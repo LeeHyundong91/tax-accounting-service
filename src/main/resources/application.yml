@@ -1,1 +1,71 @@
+server:
+  port: 8080
 
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    cache:
+      connection:
+        mode: connection
+    template:
+      reply-timeout: 30000
+
+  config:
+    activate:
+      on-profile: local
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: data-receive-service
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://dr-village-dev.cerct58sajf3.ap-northeast-2.rds.amazonaws.com:3306/tax-accounting
+    username: steward
+    password: ekrxjdmlwlqtk!
+
+    hikari:
+      auto-commit: false
+      connection-test-query: SELECT 1
+      pool-name: hikari-cp
+      maximum-pool-size: 20
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 500
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+        format_sql: false
+
+dv:
+  rabbit:
+    exchange: tax.data
+    queue: tax.data.queue
+    route-key: tax.route.key
+
+
+
+
+
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://gateway.fitpet.internal/eureka

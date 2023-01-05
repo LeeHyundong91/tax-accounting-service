@@ -28,13 +28,17 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.springframework.cloud:spring-cloud-starter-config")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+
+
+
+//    implementation("org.springframework.cloud:spring-cloud-starter-config")
+//    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.amqp:spring-rabbit-test")
-    testImplementation("org.springframework.batch:spring-batch-test")
+//    testImplementation("org.springframework.boot:spring-boot-starter-test")
+//    testImplementation("org.springframework.amqp:spring-rabbit-test")
+//    testImplementation("org.springframework.batch:spring-batch-test")
 }
 
 dependencyManagement {
