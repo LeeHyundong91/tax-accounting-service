@@ -19,10 +19,13 @@ class VaccineSalesService(private val vaccineSalesRepository: VaccineSalesReposi
         return vaccineSalesRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year)
     }
 
+    @Transactional
     fun vaccineSave(hospitalId: Int, vaccineSalesEntity: List<VaccineSalesEntity>): ResponseEntity<Any> {
 
+        /*TODO Writer 계정에서 추가 해야됨*/
+
         vaccineSalesRepository.saveAll(vaccineSalesEntity)
-        return ResponseEntity.ok(HttpStatus.OK)
+        return ResponseEntity.ok(HttpStatus.OK.value())
     }
 
 }

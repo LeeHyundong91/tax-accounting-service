@@ -20,8 +20,8 @@ repositories {
 extra["springCloudVersion"] = "2022.0.0"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-amqp")
-    implementation("org.springframework.boot:spring-boot-starter-batch")
+//    implementation("org.springframework.boot:spring-boot-starter-amqp")
+//    implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -29,7 +29,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+//    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1")
 
+
+
+    implementation("org.dhatim:fastexcel:0.14.3")
+    implementation("org.dhatim:fastexcel-reader:0.14.1")
 
 
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")

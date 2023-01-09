@@ -2,17 +2,6 @@ server:
   port: 8080
 
 spring:
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    cache:
-      connection:
-        mode: connection
-    template:
-      reply-timeout: 30000
-
   config:
     activate:
       on-profile: local
@@ -20,7 +9,7 @@ spring:
     ansi:
       enabled: always
   application:
-    name: data-receive-service
+    name: tax-accounting-service
   servlet:
     multipart:
       max-file-size: 100MB
@@ -51,21 +40,16 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 1000
-        format_sql: false
+        format_sql: true
+    open-in-view: false
+    show-sql: true
+    database: mysql
 
-dv:
-  rabbit:
-    exchange: tax.data
-    queue: tax.data.queue
-    route-key: tax.route.key
+logging:
+  level:
+#    org.hibernate.SQL: trace
+    # Only SpringBoot 3.x ..Fu
+    org.hibernate.orm.jdbc.bind: trace
+    # Not Work 3.x
+    # org.hibernate.type.descriptor.sql.BasicBinder: trace
 
-
-
-
-
-#eureka:
-#  client:
-#    register-with-eureka: true
-#    fetch-registry: true
-#    service-url:
-#      defaultZone: http://gateway.fitpet.internal/eureka

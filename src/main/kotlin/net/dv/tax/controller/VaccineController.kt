@@ -4,12 +4,7 @@ import mu.KotlinLogging
 import net.dv.tax.domain.VaccineSalesEntity
 import net.dv.tax.service.VaccineSalesService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/purchase/vaccine")
@@ -24,9 +19,10 @@ class VaccineController(private val vaccineSalesService: VaccineSalesService) {
         return vaccineSalesService.vaccineYearList(hospitalId, year)
     }
 
-    @PostMapping("/save")
+    @PostMapping("/save/{hospitalId}")
     fun vaccineSave(@PathVariable hospitalId: Int, @RequestBody vaccineSalesInfos: List<VaccineSalesEntity>): ResponseEntity<Any>{
         return vaccineSalesService.vaccineSave(hospitalId, vaccineSalesInfos)
     }
+
 
 }
