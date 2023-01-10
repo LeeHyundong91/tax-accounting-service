@@ -19,7 +19,8 @@ class ExcelDownloadController(
     fun downloadExcel(response: HttpServletResponse) {
         response.contentType = "application/vnd.ms-excel"
         response.characterEncoding = "utf-8"
-        /*TODO 이름 받게끔 수정 필요*/
+        /*TODO 이름 받게끔 수정 필요 */
+        /*TODO ENUM Class 추가*/
         val fileNameUtf8: String = URLEncoder.encode("FAST_EXCEL", "UTF-8")
         response.setHeader("Content-Disposition", "attachment; filename=$fileNameUtf8.xlsx")
 
