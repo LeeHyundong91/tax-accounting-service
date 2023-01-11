@@ -1,5 +1,6 @@
 package net.dv.tax.controller
 
+import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.domain.VaccineSalesEntity
 import net.dv.tax.service.VaccineSalesService
@@ -8,7 +9,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/purchase/vaccine")
-class VaccineController(private val vaccineSalesService: VaccineSalesService) {
+class VaccineController(
+    private val vaccineSalesService: VaccineSalesService,
+) {
 
     private val log = KotlinLogging.logger {}
 
@@ -23,6 +26,12 @@ class VaccineController(private val vaccineSalesService: VaccineSalesService) {
     fun vaccineSave(@PathVariable hospitalId: Int, @RequestBody vaccineSalesInfos: List<VaccineSalesEntity>): ResponseEntity<Any>{
         return vaccineSalesService.vaccineSave(hospitalId, vaccineSalesInfos)
     }
+
+    @GetMapping("/download/{hospitalId}")
+    fun vaccineYearListExcelDownload(@PathVariable hospitalId: Int, response: HttpServletResponse){
+        vaccineSalesService.vaccineListMakeExcel(hospitalId, response)
+    }
+
 
 
 }

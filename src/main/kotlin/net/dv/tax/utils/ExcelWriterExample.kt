@@ -11,7 +11,7 @@ class ExcelWriterExample {
 
     @Throws(IOException::class)
     fun writeWorkbook(consumer: Consumer<Workbook?>) {
-        val os = ByteArrayOutputStream(   )
+        val os = ByteArrayOutputStream()
         val wb = Workbook(os, "Test", "1.0")
         consumer.accept(wb)
         wb.finish()
@@ -27,16 +27,15 @@ class ExcelWriterExample {
                 ws.value(it.index, 2, it.value.address)
                 ws.value(it.index, 3, it.value.message)
             }
-
         }
     }
 
-    fun getData() : List<WriteCellValue> {
+    private fun getData(): List<WriteCellValue> {
         val writeCellValues: MutableList<WriteCellValue> = mutableListOf()
         writeCellValues.add(WriteCellValue("1", "2", "a1", "h1"))
         writeCellValues.add(WriteCellValue("2", "2", "a2", "h2"))
         return writeCellValues
     }
 
-    data class WriteCellValue(var firstName: String, var secondName: String, var address : String, var message : String)
+    data class WriteCellValue(var firstName: String, var secondName: String, var address: String, var message: String)
 }
