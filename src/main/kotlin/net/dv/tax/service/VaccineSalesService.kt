@@ -27,7 +27,7 @@ class VaccineSalesService(
 
     @Transactional
     fun vaccineSave(hospitalId: Int, vaccineSalesEntity: List<VaccineSalesEntity>): ResponseEntity<Any> {
-
+//        val localDate = LocalDate.parse("01-06-2022", DateTimeFormatter.ofPattern("MM-dd-yyyy"))
         /*TODO Writer 계정에서 추가 해야됨*/
         vaccineSalesRepository.saveAll(vaccineSalesEntity)
 
