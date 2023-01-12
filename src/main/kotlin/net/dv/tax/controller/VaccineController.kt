@@ -17,7 +17,7 @@ class VaccineController(
 
 
     @GetMapping("/list/{year}/{hospitalId}")
-    fun vaccineList(@PathVariable year: String, @PathVariable hospitalId: Int): List<VaccineSalesEntity>? {
+    fun vaccineList(@PathVariable year: Int, @PathVariable hospitalId: Int): List<VaccineSalesEntity>? {
         log.error { "$year /$hospitalId" }
         return vaccineSalesService.vaccineYearList(hospitalId, year)
     }
