@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 interface VaccineSalesRepository : JpaRepository<VaccineSalesEntity, Int>,
     JpaSpecificationExecutor<VaccineSalesEntity>{
 
-        fun findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId: Int, year: String): List<VaccineSalesEntity>?
+        fun findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId: Int, year: Int): List<VaccineSalesEntity>?
+
+        /*Excel*/
+        fun findAllByHospitalIdOrderByMonthAscYearAsc(hospitalId: Int): List<VaccineSalesEntity>?
 
     }
 

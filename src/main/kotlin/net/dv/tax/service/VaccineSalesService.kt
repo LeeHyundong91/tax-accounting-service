@@ -21,7 +21,7 @@ class VaccineSalesService(
     private val log = KotlinLogging.logger {}
 
 
-    fun vaccineYearList(hospitalId: Int, year: String): List<VaccineSalesEntity>? {
+    fun vaccineYearList(hospitalId: Int, year: Int): List<VaccineSalesEntity>? {
         return vaccineSalesRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year)
     }
 
@@ -35,13 +35,13 @@ class VaccineSalesService(
     }
 
     fun vaccineListMakeExcel(hospitalId: Int, response: HttpServletResponse){
-        excelWriterService.downloadExcel(response,"test", getListForFastExcel())
+        excelWriterService.downloadExcel(response,"test", getListForFastExcel(hospitalId))
     }
 
-    private fun getListForFastExcel(): List<Map<String, Any>> {
+    private fun getListForFastExcel(hospitalId: Int): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()
 
-        vaccineSalesRepository.findAllByHospitalIdAndYearOrderByMonthAsc(1, "2022")?.forEach {
+        vaccineSalesRepository.findAllByHospitalIdOrderByMonthAscYearAsc(hospitalId)?.forEach {
             val tempMap: MutableMap<String, Any> = LinkedHashMap()
             tempMap["기간"] = it.year.toString() + " ." + it.month.toString()
             tempMap["지급완료 건수"] = it.payCount!!
