@@ -7,12 +7,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 
 @Entity
-@Table(name = "ELEC_INVOICE")
+@Table(name = "SALES_ELEC_INVOICE")
 @Comment("전자계산서매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
-data class ElecInvoiceEntity(
+data class SalesElecInvoiceEntity(
 
     @Id
     @Column(name = "id", insertable = false, updatable = false)

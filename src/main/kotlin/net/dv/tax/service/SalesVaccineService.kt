@@ -2,9 +2,9 @@ package net.dv.tax.service
 
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
-import net.dv.tax.domain.sales.VaccineSalesEntity
-import net.dv.tax.repository.VaccineSalesRepository
-import net.dv.tax.utils.ExcelWriterService
+import net.dv.tax.domain.sales.SalesVaccineEntity
+import net.dv.tax.repository.SalesVaccineRepository
+import net.dv.tax.utils.ExcelWriterComponent
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -12,24 +12,24 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-class VaccineSalesService(
-    private val vaccineSalesRepository: VaccineSalesRepository,
-    private val excelWriterService: ExcelWriterService
+class SalesVaccineService(
+    private val vaccineSalesRepository: SalesVaccineRepository,
+    private val excelWriterService: ExcelWriterComponent
 ) {
 
 
     private val log = KotlinLogging.logger {}
 
 
-    fun vaccineYearList(hospitalId: Int, year: Int): List<VaccineSalesEntity>? {
+    fun vaccineYearList(hospitalId: Int, year: Int): List<SalesVaccineEntity>? {
         return vaccineSalesRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year)
     }
 
     @Transactional
-    fun vaccineSave(hospitalId: Int, vaccineSalesEntity: List<VaccineSalesEntity>): ResponseEntity<Any> {
+    fun vaccineSave(hospitalId: Int, salesVaccineEntity: List<SalesVaccineEntity>): ResponseEntity<Any> {
 //        val localDate = LocalDate.parse("01-06-2022", DateTimeFormatter.ofPattern("MM-dd-yyyy"))
         /*TODO Writer 계정에서 추가 해야됨*/
-        vaccineSalesRepository.saveAll(vaccineSalesEntity)
+        vaccineSalesRepository.saveAll(salesVaccineEntity)
 
         return ResponseEntity.ok(HttpStatus.OK.value())
     }

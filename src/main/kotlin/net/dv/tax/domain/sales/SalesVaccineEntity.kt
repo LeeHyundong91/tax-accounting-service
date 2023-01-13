@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 @Table(name = "vaccine_sales")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
-data class VaccineSalesEntity(
+data class SalesVaccineEntity(
 
     @Id
     @Column(name = "id", insertable = false, updatable = false)

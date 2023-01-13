@@ -10,7 +10,7 @@ import java.util.*
 
 
 @Component
-class ExcelWriterService(
+class ExcelWriterComponent(
 ) {
 
     fun downloadExcel(response: HttpServletResponse, fileName: String, list: List<Map<String, Any>>) {
