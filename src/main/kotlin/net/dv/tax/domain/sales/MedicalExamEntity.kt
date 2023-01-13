@@ -1,4 +1,4 @@
-package net.dv.tax.domain
+package net.dv.tax.domain.sales
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
@@ -9,7 +9,7 @@ import java.util.*
 @Comment("건강검진매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "medical_exam")
+@Table(name = "MEDICAL_EXAM")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class MedicalExamEntity(

@@ -1,7 +1,6 @@
 package net.dv.tax.utils
 
 import jakarta.servlet.http.HttpServletResponse
-import net.dv.tax.repository.VaccineSalesRepository
 import org.dhatim.fastexcel.Workbook
 import org.springframework.stereotype.Component
 import java.io.IOException
@@ -12,7 +11,6 @@ import java.util.*
 
 @Component
 class ExcelWriterService(
-    private val vaccineSalesRepository: VaccineSalesRepository
 ) {
 
     fun downloadExcel(response: HttpServletResponse, fileName: String, list: List<Map<String, Any>>) {

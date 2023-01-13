@@ -1,12 +1,12 @@
 package net.dv.tax.controller
 
-import net.dv.tax.domain.HospitalChartEntity
+import net.dv.tax.domain.sales.HospitalChartEntity
 import net.dv.tax.service.HospitalChartService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/purchase/hospital-chart")
+@RequestMapping("/sales/hospital-chart")
 class HospitalChartController(private val hospitalChartService: HospitalChartService) {
 
     @GetMapping("/list/{year}/{hospitalId}")

@@ -1,6 +1,6 @@
 package net.dv.tax.repository
 
-import net.dv.tax.domain.HospitalChartEntity
+import net.dv.tax.domain.sales.HospitalChartEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 

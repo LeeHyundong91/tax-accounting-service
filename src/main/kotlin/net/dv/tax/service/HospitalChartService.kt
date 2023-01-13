@@ -1,7 +1,7 @@
 package net.dv.tax.service
 
 import mu.KotlinLogging
-import net.dv.tax.domain.HospitalChartEntity
+import net.dv.tax.domain.sales.HospitalChartEntity
 import net.dv.tax.repository.HospitalChartRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

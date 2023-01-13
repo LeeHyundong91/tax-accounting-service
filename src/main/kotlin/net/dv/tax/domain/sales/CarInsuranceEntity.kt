@@ -1,4 +1,4 @@
-package net.dv.tax.domain
+package net.dv.tax.domain.sales
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment

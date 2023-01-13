@@ -2,13 +2,13 @@ package net.dv.tax.controller
 
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
-import net.dv.tax.domain.VaccineSalesEntity
+import net.dv.tax.domain.sales.VaccineSalesEntity
 import net.dv.tax.service.VaccineSalesService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/purchase/vaccine")
+@RequestMapping("/sales/vaccine")
 class VaccineController(
     private val vaccineSalesService: VaccineSalesService,
 ) {
