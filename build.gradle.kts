@@ -41,9 +41,6 @@ dependencies {
 //    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
-//    testImplementation("org.springframework.boot:spring-boot-starter-test")
-//    testImplementation("org.springframework.amqp:spring-rabbit-test")
-//    testImplementation("org.springframework.batch:spring-batch-test")
 }
 
 dependencyManagement {
@@ -61,4 +58,10 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
 }
