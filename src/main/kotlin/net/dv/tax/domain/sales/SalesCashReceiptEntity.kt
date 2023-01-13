@@ -13,8 +13,10 @@ import java.time.LocalDate
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesCashReceiptEntity(
+
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", insertable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
     @Comment("자료구분")
