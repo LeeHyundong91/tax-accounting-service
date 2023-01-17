@@ -3,7 +3,7 @@ package net.dv.tax.service.sales
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.SalesVaccineEntity
-import net.dv.tax.repository.SalesVaccineRepository
+import net.dv.tax.repository.sales.SalesVaccineRepository
 import net.dv.tax.utils.ExcelWriterComponent
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

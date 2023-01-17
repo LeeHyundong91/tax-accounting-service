@@ -2,7 +2,7 @@ package net.dv.tax.service.sales
 
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.HospitalChartEntity
-import net.dv.tax.repository.HospitalChartRepository
+import net.dv.tax.repository.sales.HospitalChartRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
