@@ -1,1 +1,55 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: tax-accounting-service
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://dr-village-dev.cerct58sajf3.ap-northeast-2.rds.amazonaws.com:3306/tax-accounting
+    username: steward
+    password: ekrxjdmlwlqtk!
+
+    hikari:
+      auto-commit: false
+      connection-test-query: SELECT 1
+      pool-name: hikari-cp
+      maximum-pool-size: 20
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 500
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+        format_sql: true
+    open-in-view: false
+    show-sql: true
+    database: mysql
+
+logging:
+  level:
+#    org.hibernate.SQL: trace
+    # Only SpringBoot 3.x ..Fu
+    org.hibernate.orm.jdbc.bind: trace
+    # Not Work 3.x
+    # org.hibernate.type.descriptor.sql.BasicBinder: trace
 
