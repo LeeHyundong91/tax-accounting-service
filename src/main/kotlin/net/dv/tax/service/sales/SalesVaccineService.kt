@@ -39,7 +39,7 @@ class SalesVaccineService(
     }
 
     /**
-     * TEST Other Project
+     * TEST Other Project test
      */
     private fun getListForFastExcel(hospitalId: Int): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()
