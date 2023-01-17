@@ -38,6 +38,9 @@ class SalesVaccineService(
         excelWriterService.downloadExcel(response,"test", getListForFastExcel(hospitalId))
     }
 
+    /**
+     * TEST #58
+     */
     private fun getListForFastExcel(hospitalId: Int): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()
 
