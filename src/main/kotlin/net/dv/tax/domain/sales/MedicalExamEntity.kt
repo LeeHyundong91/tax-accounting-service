@@ -19,6 +19,10 @@ data class MedicalExamEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int,
 
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
+
     @Comment("청구일")
     val billingDate: Date,
 

@@ -19,6 +19,10 @@ data class SalesElecInvoiceEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
+
     @Comment("작성일시")
     @Column(name = "CREATED_DT")
     var createdDt: LocalDate? = null,

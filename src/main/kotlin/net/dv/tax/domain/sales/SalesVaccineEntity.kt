@@ -23,7 +23,7 @@ data class SalesVaccineEntity(
     val id: Int,
 
     @Comment("병원 아이디")
-    val hospitalId: Int,
+    var hospitalId: Int,
 
     @Comment("년도")
     val year: Int?,

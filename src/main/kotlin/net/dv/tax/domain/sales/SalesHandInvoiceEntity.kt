@@ -20,6 +20,10 @@ data class SalesHandInvoiceEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
+
     @Comment("계산서종류")
     @Column(name = "BILL_TYPE", length = 10)
     var billType: String? = null,

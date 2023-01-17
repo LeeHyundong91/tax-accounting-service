@@ -19,6 +19,10 @@ data class SalesCashReceiptEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
+
     @Comment("자료구분")
     @Column(name = "DATA_TYPE", length = 10)
     var dataType: String? = null,
