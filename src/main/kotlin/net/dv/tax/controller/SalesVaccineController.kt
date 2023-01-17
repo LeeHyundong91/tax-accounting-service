@@ -3,7 +3,7 @@ package net.dv.tax.controller
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.SalesVaccineEntity
-import net.dv.tax.service.SalesVaccineService
+import net.dv.tax.service.sales.SalesVaccineService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

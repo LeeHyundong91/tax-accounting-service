@@ -1,4 +1,4 @@
-package net.dv.tax.service
+package net.dv.tax.service.sales
 
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.HospitalChartEntity

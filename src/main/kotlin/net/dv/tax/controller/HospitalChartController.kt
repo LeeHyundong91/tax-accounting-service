@@ -1,7 +1,7 @@
 package net.dv.tax.controller
 
 import net.dv.tax.domain.sales.HospitalChartEntity
-import net.dv.tax.service.HospitalChartService
+import net.dv.tax.service.sales.HospitalChartService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
