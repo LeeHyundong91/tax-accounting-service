@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.SalesVaccineEntity
 import net.dv.tax.repository.sales.SalesVaccineRepository
-import net.dv.tax.utils.ExcelWriterComponent
+import net.dv.tax.utils.ExcelComponent
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ import java.util.*
 @Service
 class SalesVaccineService(
     private val vaccineSalesRepository: SalesVaccineRepository,
-    private val excelWriterService: ExcelWriterComponent
+    private val excelWriterService: ExcelComponent
 ) {
 
 

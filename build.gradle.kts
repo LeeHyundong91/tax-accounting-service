@@ -29,6 +29,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+
+    /*AWS*/
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.386")
+
 //    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1")
 
 
