@@ -51,6 +51,11 @@ class PurchaseCreditCardService(private val excelComponent: ExcelComponent) {
                     separateSend = it.getCell(15).rawValue,
                     statementStatus = it.getCell(16).rawValue,
                 )
+
+            purchaseCreditCardEntity.also {
+
+            }
+
             creditCardList.add(purchaseCreditCardEntity)
         }
 
