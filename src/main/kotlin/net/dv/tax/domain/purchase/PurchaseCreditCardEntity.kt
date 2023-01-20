@@ -3,7 +3,11 @@ package net.dv.tax.domain.purchase
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import org.springframework.format.annotation.DateTimeFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "PURCHASE_CREDIT_CARD")
@@ -20,11 +24,12 @@ data class PurchaseCreditCardEntity(
 
     @Comment("병원아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Long? = null,
+    var hospitalId: Int? = null,
 
     @Comment("일자")
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     @Column(name = "BILLING_DATE")
-    var billingDate: String? = null,
+    var billingDate: LocalDate? = null,
 
     @Comment("코드")
     @Column(name = "ACCOUNT_CODE")
@@ -44,27 +49,27 @@ data class PurchaseCreditCardEntity(
 
     @Comment("공급가액")
     @Column(name = "SUPPLY_PRICE")
-    var supplyPrice: String? = null,
+    var supplyPrice: Long? = null,
 
     @Comment("세액")
     @Column(name = "TAX_AMOUNT")
-    var taxAmount: String? = null,
+    var taxAmount: Long? = 0,
 
     @Comment("비과세")
     @Column(name = "NON_TAX_AMOUNT")
-    var nonTaxAmount: String? = null,
+    var nonTaxAmount: Long? = 0,
 
     @Comment("합계")
     @Column(name = "TOTAL_AMOUNT")
-    var totalAmount: String? = null,
+    var totalAmount: Long? = 0,
 
     @Comment("국세청(공제여부)")
     @Column(name = "IS_DEDUCTION")
-    var isDeduction: String? = null,
+    var isDeduction: Boolean? = false,
 
     @Comment("추천유형(불공제")
     @Column(name = "IS_RECOMMEND_DEDUCTION")
-    var isRecommendDeduction: String? = null,
+    var isRecommendDeduction: Boolean? = false,
 
     @Comment("전표유형")
     @Column(name = "STATEMENT_TYPE_1")
@@ -93,4 +98,14 @@ data class PurchaseCreditCardEntity(
     @Comment("작성자")
     @Column(name = "WRITER")
     var writer: String? = null,
+
+    @Comment("삭제")
+    @Column(name = "IS_DELETE")
+    var isDelete: Boolean? = false,
+
+    @Comment("등록일(업로드일시")
+    @CreatedDate
+    @Column(name = "CREATED_AT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 )
