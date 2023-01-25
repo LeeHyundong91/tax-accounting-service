@@ -9,7 +9,7 @@ import java.time.LocalDate
 @Entity
 @Comment("현금영수증매출관리")
 @Suppress("JpaAttributeTypeInspection")
-@Table(name = "SALES_CASH_RECEIPT")
+@Table(name = "sales_cash_receipt")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesCashReceiptEntity(

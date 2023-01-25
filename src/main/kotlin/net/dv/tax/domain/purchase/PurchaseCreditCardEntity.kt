@@ -4,16 +4,14 @@ import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "PURCHASE_CREDIT_CARD")
+@Table(name = "purchase_credit_card")
 @Comment("신용카드매입관리")
 @Suppress("JpaAttributeTypeInspection")
-@EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class PurchaseCreditCardEntity(
 

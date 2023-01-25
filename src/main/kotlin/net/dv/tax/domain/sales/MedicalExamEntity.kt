@@ -9,7 +9,7 @@ import java.util.*
 @Comment("건강검진매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "MEDICAL_EXAM")
+@Table(name = "medical_exam")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class MedicalExamEntity(

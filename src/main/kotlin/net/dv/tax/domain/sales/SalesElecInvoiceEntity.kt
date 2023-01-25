@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 
 @Entity
-@Table(name = "SALES_ELEC_INVOICE")
+@Table(name = "sales_elec_invoice")
 @Comment("전자계산서매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)

@@ -3,7 +3,6 @@ package net.dv.tax.controller.purchase
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.service.purchase.PurchaseCreditCardService
-import net.dv.tax.utils.ExcelComponent
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -14,7 +13,6 @@ import java.util.*
 @RestController
 @RequestMapping("/purchase/credit-card")
 class PurchaseCreditCardController(
-    private val excelComponent: ExcelComponent,
     private val purchaseCreditCardService: PurchaseCreditCardService
 ) {
 
@@ -34,7 +32,7 @@ class PurchaseCreditCardController(
         purchaseCreditCardEntity.hospitalId = 0
         purchaseCreditCardEntity.writer = "작성자"
 
-        purchaseCreditCardService.cellToEntity(excelComponent.readExcel(contents), purchaseCreditCardEntity)
+        purchaseCreditCardService.cellToEntity(contents, purchaseCreditCardEntity)
 
         return contents.originalFilename ?: "없어 그런거 야발!!"
     }
