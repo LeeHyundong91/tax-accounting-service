@@ -23,12 +23,15 @@ dependencies {
 //    implementation("org.springframework.boot:spring-boot-starter-amqp")
 //    implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+
 
     /*AWS*/
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.386")
@@ -37,14 +40,20 @@ dependencies {
 
 
 
+    /*XLS*/
+    implementation("com.github.javaxcel:javaxcel-core:0.9.1")
+    implementation("org.apache.poi:poi-ooxml:5.2.3")
+
+    /*XLSX*/
     implementation("org.dhatim:fastexcel:0.14.3")
     implementation("org.dhatim:fastexcel-reader:0.14.1")
 
 
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")
 //    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+//    developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+
 }
 
 dependencyManagement {

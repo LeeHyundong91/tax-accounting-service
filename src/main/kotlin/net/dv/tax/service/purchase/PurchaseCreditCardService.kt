@@ -3,16 +3,19 @@ package net.dv.tax.service.purchase
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
+import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+
 @Service
 class PurchaseCreditCardService(
     private val excelComponent: ExcelComponent,
-    private val purchaseCreditCardRepository: PurchaseCreditCardRepository
+    private val purchaseCreditCardRepository: PurchaseCreditCardRepository,
+    private val awsS3Service: AwsS3Service
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -27,9 +30,25 @@ class PurchaseCreditCardService(
      * do not use xls
      * only accept xlsx
      */
-    fun cellToEntity(multipartFile: MultipartFile, cardEntity: PurchaseCreditCardEntity) {
 
-        var rows = excelComponent.readExcel(multipartFile)
+    fun cellToEntity(cardEntity: PurchaseCreditCardEntity) {
+
+
+        var files : MultipartFile? = null
+//
+//        files.transferTo(Path(""))
+//
+//        var file: File? = null
+//
+//        file = File("origin/2023/01/25/credit-card_15:48_02ac91647c4249a5b059c54773517107.xlsx")
+
+
+//        multipartFile?.transferTo(Path("origin/2023/01/25/credit-card_15:48_02ac91647c4249a5b059c54773517107.xlsx"))
+
+
+        log.error { awsS3Service.getFileFromBucket()?.name }
+
+        var rows = excelComponent.readExcel(files)
 
         val creditCardList = mutableListOf<PurchaseCreditCardEntity>()
 

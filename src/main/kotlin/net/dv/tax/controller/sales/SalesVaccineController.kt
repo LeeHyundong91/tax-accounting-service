@@ -1,4 +1,4 @@
-package net.dv.tax.controller
+package net.dv.tax.controller.sales
 
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
