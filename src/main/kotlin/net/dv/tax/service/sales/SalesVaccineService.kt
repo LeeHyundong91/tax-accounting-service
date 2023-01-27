@@ -42,14 +42,14 @@ class SalesVaccineService(
     fun vaccineListMakeExcel(hospitalId: Int, response: HttpServletResponse) {
         excelWriterService.downloadExcel(response, "test")
             .outputStream.use { os ->
-                getListForFastExcel(os, hospitalId)
+                getListForExcel(os, hospitalId)
             }
     }
 
     /**
      * TEST #58 인지하냐
      */
-    private fun getListForFastExcel(os: OutputStream?, hospitalId: Int) {
+    private fun getListForExcel(os: OutputStream?, hospitalId: Int) {
 
         val excelList: MutableList<SalesVaccineExcelDto> = LinkedList()
         val workbook: Workbook = HSSFWorkbook()

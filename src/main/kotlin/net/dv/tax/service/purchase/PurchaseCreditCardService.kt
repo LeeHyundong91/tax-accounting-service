@@ -6,7 +6,6 @@ import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -33,22 +32,10 @@ class PurchaseCreditCardService(
 
     fun cellToEntity(cardEntity: PurchaseCreditCardEntity) {
 
-
-        var files : MultipartFile? = null
-//
-//        files.transferTo(Path(""))
-//
-//        var file: File? = null
-//
-//        file = File("origin/2023/01/25/credit-card_15:48_02ac91647c4249a5b059c54773517107.xlsx")
+        val filePath = "origin/2023/01/25/credit-card_17:27_90e636c7d68247559ffe0b6dfd586533.xlsx"
 
 
-//        multipartFile?.transferTo(Path("origin/2023/01/25/credit-card_15:48_02ac91647c4249a5b059c54773517107.xlsx"))
-
-
-        log.error { awsS3Service.getFileFromBucket()?.name }
-
-        var rows = excelComponent.readExcel(files)
+        var rows = excelComponent.readExcel(awsS3Service.getFileFromBucket(filePath))
 
         val creditCardList = mutableListOf<PurchaseCreditCardEntity>()
 

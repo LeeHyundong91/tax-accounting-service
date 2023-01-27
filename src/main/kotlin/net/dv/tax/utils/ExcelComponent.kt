@@ -1,16 +1,18 @@
 package net.dv.tax.utils
 
 import jakarta.servlet.http.HttpServletResponse
+import mu.KotlinLogging
 import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Component
-import org.springframework.web.multipart.MultipartFile
+import java.io.File
 import java.net.URLEncoder
 import java.util.stream.Collectors
 
 
 @Component
 class ExcelComponent {
+    private val log = KotlinLogging.logger {}
 
     fun downloadExcel(response: HttpServletResponse, fileName: String) : HttpServletResponse {
         response.contentType = "application/vnd.ms-excel"
@@ -20,17 +22,19 @@ class ExcelComponent {
         return response
     }
 
-    fun readExcel(multipartFile: MultipartFile?): MutableList<Row> {
+    fun readExcel(multipartFile: File?): MutableList<Row> {
         try {
             var setValues: MutableList<Row>
 
-            val inputStream = multipartFile?.inputStream
+            val inputStream = multipartFile?.inputStream()
             inputStream.use { fis ->
                 val wb = ReadableWorkbook(fis)
                 setValues = wb.firstSheet.openStream()
                     .parallel()
                     .collect(Collectors.toList())
             }
+            log.error { setValues }
+
 
             return setValues
 

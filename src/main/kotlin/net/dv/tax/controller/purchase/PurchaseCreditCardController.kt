@@ -47,16 +47,15 @@ class PurchaseCreditCardController(
     @GetMapping("/read")
     fun readFile() {
 
-//        var hospitalId: Int = 0
-//
-//        var purchaseCreditCardEntity = PurchaseCreditCardEntity()
-//        purchaseCreditCardEntity.hospitalId = 0
-//        purchaseCreditCardEntity.writer = "작성자"
-//
-//
-//        purchaseCreditCardService.cellToEntity(purchaseCreditCardEntity)
+        var hospitalId: Int = 0
 
-        awsS3Service.readObj()
+        var purchaseCreditCardEntity = PurchaseCreditCardEntity()
+        purchaseCreditCardEntity.hospitalId = 0
+        purchaseCreditCardEntity.writer = "작성자"
+
+
+        purchaseCreditCardService.cellToEntity(purchaseCreditCardEntity)
+
 
     }
 
