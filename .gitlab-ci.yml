@@ -1,0 +1,4 @@
+build-job:
+  stage: test
+  script:
+    - echo "tax-accounting-service build"
