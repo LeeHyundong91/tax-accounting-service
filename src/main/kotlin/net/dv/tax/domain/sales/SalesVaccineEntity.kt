@@ -20,25 +20,25 @@ data class SalesVaccineEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Int? = null,
 
     @Comment("병원 아이디")
-    val hospitalId: Int,
+    var hospitalId: Int? = null,
 
     @Comment("년도")
-    val year: Int?,
+    val year: Int? = null,
 
     @Comment("월")
     val month: Int? = null,
 
     @Comment("지급완료 건수")
-    var payCount: Long?,
+    var payCount: Long? = 0,
 
     @Comment("지급금액")
-    var payAmount: Long?,
+    var payAmount: Long? = 0,
 
     @Comment("작성자")
-    var writer: String,
+    var writer: String? = null,
 
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-mm-dd")

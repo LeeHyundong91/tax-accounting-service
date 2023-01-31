@@ -21,7 +21,8 @@ data class HospitalChartEntity(
     val id: Int,
 
     @Comment("병원 아이디")
-    val hospitalId: Int,
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
 
     @Comment("연도")
     var year: Int?,

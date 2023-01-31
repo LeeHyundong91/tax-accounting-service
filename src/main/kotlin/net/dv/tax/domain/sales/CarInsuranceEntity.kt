@@ -19,6 +19,10 @@ data class CarInsuranceEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int,
 
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
+
     @Comment("기간")
     var dataPeriod: LocalDate,
 

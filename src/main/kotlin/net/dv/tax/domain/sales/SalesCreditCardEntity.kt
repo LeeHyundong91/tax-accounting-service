@@ -10,7 +10,7 @@ import java.util.*
 @Comment("신용카드매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "SALES_CREDIT_CARD")
+@Table(name = "sales_credit_card")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesCreditCardEntity(
@@ -20,6 +20,9 @@ data class SalesCreditCardEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int,
 
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
 
     @Comment("승인일시")
     val approvalDate: Date,

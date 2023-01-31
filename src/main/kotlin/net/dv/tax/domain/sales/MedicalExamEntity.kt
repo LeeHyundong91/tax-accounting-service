@@ -9,7 +9,7 @@ import java.util.*
 @Comment("건강검진매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "MEDICAL_EXAM")
+@Table(name = "medical_exam")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class MedicalExamEntity(
@@ -18,6 +18,10 @@ data class MedicalExamEntity(
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int,
+
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
 
     @Comment("청구일")
     val billingDate: Date,

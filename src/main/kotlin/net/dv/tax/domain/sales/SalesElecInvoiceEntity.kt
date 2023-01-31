@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 
 @Entity
-@Table(name = "SALES_ELEC_INVOICE")
+@Table(name = "sales_elec_invoice")
 @Comment("전자계산서매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)
@@ -18,6 +18,10 @@ data class SalesElecInvoiceEntity(
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
+
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: Int,
 
     @Comment("작성일시")
     @Column(name = "CREATED_DT")

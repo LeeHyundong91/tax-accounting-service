@@ -1,4 +1,4 @@
-package net.dv.tax.dto
+package net.dv.tax.dto.sales
 
 import org.hibernate.annotations.Comment
 

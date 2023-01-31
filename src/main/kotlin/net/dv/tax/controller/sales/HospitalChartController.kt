@@ -1,4 +1,4 @@
-package net.dv.tax.controller
+package net.dv.tax.controller.sales
 
 import net.dv.tax.domain.sales.HospitalChartEntity
 import net.dv.tax.service.sales.HospitalChartService
