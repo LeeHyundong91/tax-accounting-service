@@ -1,10 +1,10 @@
 stages:
-  - compile
   - build
+  - package
   - deploy
 
 gradle:
-  stage: compile
+  stage: build
   image: amazoncorretto:17
   only:
     - main
@@ -14,10 +14,10 @@ gradle:
     - ./gradlew clean build -x test
   artifacts:
     paths:
-      - build/libs/*.SNAPSHOT.JAR
+      - build/libs/*.SNAPSHOT.jar
 
 docker:
-  stage: build
+  stage: package
   image: docker:latest
   script:
     - ls -al build/libs
