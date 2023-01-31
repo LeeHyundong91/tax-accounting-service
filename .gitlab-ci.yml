@@ -1,9 +1,11 @@
 stages:
+  - compile
   - build
   - deploy
 
-build:
-  stage: build
+gradle:
+  stage: compile
+  image: amazoncorretto:17
   only:
     - main
   before_script:
@@ -11,6 +13,11 @@ build:
   script:
     - ./gradlew clean build -x test
     - ls -al build/libs
+
+docker:
+  stage: build
+  image: docker:latest
+  script:
     - ARCHIVE="build/libs/$(ls build/libs | grep SNAPSHOT.jar)"
     - TARGET="tax-accounting:$(date "+%Y.%m.%d")"
     - docker build --build-arg ARCHIVE_FILE=$ARCHIVE -t $TARGET .
