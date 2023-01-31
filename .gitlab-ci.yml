@@ -7,9 +7,10 @@ build:
   only:
     - main
   before_script:
-    - echo "============================================"
-    - echo " Dr.village - build tax-accounting-service"
-    - echo "============================================"
     - chmod +x ./gradlew
   script:
     - ./gradlew clean build -x test
+    - ls -al build/libs
+    - ARCHIVE="build/libs/$(ls build/libs | grep SNAPSHOT.jar)"
+    - TARGET="tax-accounting:$(date "+%Y.%m.%d")"
+    - docker build --build-arg ARCHIVE_FILE=$ARCHIVE -t $TARGET .
