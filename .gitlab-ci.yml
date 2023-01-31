@@ -14,7 +14,7 @@ gradle:
     - ./gradlew clean build -x test
   artifacts:
     paths:
-      - build/libs/*.SNAPSHOT.jar
+      - ./build/libs/*.SNAPSHOT.jar
 
 docker:
   stage: package
