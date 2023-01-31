@@ -14,10 +14,10 @@ gradle:
     - ./gradlew clean build -x test
     - ls -al build/libs
     - mkdir target
-    - cp build/libs/$(ls build/libs | grep SNAPSHOT.jar) target/service.jar
+    - cp build/libs/$(ls build/libs | grep SNAPSHOT.jar) ${CI_PROJECT_DIR}/service.jar
   artifacts:
     paths:
-      - ${CI_PROJECT_DIR}/build/libs/*.SNAPSHOT.jar
+      - service.jar
 
 docker:
   stage: package
@@ -25,4 +25,4 @@ docker:
   script:
     - ls -al target
     - TARGET="tax-accounting:$(date "+%Y.%m.%d")"
-    - docker build --build-arg ARCHIVE_FILE=target/service.jar -t $TARGET .
+    - docker build --build-arg ARCHIVE_FILE=service.jar -t $TARGET .
