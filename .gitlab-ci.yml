@@ -1,4 +1,15 @@
-build-job:
-  stage: test
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  only:
+    - main
+  before_script:
+    - echo "============================================"
+    - echo " Dr.village - build tax-accounting-service"
+    - echo "============================================"
+    - chmod +x ./gradlew
   script:
-    - echo "tax-accounting-service build"
+    - ./gradlew clean build -x test
