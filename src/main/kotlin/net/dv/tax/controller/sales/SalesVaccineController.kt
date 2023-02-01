@@ -7,8 +7,9 @@ import net.dv.tax.service.sales.SalesVaccineService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+@CrossOrigin(origins = ["*"], allowedHeaders = ["*"], exposedHeaders = ["*"])
 @RestController
-@RequestMapping("/sales/vaccine")
+@RequestMapping("/v1/sales/vaccine")
 class SalesVaccineController(
     private val salesVaccineService: SalesVaccineService,
 ) {
