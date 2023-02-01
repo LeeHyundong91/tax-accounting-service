@@ -30,7 +30,10 @@ docker:
 
 aws:
   stage: deploy
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+#  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  image:
+    name: amazon/aws-cli:latest
+    entrypoint: ["/bin/sh", "-c"]
   before_script:
     - eval "$(curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh")"
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
