@@ -33,6 +33,16 @@ aws:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
+    - aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+    - aws configure set aws_secret_key ${AWS_SECRET_KEY}
+    - aws configure set default.region ${AWS_DEFAULT_REGION}
+    - sts=$(
+      aws sts assume-role \
+      --role-arn "arn:aws:iam::526459572421:role/role-supervisor-access" \
+      --role-session-name "ecr-work-session" \
+      --query Credentials
+      )
+    - echo $sts
     - docker images
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
