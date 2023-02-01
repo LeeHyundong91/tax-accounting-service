@@ -32,8 +32,7 @@ aws:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
-    - curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh" -o assume-role.sh
-    - source assume-role.sh
+    - eval "$(curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh")"
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
     - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
