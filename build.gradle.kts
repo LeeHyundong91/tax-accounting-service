@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "net.dv"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -23,7 +23,7 @@ dependencies {
 //    implementation("org.springframework.boot:spring-boot-starter-amqp")
 //    implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -32,13 +32,14 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
 
+    /* Spring Cloud */
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
     /*AWS*/
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.386")
 
 //    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1")
-
-
 
     /*XLS*/
     implementation("com.github.javaxcel:javaxcel-core:0.9.1")

@@ -2,14 +2,14 @@ server:
   port: 8080
 
 spring:
-  config:
-    activate:
-      on-profile: local
+#  config:
+#    activate:
+#      on-profile: local
   output:
     ansi:
       enabled: always
   application:
-    name: tax-accounting-service
+    name: tax-accounting
   servlet:
     multipart:
       max-file-size: 100MB
@@ -45,6 +45,15 @@ spring:
     show-sql: true
     database: mysql
 
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-server/eureka/
+
 logging:
   level:
 #    org.hibernate.SQL: trace
@@ -53,3 +62,9 @@ logging:
     # Not Work 3.x
     # org.hibernate.type.descriptor.sql.BasicBinder: trace
 
+management:
+  endpoints:
+    web:
+      base-path:  /
+      exposure:
+        include: health,info
