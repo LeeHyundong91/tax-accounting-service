@@ -1,5 +1,6 @@
 package net.dv.tax.domain.sales
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -18,45 +19,47 @@ data class HospitalChartEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Int? = null,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int,
+    var hospitalId: Int? = 0,
 
     @Comment("연도")
-    var year: Int?,
+    var year: Int? = 0,
 
     @Comment("월")
-    var month: Int?,
+    var month: Int? = 0,
 
     @Comment("진료비")
-    var medicalExpenses: Int?,
+    var medicalExpenses: Int? = 0,
 
     @Comment("급여총액")
-    var totalSalary: Int?,
+    var totalSalary: Int? = 0,
 
     @Comment("청구액")
-    var billingAmount: Int?,
+    var billingAmount: Int? = 0,
 
     @Comment("진료수납액")
-    var medicalReceipts: Int?,
+    var medicalReceipts: Int? = 0,
 
     @Comment("본인부담 금액")
-    var ownExpense: Int?,
+    var ownExpense: Int? = 0,
 
     @Comment("본인부담 비급여")
-    var nonPayment: Int?,
+    var nonPayment: Int? = 0,
 
     @Comment("본인부담 금액 합계")
-    var ownExpenseAmount: Int?,
+    var ownExpenseAmount: Int? = 0,
 
     @CreatedDate
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonIgnore
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Comment("작성자")
+    @JsonIgnore
     var writer: String?
 
 
