@@ -27,7 +27,7 @@ docker:
     - ls -al .
     - TARGET="tax-accounting:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
     - docker build --build-arg ARCHIVE_FILE=service.jar -t ${TARGET} .
-    - docker tag ${REPOSITORY_HOST}/dv-service.${TARGET} ${TARGET}
+    - docker tag ${TARGET} ${REPOSITORY_HOST}/dv-service.${TARGET}
 
 aws:
   stage: deploy
