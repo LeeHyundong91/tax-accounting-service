@@ -37,10 +37,10 @@ aws:
     - aws configure set aws_secret_key ${AWS_SECRET_ACCESS_KEY}
     - aws configure set default.region ${AWS_DEFAULT_REGION}
     - sts=($(
-      aws sts assume-role \
-      --role-arn "arn:aws:iam::526459572421:role/role-supervisor-access" \
-      --role-session-name "ecr-work-session" \
-      --query Credentials.[AccessKeyId,SecretAccessKey,SessionToken] \
+      aws sts assume-role 
+      --role-arn "arn:aws:iam::526459572421:role/role-supervisor-access" 
+      --role-session-name "ecr-work-session" 
+      --query Credentials.[AccessKeyId,SecretAccessKey,SessionToken] 
       --output text
       ))
     - export AWS_ACCESS_KEY_ID=${sts[0]}
