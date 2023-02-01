@@ -30,21 +30,10 @@ docker:
 
 aws:
   stage: deploy
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  image: amazon/aws-cli:latest
   before_script:
-    - aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-    - aws configure set aws_secret_key ${AWS_SECRET_ACCESS_KEY}
-    - aws configure set default.region ${AWS_DEFAULT_REGION}
-    - sts=($(
-      aws sts assume-role 
-      --role-arn "arn:aws:iam::526459572421:role/role-supervisor-access" 
-      --role-session-name "ecr-work-session" 
-      --query Credentials.[AccessKeyId,SecretAccessKey,SessionToken] 
-      --output text
-      ))
-    - export AWS_ACCESS_KEY_ID=${sts[0]}
-    - export AWS_SECRET_ACCESS_KEY=${sts[1]}
-    - export AWS_SESSION_TOKEN=${sts[2]}
+    - curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh" -o assume-role.sh
+    - source assume-role.sh
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
     - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
