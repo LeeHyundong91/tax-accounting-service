@@ -5,16 +5,13 @@ import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.service.common.AccountingDataService
 import net.dv.tax.service.purchase.PurchaseCreditCardService
 import net.dv.tax.utils.AwsS3Service
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 
 @RestController
-@RequestMapping("/purchase/credit-card")
+@RequestMapping("/v1/purchase/credit-card")
 class PurchaseCreditCardController(
     private val purchaseCreditCardService: PurchaseCreditCardService,
     private val accountingDataService: AccountingDataService,
@@ -54,7 +51,23 @@ class PurchaseCreditCardController(
         purchaseCreditCardEntity.writer = "작성자"
 
 
-        purchaseCreditCardService.cellToEntity(purchaseCreditCardEntity)
+//        purchaseCreditCardService.cellToEntity(purchaseCreditCardEntity)
+
+
+    }
+    @GetMapping("/test")
+    fun testFile() {
+
+        var hospitalId: Int = 0
+
+        var fileName = "origin/2023/01/27/credit-card_18:32_6d41c4e3e09b47e4baccf26a7066a392.xls"
+
+        var purchaseCreditCardEntity = PurchaseCreditCardEntity()
+        purchaseCreditCardEntity.hospitalId = 0
+        purchaseCreditCardEntity.writer = "작성자"
+
+
+        purchaseCreditCardService.cellToEntity(purchaseCreditCardEntity, fileName)
 
 
     }

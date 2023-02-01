@@ -32,10 +32,9 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
     fun uploadOnS3(findName: String, file: File) {
         val transferManager: TransferManager = TransferManagerBuilder.standard().build()
 
-        val request = PutObjectRequest(bucket, findName, file)
         // 업로드 시도
         try {
-            val upload: Upload = transferManager.upload(request)
+            val upload: Upload = transferManager.upload(PutObjectRequest(bucket, findName, file))
             upload.waitForCompletion()
         } catch (e: Exception) {
             log.error("e: ${e.printStackTrace()}")
@@ -44,15 +43,12 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
     }
 
 
-
-    fun getFileFromBucket(filePath: String) :File{
+    fun getFileFromBucket(filePath: String): File {
         val transferManager: TransferManager = TransferManagerBuilder.standard().build()
+        log.error("filePath : $filePath")
+        val file = File("/tmp/$filePath")
 
-        var file: File? = null
-
-        val request = GetObjectRequest(bucket,filePath)
-        file = File("/tmp/$filePath")
-        transferManager.download(request, file)
+        transferManager.download(GetObjectRequest(bucket, filePath), file)
 
         return file
 
@@ -68,10 +64,10 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
         try {
             val pattern = dateString(LocalDate.now())
             val timeString = timeString()
-            val ext: String? = multipartFile.originalFilename?.substringAfterLast(".")
+            val ext: String = multipartFile.originalFilename!!.substringAfterLast(".")
             val underBar = "_"
             val saveFileName: String = UUID.randomUUID().toString().replace("-".toRegex(), "")
-            val originFileName = multipartFile.originalFilename
+            val originFileName: String = multipartFile.originalFilename!!
             file = File("/tmp/$saveFileName.$ext")
 
 
@@ -81,8 +77,10 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
             uploadOnS3(fullPath, file)
             file.delete()
 
+            log.info(fullPath)
+
             nameMap["filePath"] = fullPath
-            nameMap["fileName"] = originFileName.toString()
+            nameMap["fileName"] = originFileName
 
             return nameMap
         } catch (e: AmazonServiceException) {
