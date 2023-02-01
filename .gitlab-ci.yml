@@ -1,3 +1,6 @@
+variables:
+  REPOSITORY_HOST: 526459572421.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+
 stages:
   - build
   - package
@@ -20,7 +23,11 @@ gradle:
 
 docker:
   stage: package
+  before_script:
+    - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
     - ls -al .
     - TARGET="tax-accounting:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
-    - docker build --build-arg ARCHIVE_FILE=service.jar -t $TARGET .
+    - docker build --build-arg ARCHIVE_FILE=service.jar -t ${TARGET} .
+    - docker tag ${REPOSITORY_HOST}/dv-service.${TARGET} ${TARGET}
+    - docker push ${REPOSITORY_HOST}/dv-service.${TARGET}
