@@ -1,5 +1,6 @@
 variables:
   REPOSITORY_HOST: 526459572421.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+  APP_NAME: tax-accounting
 
 stages:
   - build
@@ -25,9 +26,7 @@ docker:
   stage: package
   script:
     - ls -al .
-    - TARGET="tax-accounting:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
-    - docker build --build-arg ARCHIVE_FILE=service.jar -t ${TARGET} .
-    - docker tag ${TARGET} ${REPOSITORY_HOST}/dv-service.${TARGET}
+    - docker build --build-arg ARCHIVE_FILE=service.jar -t ${APP_NAME}:latest .
 
 aws:
   stage: deploy
@@ -46,7 +45,8 @@ aws:
     - export AWS_ACCESS_KEY_ID=${sts[0]}
     - export AWS_SECRET_ACCESS_KEY=${sts[1]}
     - export AWS_SESSION_TOKEN=${sts[2]}
-    - docker images
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
-    - docker push ${REPOSITORY_HOST}/dv-service.${TARGET}
+    - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
+    - docker tag ${APP_NAME}:latest ${DEPLOY_IMAGE}
+    - docker push ${DEPLOY_IMAGE}
