@@ -10,8 +10,6 @@ stages:
 gradle:
   stage: build
   image: amazoncorretto:17
-  only:
-    - main
   before_script:
     - chmod +x ./gradlew
   script:
@@ -21,12 +19,16 @@ gradle:
   artifacts:
     paths:
       - service.jar
+  only:
+    - /^release-.*$/
 
 docker:
   stage: package
   script:
     - ls -al .
     - docker build --build-arg ARCHIVE_FILE=service.jar -t ${APP_NAME}:latest .
+  only:
+    - /^release-.*$/
 
 aws:
   stage: deploy
@@ -38,3 +40,5 @@ aws:
     - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
     - docker tag ${APP_NAME}:latest ${DEPLOY_IMAGE}
     - docker push ${DEPLOY_IMAGE}
+  only:
+    - /^release-.*$/
