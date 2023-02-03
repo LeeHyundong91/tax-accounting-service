@@ -35,8 +35,6 @@ class PurchaseCreditCardService(
 //        val filePath = "origin/2023/01/25/credit-card_17:27_90e636c7d68247559ffe0b6dfd586533.xlsx"
 
 
-        excelComponent.readXls(awsS3Service.getFileFromBucket(fileName))
-
         var rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(fileName))
 
         val creditCardList = mutableListOf<PurchaseCreditCardEntity>()
