@@ -4,10 +4,9 @@ variables:
 
 stages:
   - build
-  - package
   - deploy
 
-gradle:
+gradle:build:
   stage: build
   image: amazoncorretto:17
   before_script:
@@ -22,23 +21,28 @@ gradle:
   only:
     - /^release-.*$/
 
-docker:
-  stage: package
+docker:build:
+  stage: build
   script:
     - ls -al .
     - docker build --build-arg ARCHIVE_FILE=service.jar -t ${APP_NAME}:latest .
+  needs: ["gradle:build"]
   only:
     - /^release-.*$/
 
-aws:
+ecr:deploy:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   before_script:
+    - echo ${AWS_ACCESS_KEY_ID}
+    - echo ${AWS_DEFAULT_REGION}
+    - echo ${AWS_SECRET_ACCESS_KEY}
     - eval "$(curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh")"
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
     - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:$(TZ="Asia/Seoul" date "+%y.%m.%d")"
     - docker tag ${APP_NAME}:latest ${DEPLOY_IMAGE}
     - docker push ${DEPLOY_IMAGE}
+  needs: ["docker:build"]
   only:
     - /^release-.*$/
