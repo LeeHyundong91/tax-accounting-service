@@ -95,7 +95,7 @@ env:rel:
 eks:deploy:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-  needs: ["env:dev"]
+  needs: ["env:rel"]
   before_script:
     - apt install -y gettext-base
     - eval "$(curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh")"
