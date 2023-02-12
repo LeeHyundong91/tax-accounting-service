@@ -1,6 +1,7 @@
 variables:
   REPOSITORY_HOST: 526459572421.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
   APP_NAME: tax-accounting
+  ROLE_NAME: role-service-deploy
 
 stages:
   - build
