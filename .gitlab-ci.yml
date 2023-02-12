@@ -63,7 +63,7 @@ env:dev:
   needs: ["ecr:deploy"]
   script:
     - |
-      cat <<"EOF" | tee deploy.env
+      cat <<EOF | tee deploy.env
       PROFILE=dev
       VERSION=${VERSION}
       NAMESPACE=dv-platform-dev
