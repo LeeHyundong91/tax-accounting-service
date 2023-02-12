@@ -47,7 +47,6 @@ ecr:deploy:
     - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:${VERSION}"
     - docker tag ${APP_NAME}:latest ${DEPLOY_IMAGE}
     - docker push ${DEPLOY_IMAGE}
-  after_script:
     - echo VERSION="${VERSION}" | tee .env
   artifacts:
     reports:
