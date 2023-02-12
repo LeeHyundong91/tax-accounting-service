@@ -1,6 +1,8 @@
 variables:
   REPOSITORY_HOST: 526459572421.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
   APP_NAME: tax-accounting
+  CLOUD_CONFIG_SERVER: http://config-server
+  CLOUD_EUREKA_SERVER: http://eureka-server/eureka/
   ROLE_NAME: role-service-deploy
 
 stages:
@@ -81,8 +83,6 @@ env:rel:
     - |
       cat <<EOF | tee deploy.env
       PROFILE=dev
-      CLOUD_CONFIG_SERVER=http://config-server
-      CLOUD_EUREKA_SERVER=http://eureka-server/eureka/
       VERSION=${VERSION}
       NAMESPACE=dv-platform-dev
       EOF
@@ -95,7 +95,11 @@ env:rel:
 eks:deploy:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-  needs: ["env:rel"]
+  needs:
+    - job: "env:dev"
+      optional: true
+    - job: "env:rel"
+      optional: true
   before_script:
     - apt install -y gettext-base
     - eval "$(curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh")"
