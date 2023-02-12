@@ -65,8 +65,6 @@ env:dev:
     - |
       cat <<"EOF" | tee deploy.env
       PROFILE=dev
-      CLOUD_CONFIG_SERVER=http://config-server
-      CLOUD_EUREKA_SERVER=http://eureka-server/eureka/
       VERSION=${VERSION}
       NAMESPACE=dv-platform-dev
       EOF
