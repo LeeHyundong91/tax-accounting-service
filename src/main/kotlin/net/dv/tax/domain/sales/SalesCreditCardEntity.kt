@@ -18,7 +18,7 @@ data class SalesCreditCardEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Long,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")

@@ -9,7 +9,7 @@ data class EmployeeIndustryDto(
     val dataPeriod: Date,
 
     @Comment("청구건수")
-    val billingCount: Int,
+    val billingCount: Long,
 
 
 

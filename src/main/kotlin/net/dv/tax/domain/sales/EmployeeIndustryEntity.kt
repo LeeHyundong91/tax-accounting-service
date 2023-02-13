@@ -17,7 +17,7 @@ data class EmployeeIndustryEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Long,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
@@ -33,25 +33,25 @@ data class EmployeeIndustryEntity(
     val payday: LocalDate,
 
     @Comment("청구번호")
-    val billingNo: Int,
+    val billingNo: Long,
 
     @Comment("급여종류")
     val salaryType: String,
 
     @Comment("청구금액")
-    val billingAmount: Int,
+    val billingAmount: Long,
 
     @Comment("지급금액")
-    val paymentAmount: Int,
+    val paymentAmount: Long,
 
     @Comment("실지급금액")
-    val actualPayment: Int,
+    val actualPayment: Long,
 
     @Comment("소득세")
-    val incomeTax: Int,
+    val incomeTax: Long,
 
     @Comment("주민세")
-    val residenceTax: Int,
+    val residenceTax: Long,
 
 
     )

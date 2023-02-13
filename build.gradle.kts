@@ -4,8 +4,11 @@ plugins {
     id("org.springframework.boot") version "3.0.0"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.7.21"
+    kotlin("kapt") version "1.7.10"
     kotlin("plugin.spring") version "1.7.21"
     kotlin("plugin.jpa") version "1.7.21"
+    kotlin("plugin.serialization") version "1.5.0"
+
 }
 
 group = "net.dv"
@@ -16,14 +19,19 @@ repositories {
     mavenCentral()
     maven { url = uri("https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates") }
 }
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
 
 extra["springCloudVersion"] = "2022.0.0"
 
 dependencies {
-//    implementation("org.springframework.boot:spring-boot-starter-amqp")
-//    implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.0")
+
 
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -32,12 +40,20 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
 
+    /*Querydsl*/
+    val queryDslVersion = dependencyManagement.importedProperties["querydsl.version"]
+    implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
+    kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")
+
+//    kapt(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
+//    kapt("jakarta.annotation:jakarta.annotation-api")
+//    kapt("jakarta.persistence:jakarta.persistence-api")
+
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 
     /*AWS*/
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.386")
-
-//    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1")
-
 
 
     /*XLS*/
@@ -73,6 +89,9 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+noArg {
+    annotation("javax.persistence.Entity")
+}
 allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.MappedSuperclass")

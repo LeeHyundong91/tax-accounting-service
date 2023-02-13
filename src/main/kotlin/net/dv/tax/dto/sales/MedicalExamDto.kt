@@ -9,6 +9,6 @@ data class MedicalExamDto(
     var dataPeriod: LocalDate,
 
     @Comment("청구건수")
-    val billingCount: Int,
+    val billingCount: Long,
 
 )

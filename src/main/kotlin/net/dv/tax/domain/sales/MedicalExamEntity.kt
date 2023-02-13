@@ -17,44 +17,44 @@ data class MedicalExamEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Long?,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: String,
+    var hospitalId: String?,
 
     @Comment("청구일")
-    val billingDate: Date,
+    val billingDate: Date?,
 
     @Comment("청구번호")
-    val billingNo: Int,
+    val billingNo: Long,
 
     @Comment("청구금액")
-    val billingAmount: Int,
+    val billingAmount: Long,
 
     @Comment("검진금액")
-    val examAmount: Int,
+    val examAmount: Long,
 
     @Comment("지급금액")
-    val paymentAmount: Int,
+    val paymentAmount: Long,
 
     @Comment("송금액")
-    val remittance: Int,
+    val remittance: Long,
 
     @Comment("조정금액")
-    val adjustmentAmount: Int,
+    val adjustmentAmount: Long,
 
     @Comment("세액")
-    val taxAmount: Int,
+    val taxAmount: Long,
 
     @Comment("채권압류액")
-    val bondAmount: Int,
+    val bondAmount: Long,
 
     @Comment("환수액")
-    val recoveredAmount: Int,
+    val recoveredAmount: Long,
 
     @Comment("공제액")
-    val deductibleAmount: Int,
+    val deductibleAmount: Long,
 
 
     )
