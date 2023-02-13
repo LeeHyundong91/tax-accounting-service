@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 interface EmployeeIndustryRepository : JpaRepository<EmployeeIndustryEntity?, Int>,
     JpaSpecificationExecutor<EmployeeIndustryEntity?> {
 
-    fun findAllByHospitalId(hospitalId: Int): List<EmployeeIndustryEntity>?
+    fun findAllByHospitalId(hospitalId: String): List<EmployeeIndustryEntity>?
 
 }

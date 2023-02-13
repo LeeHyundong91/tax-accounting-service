@@ -22,7 +22,7 @@ data class PurchaseCreditCardEntity(
 
     @Comment("병원아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int? = null,
+    var hospitalId: String? = null,
 
     @Comment("일자")
     @DateTimeFormat(pattern = "yyyy-mm-dd")

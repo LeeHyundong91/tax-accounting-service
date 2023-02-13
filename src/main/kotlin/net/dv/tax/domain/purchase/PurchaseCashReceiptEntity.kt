@@ -20,7 +20,7 @@ class PurchaseCashReceiptEntity(
     val id: Int? = null,
 
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int? = null,
+    var hospitalId: String? = null,
 
     @Column(name = "BILLING_DATE")
     var billingDate: LocalDate? = null,

@@ -20,7 +20,7 @@ data class PurchaseElecInvoiceEntity (
     val id: Int? = null,
 
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int? = null,
+    var hospitalId: String? = null,
 
     @Column(name = "ISSUE_DATE")
     var issueDate: LocalDate? = null,

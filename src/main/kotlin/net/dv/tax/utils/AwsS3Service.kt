@@ -43,7 +43,7 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
 
 
     fun getFileFromBucket(filePath: String): File {
-        val transferManager: TransferManager = TransferManagerBuilder.standard().build()
+//        val transferManager: TransferManager = TransferManagerBuilder.standard().build()
         log.error("filePath : $filePath")
         val file = File("/tmp/$filePath")
 

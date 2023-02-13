@@ -26,12 +26,12 @@ class SalesVaccineService(
     private val log = KotlinLogging.logger {}
 
 
-    fun vaccineYearList(hospitalId: Int, year: Int): List<SalesVaccineEntity>? {
+    fun vaccineYearList(hospitalId: String, year: Int): List<SalesVaccineEntity>? {
         return vaccineSalesRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year)
     }
 
     @Transactional
-    fun vaccineSave(hospitalId: Int, salesVaccineEntity: List<SalesVaccineEntity>): ResponseEntity<Any> {
+    fun vaccineSave(hospitalId: String, salesVaccineEntity: List<SalesVaccineEntity>): ResponseEntity<Any> {
 //        val localDate = LocalDate.parse("01-06-2022", DateTimeFormatter.ofPattern("MM-dd-yyyy"))
         /*TODO Writer 계정에서 추가 해야됨*/
         vaccineSalesRepository.saveAll(salesVaccineEntity)
@@ -39,7 +39,7 @@ class SalesVaccineService(
         return ResponseEntity.ok(HttpStatus.OK.value())
     }
 
-    fun vaccineListMakeExcel(hospitalId: Int, response: HttpServletResponse) {
+    fun vaccineListMakeExcel(hospitalId: String, response: HttpServletResponse) {
         excelWriterService.downloadExcel(response, "test")
             .outputStream.use { os ->
                 getListForExcel(os, hospitalId)
@@ -49,7 +49,7 @@ class SalesVaccineService(
     /**
      * TEST #58 인지하냐
      */
-    private fun getListForExcel(os: OutputStream?, hospitalId: Int) {
+    private fun getListForExcel(os: OutputStream?, hospitalId: String) {
 
         val excelList: MutableList<SalesVaccineExcelDto> = LinkedList()
         val workbook: Workbook = HSSFWorkbook()

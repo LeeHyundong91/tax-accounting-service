@@ -15,7 +15,7 @@ class AccountingDataService(
 
     private val log = KotlinLogging.logger {}
 
-    fun saveOriginData(hospitalId: Int, writer: String, dataCategory: String, multipartFile: MultipartFile) {
+    fun saveOriginData(hospitalId: String, writer: String, dataCategory: String, multipartFile: MultipartFile) {
         val accountingDataEntity = AccountingDataEntity()
 
         var tempMap = awsS3Service.upload(dataCategory, multipartFile)

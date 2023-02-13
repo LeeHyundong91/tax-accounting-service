@@ -23,7 +23,7 @@ data class HospitalChartEntity(
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int? = 0,
+    var hospitalId: String? = null,
 
     @Comment("연도")
     var year: Int? = 0,

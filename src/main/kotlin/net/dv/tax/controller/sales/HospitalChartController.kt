@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 class HospitalChartController(private val hospitalChartService: HospitalChartService) {
 
     @GetMapping("/list/{year}/{hospitalId}")
-    fun hospitalChartYearList(@PathVariable hospitalId: Int, @PathVariable year: Int): List<HospitalChartEntity>? {
+    fun hospitalChartYearList(@PathVariable hospitalId: String, @PathVariable year: Int): List<HospitalChartEntity>? {
         return hospitalChartService.hospitalChartYearList(hospitalId, year)
     }
 

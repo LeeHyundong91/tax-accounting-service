@@ -18,18 +18,18 @@ class SalesVaccineController(
 
 
     @GetMapping("/list/{year}/{hospitalId}")
-    fun vaccineList(@PathVariable year: Int, @PathVariable hospitalId: Int): List<SalesVaccineEntity>? {
+    fun vaccineList(@PathVariable year: Int, @PathVariable hospitalId: String): List<SalesVaccineEntity>? {
         log.error { "$year /$hospitalId" }
         return salesVaccineService.vaccineYearList(hospitalId, year)
     }
 
     @PostMapping("/save/{hospitalId}")
-    fun vaccineSave(@PathVariable hospitalId: Int, @RequestBody vaccineSalesInfos: List<SalesVaccineEntity>): ResponseEntity<Any>{
+    fun vaccineSave(@PathVariable hospitalId: String, @RequestBody vaccineSalesInfos: List<SalesVaccineEntity>): ResponseEntity<Any>{
         return salesVaccineService.vaccineSave(hospitalId, vaccineSalesInfos)
     }
 
     @GetMapping("/download/{hospitalId}")
-    fun vaccineYearListExcelDownload(@PathVariable hospitalId: Int, response: HttpServletResponse){
+    fun vaccineYearListExcelDownload(@PathVariable hospitalId: String, response: HttpServletResponse){
         salesVaccineService.vaccineListMakeExcel(hospitalId, response)
     }
 

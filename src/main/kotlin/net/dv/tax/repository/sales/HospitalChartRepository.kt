@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 interface HospitalChartRepository: JpaRepository<HospitalChartEntity?, Int>,
     JpaSpecificationExecutor<HospitalChartEntity?> {
 
-        fun findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId: Int, year: Int ): List<HospitalChartEntity>?
+        fun findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId: String, year: Int ): List<HospitalChartEntity>?
 
 
 

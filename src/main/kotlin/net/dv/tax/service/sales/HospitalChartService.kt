@@ -13,7 +13,7 @@ class HospitalChartService(private val hospitalChartRepository: HospitalChartRep
     private val log = KotlinLogging.logger {}
 
 
-    fun hospitalChartYearList(hospitalId: Int, year: Int): List<HospitalChartEntity>? {
+    fun hospitalChartYearList(hospitalId: String, year: Int): List<HospitalChartEntity>? {
         log.info { "hospitalId : $hospitalId , year: $year" }
         return hospitalChartRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year)
     }

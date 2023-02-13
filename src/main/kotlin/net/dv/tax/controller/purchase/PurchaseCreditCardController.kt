@@ -28,14 +28,14 @@ class PurchaseCreditCardController(
          * TODO 임시 값 추후 AUth 정보에서 추출 해서 박아넣어야함
          * 혹은 PATH 에 추가로 받아야함
          */
-        var hospitalId: Int = 0
+        var hospitalId: String = "cid01"
 
         var purchaseCreditCardEntity = PurchaseCreditCardEntity()
-        purchaseCreditCardEntity.hospitalId = 0
+        purchaseCreditCardEntity.hospitalId = hospitalId
         purchaseCreditCardEntity.writer = "작성자"
 
 
-        accountingDataService.saveOriginData(0, "tester", "credit-card", contents)
+        accountingDataService.saveOriginData(hospitalId, "tester", "credit-card", contents)
 
 
         return contents.originalFilename ?: "없어 그런거 야발!!"
@@ -44,10 +44,10 @@ class PurchaseCreditCardController(
     @GetMapping("/read")
     fun readFile() {
 
-        var hospitalId: Int = 0
+        var hospitalId: String = "cid01"
 
         var purchaseCreditCardEntity = PurchaseCreditCardEntity()
-        purchaseCreditCardEntity.hospitalId = 0
+        purchaseCreditCardEntity.hospitalId = hospitalId
         purchaseCreditCardEntity.writer = "작성자"
 
 
@@ -58,12 +58,12 @@ class PurchaseCreditCardController(
     @GetMapping("/test")
     fun testFile() {
 
-        var hospitalId: Int = 0
+        var hospitalId: String = "cid01"
 
         var fileName = "origin/2023/01/27/credit-card_18:32_6d41c4e3e09b47e4baccf26a7066a392.xls"
 
         var purchaseCreditCardEntity = PurchaseCreditCardEntity()
-        purchaseCreditCardEntity.hospitalId = 0
+        purchaseCreditCardEntity.hospitalId = hospitalId
         purchaseCreditCardEntity.writer = "작성자"
 
 

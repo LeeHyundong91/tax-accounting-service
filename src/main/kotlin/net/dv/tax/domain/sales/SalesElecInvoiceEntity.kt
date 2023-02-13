@@ -21,7 +21,7 @@ data class SalesElecInvoiceEntity(
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int,
+    var hospitalId: String,
 
     @Comment("작성일시")
     @Column(name = "CREATED_DT")

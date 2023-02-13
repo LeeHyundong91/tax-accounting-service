@@ -21,7 +21,7 @@ data class SalesCashReceiptEntity(
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int,
+    var hospitalId: String,
 
     @Comment("자료구분")
     @Column(name = "DATA_TYPE", length = 10)
@@ -31,7 +31,7 @@ data class SalesCashReceiptEntity(
     @Column(name = "SALES_DATE")
     var salesDate: LocalDate? = null,
 
-    @Comment("현금결제번호")
+    @Comment("승인번호")
     @Column(name = "CASH_PAYMENT_NO", length = 10)
     var cashPaymentNo: String? = null,
 
@@ -43,7 +43,7 @@ data class SalesCashReceiptEntity(
     @Column(name = "SUPPLY_PRICE")
     var supplyPrice: Long? = null,
 
-    @Comment("세액")
+    @Comment("부가세")
     @Column(name = "VAT")
     var vat: Long? = null,
 
@@ -51,15 +51,8 @@ data class SalesCashReceiptEntity(
     @Column(name = "SERVICE_CHARGE")
     var serviceCharge: Long? = null,
 
-    @Comment("발급수단")
-    @Column(name = "ISSUE_METHOD", length = 10)
-    var issueMethod: String? = null,
-
     @Comment("거래구분")
     @Column(name = "DEAL_TYPE")
     var dealType: Long? = null,
 
-    @Comment("비고")
-    @Column(name = "RECEIPT_NOTE")
-    var receiptNote: Long? = null,
 )

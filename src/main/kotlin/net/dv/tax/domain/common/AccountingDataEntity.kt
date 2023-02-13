@@ -19,7 +19,7 @@ data class AccountingDataEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
-    var hospitalId: Int? = null,
+    var hospitalId: String? = null,
 
     var dataCategory: String? = null,
 

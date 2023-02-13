@@ -22,7 +22,7 @@ data class SalesHandInvoiceEntity(
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int,
+    var hospitalId: String,
 
     @Comment("계산서종류")
     @Column(name = "BILL_TYPE", length = 10)

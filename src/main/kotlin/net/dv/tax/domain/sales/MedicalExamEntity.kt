@@ -21,7 +21,7 @@ data class MedicalExamEntity(
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: Int,
+    var hospitalId: String,
 
     @Comment("청구일")
     val billingDate: Date,

@@ -23,7 +23,7 @@ data class SalesVaccineEntity(
     val id: Int? = null,
 
     @Comment("병원 아이디")
-    var hospitalId: Int? = null,
+    var hospitalId: String? = null,
 
     @Comment("년도")
     val year: Int? = null,
