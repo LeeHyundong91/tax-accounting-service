@@ -1,0 +1,113 @@
+variables:
+  REPOSITORY_HOST: 526459572421.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+  APP_NAME: tax-accounting
+  CLOUD_CONFIG_SERVER: http://config-server
+  CLOUD_EUREKA_SERVER: http://eureka-server/eureka/
+  ROLE_NAME: role-service-deploy
+
+stages:
+  - build
+  - deploy
+
+gradle:build:
+  stage: build
+  image: amazoncorretto:17
+  before_script:
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew clean build -x test
+    - mkdir target
+    - cp build/libs/$(ls build/libs | grep SNAPSHOT.jar) ${CI_PROJECT_DIR}/service.jar
+  artifacts:
+    paths:
+      - service.jar
+  only:
+    - /^dev.*$/
+    - /^release-.*$/
+
+docker:build:
+  stage: build
+  script:
+    - ls -al .
+    - docker build --build-arg ARCHIVE_FILE=service.jar -t ${APP_NAME}:latest .
+  needs: ["gradle:build"]
+  only:
+    - /^dev.*$/
+    - /^release-.*$/
+
+ecr:deploy:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  before_script:
+    - echo ${AWS_ACCESS_KEY_ID}
+    - echo ${AWS_DEFAULT_REGION}
+    - echo ${AWS_SECRET_ACCESS_KEY}
+    - eval "$(curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh")"
+    - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
+  script:
+    - VERSION="$(TZ="Asia/Seoul" date "+%m.%d")"
+    - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:${VERSION}"
+    - docker tag ${APP_NAME}:latest ${DEPLOY_IMAGE}
+    - docker push ${DEPLOY_IMAGE}
+    - echo VERSION="${VERSION}" | tee .env
+  artifacts:
+    reports:
+      dotenv: .env
+  needs: ["docker:build"]
+  only:
+    - /^dev.*$/
+    - /^release-.*$/
+
+env:dev:
+  stage: deploy
+  needs: ["ecr:deploy"]
+  script:
+    - |
+      cat <<EOF | tee deploy.env
+      PROFILE=dev
+      VERSION=${VERSION}
+      NAMESPACE=dv-platform-dev
+      EOF
+  artifacts:
+    reports:
+      dotenv: deploy.env
+  only:
+    - /^dev.*$/
+
+env:rel:
+  stage: deploy
+  needs: ["ecr:deploy"]
+  script:
+    - |
+      cat <<EOF | tee deploy.env
+      PROFILE=dev
+      VERSION=${VERSION}
+      NAMESPACE=dv-platform-dev
+      EOF
+  artifacts:
+    reports:
+      dotenv: deploy.env
+  only:
+    - /^release-.*$/
+
+eks:deploy:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  needs:
+    - job: "env:dev"
+      optional: true
+    - job: "env:rel"
+      optional: true
+  before_script:
+    - apt install -y gettext-base
+    - eval "$(curl "https://s3.ap-northeast-2.amazonaws.com/sugarbricks.static/scripts/assume-role.sh")"
+    - aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name dv-svc-cluster
+    - curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.24.9/2023-01-11/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl
+    - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+  script:
+    - aws s3 cp s3://dr.village.deployment/dv.service/dv-tax-accounting.yml .
+    - envsubst < dv-tax-accounting.yml | kubectl --namespace ${NAMESPACE} apply -f -
+  only:
+    - /^dev.*$/
+    - /^release-.*$/
