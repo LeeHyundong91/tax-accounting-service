@@ -10,19 +10,17 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class MedicalBenefitsSupportImpl(
-    private val queryFactory: JPAQueryFactory,
+    private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(MedicalBenefitsEntity::class.java), MedicalBenefitsSupport {
     override fun groupingList(hospitalId: String, dataPeriod: String): List<MedicalBenefitsListDto> {
-        return queryFactory.select(
-            Projections.bean(
+        return query.select(
+            Projections.fields(
                 MedicalBenefitsListDto::class.java,
-                medicalBenefitsEntity.medicalBenefitsId,
-                medicalBenefitsEntity.actualPayment,
-                medicalBenefitsEntity.amountReceived,
-                medicalBenefitsEntity.corporationExpense,
+                medicalBenefitsEntity.actualPayment.sum().`as`("actualPayment"),
+                medicalBenefitsEntity.amountReceived.sum().`as`("amountReceived"),
+                medicalBenefitsEntity.corporationExpense.sum().`as`("corporationExpense"),
                 medicalBenefitsEntity.dataPeriod,
-                medicalBenefitsEntity.ownExpense,
-                medicalBenefitsEntity.ownExpense
+                medicalBenefitsEntity.ownExpense.sum().`as`("ownExpense"),
             )
         )
             .from(medicalBenefitsEntity)

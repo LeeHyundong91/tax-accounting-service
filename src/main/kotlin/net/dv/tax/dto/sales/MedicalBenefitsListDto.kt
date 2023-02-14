@@ -21,15 +21,15 @@ data class MedicalBenefitsListDto(
     val ownExpense: Long?,
 
     @Comment("공단부담금")
-    val corporationExpense: Long?,
+    val corporationExpense: Long? = 0,
 
     @Comment("지금(예정)일")
     val payday: String?,
 
     @Comment("접수액")
-    val amountReceived: Long?,
+    val amountReceived: Long? = 0,
 
     @Comment("실지급액")
-    val actualPayment: Long?,
+    val actualPayment: Long? = 0,
 
     )

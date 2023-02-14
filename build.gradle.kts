@@ -3,12 +3,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.0.0"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.7.10"
     kotlin("jvm") version "1.7.21"
     kotlin("kapt") version "1.7.10"
     kotlin("plugin.spring") version "1.7.21"
     kotlin("plugin.jpa") version "1.7.21"
     kotlin("plugin.serialization") version "1.5.0"
 
+}
+noArg {
+    annotation("javax.persistence.Entity")
+}
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
 }
 
 group = "net.dv"
@@ -24,6 +33,8 @@ configurations {
         extendsFrom(configurations.annotationProcessor.get())
     }
 }
+
+
 
 extra["springCloudVersion"] = "2022.0.0"
 
@@ -87,13 +98,4 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-noArg {
-    annotation("javax.persistence.Entity")
-}
-allOpen {
-    annotation("javax.persistence.Entity")
-    annotation("javax.persistence.MappedSuperclass")
-    annotation("javax.persistence.Embeddable")
 }
