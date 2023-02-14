@@ -19,6 +19,7 @@ class CallDataController(
     fun getTaxDataFromReceiveService(): ResponseEntity<HttpStatus> {
         taxDataLoadService.getBenefitsData()
         taxDataLoadService.getCarInsuranceData()
+        taxDataLoadService.getMedicalExamData()
         return ResponseEntity(HttpStatus.OK)
     }
 

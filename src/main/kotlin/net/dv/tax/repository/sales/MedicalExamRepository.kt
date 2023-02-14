@@ -1,9 +1,9 @@
 package net.dv.tax.repository.sales
 
 import net.dv.tax.domain.sales.MedicalExamEntity
+import net.dv.tax.repository.sales.support.MedicalExamSupport
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
-interface MedicalExamRepository: JpaRepository<MedicalExamEntity?, Int>,
-    JpaSpecificationExecutor<MedicalExamEntity?> {
+interface MedicalExamRepository : JpaRepository<MedicalExamEntity?, Int>,
+    MedicalExamSupport {
 }

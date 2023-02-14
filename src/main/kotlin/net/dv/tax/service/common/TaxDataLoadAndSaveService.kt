@@ -25,4 +25,8 @@ class TaxDataLoadAndSaveService(
         carInsuranceRepository.saveAll(dataReceiveFeignService.getCarInsurance())
     }
 
+    fun getMedicalExamData(){
+        medicalExamRepository.saveAll(dataReceiveFeignService.getMedicalExam())
+    }
+
 }

@@ -1,4 +1,4 @@
-package net.dv.tax.repository.sales
+package net.dv.tax.repository.sales.support
 
 import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory

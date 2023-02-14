@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service
 class MedicalBenefitsService(
     private val medicalBenefitsRepository: MedicalBenefitsRepository,
 ) {
-
     fun getListData(hospitalId: String, year: String) : List<MedicalBenefitsListDto> {
         return medicalBenefitsRepository.groupingList(hospitalId, year)
     }

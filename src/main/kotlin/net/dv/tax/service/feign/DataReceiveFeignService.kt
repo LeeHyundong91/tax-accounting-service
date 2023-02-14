@@ -2,6 +2,7 @@ package net.dv.tax.service.feign
 
 import net.dv.tax.domain.sales.CarInsuranceEntity
 import net.dv.tax.domain.sales.MedicalBenefitsEntity
+import net.dv.tax.domain.sales.MedicalExamEntity
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.GetMapping
 
@@ -13,5 +14,9 @@ interface DataReceiveFeignService {
 
     @GetMapping("/car-insurance")
     fun getCarInsurance(): List<CarInsuranceEntity>
+
+    @GetMapping("/medical-care")
+    fun getMedicalExam(): List<MedicalExamEntity>
+
 
 }

@@ -1,4 +1,4 @@
-package net.dv.tax.repository.sales
+package net.dv.tax.repository.sales.support
 
 import net.dv.tax.dto.sales.CarInsuranceListDto
 

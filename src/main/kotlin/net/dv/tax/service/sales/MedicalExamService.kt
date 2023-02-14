@@ -1,16 +1,16 @@
 package net.dv.tax.service.sales
 
+import net.dv.tax.dto.sales.MedicalExamListDto
 import net.dv.tax.repository.sales.MedicalExamRepository
-import net.dv.tax.service.feign.DataReceiveFeignService
+import org.springframework.stereotype.Service
 
+@Service
 class MedicalExamService(
     private val medicalExamRepository: MedicalExamRepository,
-    private val dataReceiveFeignService: DataReceiveFeignService,
 ) {
-
-    fun saveData() {
-
-
+    fun getListData(hospitalId: String, year: String): List<MedicalExamListDto> {
+        return medicalExamRepository.groupingList(hospitalId, year)
     }
+
 
 }
