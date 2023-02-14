@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 class MedicalBenefitsSupportImpl(
     private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(MedicalBenefitsEntity::class.java), MedicalBenefitsSupport {
-    override fun groupingList(hospitalId: String, dataPeriod: String): List<MedicalBenefitsListDto> {
+    override fun groupingList(hospitalId: String, year: String): List<MedicalBenefitsListDto> {
         return query.select(
             Projections.bean(
                 MedicalBenefitsListDto::class.java,
@@ -28,7 +28,7 @@ class MedicalBenefitsSupportImpl(
             .from(medicalBenefitsEntity)
             .where(
                 medicalBenefitsEntity.hospitalId.eq(hospitalId),
-                medicalBenefitsEntity.dataPeriod.startsWith(dataPeriod)
+                medicalBenefitsEntity.dataPeriod.startsWith(year)
             )
             .groupBy(medicalBenefitsEntity.dataPeriod)
             .fetch()
