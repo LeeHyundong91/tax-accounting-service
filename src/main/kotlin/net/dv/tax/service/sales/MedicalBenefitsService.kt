@@ -11,8 +11,8 @@ class MedicalBenefitsService(
     private val medicalBenefitsSupportImpl: MedicalBenefitsSupportImpl
 ) {
 
-    fun getData() : List<MedicalBenefitsListDto> {
-        return medicalBenefitsSupportImpl.groupingList("cid01", "2022")
+    fun getListData(hospitalId: String, year: String) : List<MedicalBenefitsListDto> {
+        return medicalBenefitsSupportImpl.groupingList(hospitalId, year)
     }
 
 }

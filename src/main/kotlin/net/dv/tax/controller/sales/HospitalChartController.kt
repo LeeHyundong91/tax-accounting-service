@@ -5,7 +5,6 @@ import net.dv.tax.service.sales.HospitalChartService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@CrossOrigin(origins = ["*"], allowedHeaders = ["*"], exposedHeaders = ["*"])
 @RestController
 @RequestMapping("/v1/sales/hospital-chart")
 class HospitalChartController(private val hospitalChartService: HospitalChartService) {

@@ -1,35 +1,24 @@
 package net.dv.tax.dto.sales
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import jakarta.persistence.Column
 import org.hibernate.annotations.Comment
 
-data class MedicalBenefitsListDto(
+class MedicalBenefitsListDto(
 
-    @Column(name = "RECEIVE_DATA_ID")
-    val medicalBenefitsId: Long?,
-
-    @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
-    var hospitalId: String?,
+    var totalAmount: Long? = 0,
 
     @Comment("진료년원")
-    @JsonProperty("receptionYearMonth")
-    var dataPeriod: String?,
+    var dataPeriod: String? = null,
 
     @Comment("본인부담금")
-    val ownExpense: Long?,
+    var ownExpense: Long? = 0,
 
     @Comment("공단부담금")
-    val corporationExpense: Long? = 0,
-
-    @Comment("지금(예정)일")
-    val payday: String?,
+    var corporationExpense: Long? = 0,
 
     @Comment("접수액")
-    val amountReceived: Long? = 0,
+    var amountReceived: Long? = 0,
 
     @Comment("실지급액")
-    val actualPayment: Long? = 0,
+    var actualPayment: Long? = 0,
 
     )

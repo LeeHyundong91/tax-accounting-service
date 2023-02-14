@@ -14,13 +14,15 @@ class MedicalBenefitsSupportImpl(
 ) : CustomQuerydslRepositorySupport(MedicalBenefitsEntity::class.java), MedicalBenefitsSupport {
     override fun groupingList(hospitalId: String, dataPeriod: String): List<MedicalBenefitsListDto> {
         return query.select(
-            Projections.fields(
+            Projections.bean(
                 MedicalBenefitsListDto::class.java,
                 medicalBenefitsEntity.actualPayment.sum().`as`("actualPayment"),
                 medicalBenefitsEntity.amountReceived.sum().`as`("amountReceived"),
                 medicalBenefitsEntity.corporationExpense.sum().`as`("corporationExpense"),
                 medicalBenefitsEntity.dataPeriod,
                 medicalBenefitsEntity.ownExpense.sum().`as`("ownExpense"),
+                medicalBenefitsEntity.ownExpense.add(medicalBenefitsEntity.corporationExpense).sum()
+                    .`as`("totalAmount")
             )
         )
             .from(medicalBenefitsEntity)

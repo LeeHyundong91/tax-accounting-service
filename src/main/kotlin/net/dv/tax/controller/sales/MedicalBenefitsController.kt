@@ -1,4 +1,18 @@
 package net.dv.tax.controller.sales
 
-class MedicalBenefitsController {
+import net.dv.tax.service.sales.MedicalBenefitsService
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+@RequestMapping("/v1/sales/medical-benefits")
+class MedicalBenefitsController(private val medicalBenefitsService: MedicalBenefitsService) {
+
+    @GetMapping("/list/{hospitalId}/{year}")
+    fun getBenefitsList(@PathVariable year: String, @PathVariable hospitalId: String){
+        medicalBenefitsService.getListData(hospitalId, year)
+    }
+
 }
