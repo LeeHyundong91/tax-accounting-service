@@ -42,7 +42,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
-    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.0")
 
 
@@ -54,15 +53,12 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
 
     /* Spring Cloud */
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.0")
     /*Querydsl*/
     val queryDslVersion = dependencyManagement.importedProperties["querydsl.version"]
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")
 
-//    kapt(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
-//    kapt("jakarta.annotation:jakarta.annotation-api")
-//    kapt("jakarta.persistence:jakarta.persistence-api")
 
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
@@ -70,8 +66,6 @@ dependencies {
     /*AWS*/
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.386")
-
-//    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1")
 
 
     /*XLS*/
