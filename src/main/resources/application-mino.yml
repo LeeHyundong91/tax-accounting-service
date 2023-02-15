@@ -45,6 +45,21 @@ spring:
     show-sql: true
     database: mysql
 
+  logging:
+    level:
+      #    org.hibernate.SQL: trace
+      # Only SpringBoot 3.x ..Fu
+      org.hibernate.orm.jdbc.bind: trace
+      # Not Work 3.x
+      # org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+  management:
+    endpoints:
+      web:
+        base-path: /
+        exposure:
+          include: health,info
+
 logging:
   level:
 #    org.hibernate.SQL: trace
@@ -52,4 +67,6 @@ logging:
     org.hibernate.orm.jdbc.bind: trace
     # Not Work 3.x
     # org.hibernate.type.descriptor.sql.BasicBinder: trace
-
+eureka:
+  client:
+    enabled: false

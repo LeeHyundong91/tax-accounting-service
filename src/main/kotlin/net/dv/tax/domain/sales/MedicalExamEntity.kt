@@ -32,11 +32,17 @@ data class MedicalExamEntity(
     var receiveDataId: Long,
 
     @Comment("접수년월")
-    @JsonProperty("receptionDate")
+    @JsonProperty("receptionYearMonth")
     val dataPeriod: String,
+
+    @Comment("접수일자")
+    val receptionDate: String,
 
     @Comment("접수금액 - retF")
     val receptionAmount: Long? = 0,
+
+    @Comment("접수번호")
+    val receptionNo: Long? = 0,
 
     @Comment("총의료급여비용(의료급여비용 심사결정 내역) - retAJ")
     val medicalBenefitsAmount: Long? = 0,

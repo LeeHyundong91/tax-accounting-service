@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/sales/car-insurance")
 class CarInsuranceController(private val carInsuranceService: CarInsuranceService) {
 
-    @GetMapping("list/{hospitalId}/{year}")
+    @GetMapping("list/{year}/{hospitalId}")
     fun getCarInsuranceList(@PathVariable hospitalId: String, @PathVariable year: String): List<CarInsuranceListDto> {
         return carInsuranceService.getCarInsuranceList(hospitalId, year)
     }

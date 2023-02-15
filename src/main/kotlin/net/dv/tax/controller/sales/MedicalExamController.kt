@@ -11,9 +11,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/sales/medical-exam")
 class MedicalExamController(private val medicalExamService: MedicalExamService) {
 
-    @GetMapping("/list/{hospitalId}/{year}")
-    fun getBenefitsList(@PathVariable year: String, @PathVariable hospitalId: String): List<MedicalExamListDto>{
+    @GetMapping("/list/{year}/{hospitalId}")
+    fun getList(@PathVariable year: String, @PathVariable hospitalId: String): List<MedicalExamListDto>{
         return medicalExamService.getListData(hospitalId, year)
+    }
+
+    @GetMapping
+    fun getDetail(){
+
     }
 
 }
