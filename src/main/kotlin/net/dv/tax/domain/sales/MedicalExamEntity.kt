@@ -31,12 +31,12 @@ data class MedicalExamEntity(
     @JsonProperty("medicalCardId")
     var receiveDataId: Long,
 
-    @Comment("접수년월")
-    @JsonProperty("receptionYearMonth")
+    @Comment("접수일자")
+    @JsonProperty("receptionDate")
     val dataPeriod: String,
 
-    @Comment("접수일자")
-    val receptionDate: String,
+//    @Comment("접수일자")
+//    val receptionDate: String,
 
     @Comment("접수금액 - retF")
     val receptionAmount: Long? = 0,

@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface MedicalExamRepository : JpaRepository<MedicalExamEntity?, Int>,
     MedicalExamSupport {
+
+    fun findAllByHospitalIdAndDataPeriodStartingWith(hospitalId: String, dataPeriod: String): List<MedicalExamEntity>?
+
 }

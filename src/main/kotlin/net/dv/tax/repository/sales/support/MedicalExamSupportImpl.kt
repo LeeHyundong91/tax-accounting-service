@@ -28,7 +28,7 @@ class MedicalExamSupportImpl(
                 medicalExamEntity.refundPaid.sum().`as`("refundPaid"),
                 medicalExamEntity.agencyPayment.sum().`as`("agencyPayment"),
                 medicalExamEntity.actualPayment.sum().`as`("actualPayment"),
-                medicalExamEntity.dataPeriod
+                medicalExamEntity.dataPeriod.substring(0,7).`as`("dataPeriod")
             )
         )
             .from(medicalExamEntity)
@@ -36,7 +36,7 @@ class MedicalExamSupportImpl(
                 medicalExamEntity.hospitalId.eq(hospitalId),
                 medicalExamEntity.dataPeriod.startsWith(year)
             )
-            .groupBy(medicalExamEntity.dataPeriod)
+            .groupBy(medicalExamEntity.dataPeriod.substring(0,7))
             .fetch()
     }
 

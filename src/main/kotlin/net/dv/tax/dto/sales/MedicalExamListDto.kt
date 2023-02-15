@@ -7,6 +7,9 @@ class MedicalExamListDto{
     @Comment("접수년월")
     var dataPeriod: String? = null
 
+//    @Comment("접수일자")
+//    var receptionDate: String? = null
+
     @Comment("접수금액 - retF")
     var receptionAmount: Long? = 0
 

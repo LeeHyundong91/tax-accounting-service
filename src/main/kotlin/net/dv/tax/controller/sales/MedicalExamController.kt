@@ -1,5 +1,6 @@
 package net.dv.tax.controller.sales
 
+import net.dv.tax.domain.sales.MedicalExamEntity
 import net.dv.tax.dto.sales.MedicalExamListDto
 import net.dv.tax.service.sales.MedicalExamService
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,9 +17,9 @@ class MedicalExamController(private val medicalExamService: MedicalExamService) 
         return medicalExamService.getListData(hospitalId, year)
     }
 
-    @GetMapping
-    fun getDetail(){
-
+    @GetMapping("/{yearMonth}/{hospitalId}")
+    fun getDetail(@PathVariable yearMonth: String, @PathVariable hospitalId: String): List<MedicalExamEntity>{
+        return medicalExamService.getDetailData(hospitalId, yearMonth)
     }
 
 }
