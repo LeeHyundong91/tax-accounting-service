@@ -23,6 +23,7 @@ data class MedicalExamEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     val id: Long?,
 
     @Comment("병원 아이디 - cid")
