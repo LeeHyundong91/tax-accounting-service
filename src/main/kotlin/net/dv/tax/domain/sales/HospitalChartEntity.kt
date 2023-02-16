@@ -1,6 +1,5 @@
 package net.dv.tax.domain.sales
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -55,11 +54,9 @@ data class HospitalChartEntity(
     @CreatedDate
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonIgnore
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Comment("작성자")
-    @JsonIgnore
     var writer: String?
 
 

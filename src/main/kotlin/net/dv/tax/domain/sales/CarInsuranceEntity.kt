@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
-import org.hibernate.annotations.DynamicUpdate
 import org.jetbrains.annotations.NotNull
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -16,7 +15,6 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "car_insurance")
 @EntityListeners(AuditingEntityListener::class)
-@DynamicUpdate
 data class CarInsuranceEntity(
 
     @Id

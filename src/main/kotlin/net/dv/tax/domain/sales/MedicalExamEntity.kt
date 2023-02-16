@@ -26,7 +26,7 @@ data class MedicalExamEntity(
     @JsonIgnore
     val id: Long?,
 
-    @Comment("병원 아이디 - cid")
+    @Comment("병원 아이디")
     var hospitalId: String,
 
     @JsonProperty("medicalCardId")
@@ -39,43 +39,43 @@ data class MedicalExamEntity(
 //    @Comment("접수일자")
 //    val receptionDate: String,
 
-    @Comment("접수금액 - retF")
+    @Comment("접수금액")
     val receptionAmount: Long? = 0,
 
     @Comment("접수번호")
     val receptionNo: Long? = 0,
 
-    @Comment("총의료급여비용(의료급여비용 심사결정 내역) - retAJ")
+    @Comment("총의료급여비용")
     val medicalBenefitsAmount: Long? = 0,
 
-    @Comment("건수(의료급여비용 심사결정 내역) - retAK")
+    @Comment("건수")
     val benefitsCount: Long? = 0,
 
-    @Comment("본인부담금(의료급여비용 심사결정 내역)- retAL" )
+    @Comment("본인부담금" )
     val ownCharge: Long? = 0,
 
-    @Comment("장애인의료비(의료급여비용 심사결정 내역) - retAM")
+    @Comment("장애인의료비")
     val disabledExpenses: Long? = 0,
 
-    @Comment("기관부담금(의료급여비용 심사결정 내역) - retAN")
+    @Comment("기관부담금")
     val agencyExpenses: Long? = 0,
 
-    @Comment("절사금액(의료급여비용 심사결정 내역) - retAO")
+    @Comment("절사금액")
     val cutOffAmount: Long? = 0,
 
-    @Comment("기금부담금(지급결정) - retAP")
+    @Comment("기금부담금")
     val fundExpense: Long? = 0,
 
-    @Comment("대불금(지급결정) - retAQ")
+    @Comment("대불금")
     val proxyPayment: Long? = 0,
 
-    @Comment("본인부담환급금(지급결정) - retAR")
+    @Comment("본인부담환급금")
     val refundPaid: Long? = 0,
 
-    @Comment("검사기관지급액(지급결정) - retAS")
+    @Comment("검사기관지급액")
     val agencyPayment: Long? = 0,
 
-    @Comment("당차수 실지급액 - retAV")
+    @Comment("당차수 실지급액")
     val actualPayment: Long? = 0,
 
     @NotNull

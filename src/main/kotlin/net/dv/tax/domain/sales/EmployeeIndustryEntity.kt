@@ -1,36 +1,41 @@
 package net.dv.tax.domain.sales
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
-import org.hibernate.annotations.DynamicUpdate
+import org.jetbrains.annotations.NotNull
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDate
+import org.springframework.format.annotation.DateTimeFormat
+import java.time.LocalDateTime
 
 @Comment("고용산재매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "EMPLOYEE_INDUSTRY")
+@Table(name = "employee_industry")
 @EntityListeners(AuditingEntityListener::class)
-@DynamicUpdate
 data class EmployeeIndustryEntity(
 
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     val id: Long,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
     var hospitalId: String,
 
-    @Comment("청구일 - 안써!!")
-    val billingDate: LocalDate,
+    @JsonProperty("industryInsId")
+    var receiveDataId: Long,
 
-    @Comment("진료일")
-    val medicalDay: LocalDate,
+    @Comment("진료년월")
+    @JsonProperty("medicalYearMonth")
+    val dataPeriod: String,
 
     @Comment("지금일")
-    val payday: LocalDate,
+    val payday: String,
 
     @Comment("청구번호")
     val billingNo: Long,
@@ -53,5 +58,11 @@ data class EmployeeIndustryEntity(
     @Comment("주민세")
     val residenceTax: Long,
 
+    @NotNull
+    @CreatedDate
+    @JsonIgnore
+    @Column(updatable = false, name = "CREATED_AT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
     )
