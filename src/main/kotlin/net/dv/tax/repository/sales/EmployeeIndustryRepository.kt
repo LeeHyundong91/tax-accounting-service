@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface EmployeeIndustryRepository : JpaRepository<EmployeeIndustryEntity?, Int>,
     EmployeeIndustrySupport {
 
+        fun findAllByHospitalIdAndPaydayStartingWith(hospitalId: String, payday: String): List<EmployeeIndustryEntity>?
+
 
 }

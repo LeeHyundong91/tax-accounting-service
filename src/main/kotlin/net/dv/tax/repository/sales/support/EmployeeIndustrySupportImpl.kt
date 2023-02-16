@@ -23,6 +23,7 @@ class EmployeeIndustrySupportImpl(
                 employeeIndustryEntity.incomeTax.sum().`as`("incomeTax"),
                 employeeIndustryEntity.residenceTax.sum().`as`("residenceTax"),
                 employeeIndustryEntity.dataPeriod,
+                employeeIndustryEntity.dataPeriod.count().`as`("billingCount")
             )
         ).from(employeeIndustryEntity)
             .where(
