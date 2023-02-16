@@ -1,10 +1,15 @@
 package net.dv.tax.domain.sales
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
+import org.jetbrains.annotations.NotNull
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDate
+import org.springframework.format.annotation.DateTimeFormat
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "sales_elec_invoice")
@@ -17,23 +22,26 @@ data class SalesElecInvoiceEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null,
+    var id: Long? = null,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
     var hospitalId: String,
 
+    @JsonProperty("elecTaxInvoiceId")
+    var receiveDataId: Long? = 0,
+
     @Comment("작성일시")
-    @Column(name = "CREATED_DT")
-    var createdDt: LocalDate? = null,
+    @JsonProperty("createdDt")
+    var dataPeriod: String? = null,
 
     @Comment("전송일시")
     @Column(name = "SEND_DT")
-    var sendDt: LocalDate? = null,
+    var sendDt: String? = null,
 
     @Comment("발급일시")
     @Column(name = "ISSUE_DT")
-    var issueDt: LocalDate? = null,
+    var issueDt: String? = null,
 
     @Comment("승인번호")
     @Column(name = "APPROVAL_NO", length = 10)
@@ -57,18 +65,22 @@ data class SalesElecInvoiceEntity(
 
     @Comment("공급가액")
     @Column(name = "SUPPLY_PRICE")
-    var supplyPrice: Int? = null,
+    var supplyPrice: Long? = 0,
 
     @Comment("세액")
     @Column(name = "TAX_AMOUNT")
-    var taxAmount: Int? = null,
+    var taxAmount: Long? = 0,
 
     @Comment("합계금액")
     @Column(name = "TOTAL_AMOUNT")
-    var totalAmount: Int? = null,
+    var totalAmount: Long? = 0,
 
-    @Comment("부가세")
-    @Column(name = "VAT")
-    var vat: Int? = null,
-)
+    @NotNull
+    @CreatedDate
+    @JsonIgnore
+    @Column(updatable = false, name = "CREATED_AT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+
+    )
 

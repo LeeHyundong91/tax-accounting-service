@@ -25,4 +25,7 @@ interface DataReceiveFeignService {
     @GetMapping("/cash-receipt")
     fun getCashReceipt(): List<SalesCashReceiptEntity>
 
+    @GetMapping("/elec-invoice/ELEC_TAX_SALES_INVOICE")
+    fun getElecTaxInvoice(): List<SalesElecInvoiceEntity>
+
 }

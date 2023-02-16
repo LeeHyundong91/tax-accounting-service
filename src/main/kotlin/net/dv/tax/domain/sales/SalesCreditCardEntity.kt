@@ -1,16 +1,21 @@
 package net.dv.tax.domain.sales
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
+import org.jetbrains.annotations.NotNull
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import org.springframework.format.annotation.DateTimeFormat
+import java.time.LocalDateTime
 import java.util.*
 
 
+@Entity
 @Comment("신용카드매출관리")
 @Suppress("JpaAttributeTypeInspection")
-@Entity
 @Table(name = "sales_credit_card")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
@@ -49,5 +54,12 @@ data class SalesCreditCardEntity(
 
     @Comment("비과세 금액")
     val taxFreeAmount: Long? = 0,
+
+    @NotNull
+    @CreatedDate
+    @JsonIgnore
+    @Column(updatable = false, name = "CREATED_AT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
     )

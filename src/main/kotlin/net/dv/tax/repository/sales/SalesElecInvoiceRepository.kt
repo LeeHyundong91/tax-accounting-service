@@ -1,9 +1,13 @@
 package net.dv.tax.repository.sales
 
 import net.dv.tax.domain.sales.SalesElecInvoiceEntity
+import net.dv.tax.repository.sales.support.SalesElecInvoiceSupport
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
-interface SalesElecInvoiceRepository: JpaRepository<SalesElecInvoiceEntity?, Int>,
-    JpaSpecificationExecutor<SalesElecInvoiceEntity?> {
+interface SalesElecInvoiceRepository : JpaRepository<SalesElecInvoiceEntity?, Int>, SalesElecInvoiceSupport {
+
+        fun findAllByHospitalIdAndDataPeriodStartingWith(
+        hospitalId: String,
+        dataPeriod: String,
+    ): List<SalesElecInvoiceEntity>
 }

@@ -1,10 +1,15 @@
 package net.dv.tax.domain.sales
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
+import org.jetbrains.annotations.NotNull
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import org.springframework.format.annotation.DateTimeFormat
+import java.time.LocalDateTime
 
 @Entity
 @Comment("현금영수증매출관리")
@@ -50,4 +55,10 @@ data class SalesCashReceiptEntity(
     @Comment("거래구분")
     var dealType: String? = null,
 
+    @NotNull
+    @CreatedDate
+    @JsonIgnore
+    @Column(updatable = false, name = "CREATED_AT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
     )

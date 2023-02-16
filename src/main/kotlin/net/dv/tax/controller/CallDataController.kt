@@ -21,6 +21,7 @@ class CallDataController(
         taxDataLoadService.getEmployeeIndustryData()
         taxDataLoadService.getSalesCreditCardData()
         taxDataLoadService.getSalesCashReceiptData()
+        taxDataLoadService.getSalesElecTaxInvoiceData()
 
         return ResponseEntity(HttpStatus.OK)
     }
