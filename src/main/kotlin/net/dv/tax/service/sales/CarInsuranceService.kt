@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 class CarInsuranceService(private val carInsuranceRepository: CarInsuranceRepository) {
 
-    fun getCarInsuranceList(hospitalId: String, year: String): List<CarInsuranceListDto> {
+    fun getListData(hospitalId: String, year: String): List<CarInsuranceListDto> {
         return carInsuranceRepository.groupingList(hospitalId, year)
     }
 

@@ -20,6 +20,7 @@ class CallDataController(
         taxDataLoadService.getMedicalExamData()
         taxDataLoadService.getEmployeeIndustryData()
         taxDataLoadService.getSalesCreditCardData()
+        taxDataLoadService.getSalesCashReceiptData()
 
         return ResponseEntity(HttpStatus.OK)
     }

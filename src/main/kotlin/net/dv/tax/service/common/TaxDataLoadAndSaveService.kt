@@ -13,6 +13,7 @@ class TaxDataLoadAndSaveService(
     private val carInsuranceRepository: CarInsuranceRepository,
     private val employeeIndustryRepository: EmployeeIndustryRepository,
     private val salesCreditCardRepository: SalesCreditCardRepository,
+    private val salesCashReceiptRepository: SalesCashReceiptRepository
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -35,6 +36,10 @@ class TaxDataLoadAndSaveService(
 
     fun getSalesCreditCardData(){
         salesCreditCardRepository.saveAll(dataReceiveFeignService.getSalesCreditCard())
+    }
+
+    fun getSalesCashReceiptData(){
+        salesCashReceiptRepository.saveAll(dataReceiveFeignService.getCashReceipt())
     }
 
 }

@@ -28,7 +28,7 @@ class SalesCreditCardSupportImpl(
             .where(
                 salesCreditCardEntity.hospitalId.eq(hospitalId),
                 salesCreditCardEntity.dataPeriod.startsWith(year)
-            ).groupBy(salesCreditCardEntity.dataPeriod,salesCreditCardEntity.cardCategory)
+            ).groupBy(salesCreditCardEntity.dataPeriod, salesCreditCardEntity.cardCategory)
             .fetch()
 
     }

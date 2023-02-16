@@ -13,7 +13,7 @@ class CarInsuranceController(private val carInsuranceService: CarInsuranceServic
 
     @GetMapping("list/{year}/{hospitalId}")
     fun getCarInsuranceList(@PathVariable hospitalId: String, @PathVariable year: String): List<CarInsuranceListDto> {
-        return carInsuranceService.getCarInsuranceList(hospitalId, year)
+        return carInsuranceService.getListData(hospitalId, year)
     }
 
 }

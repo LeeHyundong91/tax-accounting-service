@@ -13,7 +13,7 @@ class SalesCreditCardController(private val creditCardService: SalesCreditCardSe
 
     @GetMapping("list/{year}/{hospitalId}")
     fun getCreditCardList(@PathVariable hospitalId: String, @PathVariable year: String): List<SalesCreditCardListDto> {
-        return creditCardService.getSalesCreditCardList(hospitalId, year)
+        return creditCardService.getListData(hospitalId, year)
     }
 
 }

@@ -22,4 +22,7 @@ interface DataReceiveFeignService {
     @GetMapping("/credit-card")
     fun getSalesCreditCard(): List<SalesCreditCardEntity>
 
+    @GetMapping("/cash-receipt")
+    fun getCashReceipt(): List<SalesCashReceiptEntity>
+
 }

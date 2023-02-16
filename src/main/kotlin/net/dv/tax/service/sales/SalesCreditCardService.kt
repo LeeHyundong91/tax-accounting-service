@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 class SalesCreditCardService(private val salesCreditCardRepository: SalesCreditCardRepository) {
 
-    fun getSalesCreditCardList(hospitalId: String, year: String): List<SalesCreditCardListDto> {
+    fun getListData(hospitalId: String, year: String): List<SalesCreditCardListDto> {
         return salesCreditCardRepository.groupingList(hospitalId, year)
     }
 
