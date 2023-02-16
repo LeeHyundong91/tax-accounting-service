@@ -1,5 +1,6 @@
 package net.dv.tax.domain.sales
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -20,29 +21,33 @@ data class SalesCreditCardEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
+    @JsonProperty("salesCardDetailId")
+    val receiveDataId: Long,
+
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
     var hospitalId: String,
 
-    @Comment("승인일시")
-    val approvalDate: Date,
-
-    @Comment("승인번호")
-    val approvalNo: String?,
+    @Comment("승인년월")
+    @JsonProperty("approvalYearMonth")
+    val dataPeriod: String? = null,
 
     @Comment("자료구분")
-    val dataType: String?,
+    val cardCategory: String? = null,
 
-    @Comment("면세카드")
-    val dutyFreeCard: Long? = 0,
+    @Comment("건수 - crdcstlScnt")
+    val salesCount: Long? = 0,
 
-    @Comment("과세카드")
-    val taxCard: Long? = 0,
+    @Comment("매출합계")
+    val totalSales: Long? = 0,
 
-    @Comment("봉사료")
-    val serviceCharge: Long? = 0,
+    @Comment("신용카드 결재")
+    val creditCardSalesAmount: Long? = 0,
 
-    @Comment("합계")
-    val totalAmount: Long? = 0,
+    @Comment("구매전용카드 결재")
+    val purchaseCardSalesAmount: Long? = 0,
 
-)
+    @Comment("비과세 금액")
+    val taxFreeAmount: Long? = 0,
+
+    )

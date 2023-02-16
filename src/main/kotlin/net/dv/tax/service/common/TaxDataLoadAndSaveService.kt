@@ -1,10 +1,7 @@
 package net.dv.tax.service.common
 
 import mu.KotlinLogging
-import net.dv.tax.repository.sales.CarInsuranceRepository
-import net.dv.tax.repository.sales.EmployeeIndustryRepository
-import net.dv.tax.repository.sales.MedicalBenefitsRepository
-import net.dv.tax.repository.sales.MedicalExamRepository
+import net.dv.tax.repository.sales.*
 import net.dv.tax.service.feign.DataReceiveFeignService
 import org.springframework.stereotype.Component
 
@@ -14,7 +11,8 @@ class TaxDataLoadAndSaveService(
     private val medicalExamRepository: MedicalExamRepository,
     private val medicalBenefitsRepository: MedicalBenefitsRepository,
     private val carInsuranceRepository: CarInsuranceRepository,
-    private val employeeIndustryRepository: EmployeeIndustryRepository
+    private val employeeIndustryRepository: EmployeeIndustryRepository,
+    private val salesCreditCardRepository: SalesCreditCardRepository,
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -33,6 +31,10 @@ class TaxDataLoadAndSaveService(
 
     fun getEmployeeIndustryData(){
         employeeIndustryRepository.saveAll(dataReceiveFeignService.getEmployeeIndustry())
+    }
+
+    fun getSalesCreditCardData(){
+        salesCreditCardRepository.saveAll(dataReceiveFeignService.getSalesCreditCard())
     }
 
 }

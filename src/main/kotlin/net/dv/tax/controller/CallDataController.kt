@@ -19,6 +19,8 @@ class CallDataController(
         taxDataLoadService.getCarInsuranceData()
         taxDataLoadService.getMedicalExamData()
         taxDataLoadService.getEmployeeIndustryData()
+        taxDataLoadService.getSalesCreditCardData()
+
         return ResponseEntity(HttpStatus.OK)
     }
 

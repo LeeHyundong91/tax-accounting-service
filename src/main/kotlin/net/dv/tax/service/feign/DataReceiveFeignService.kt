@@ -1,9 +1,6 @@
 package net.dv.tax.service.feign
 
-import net.dv.tax.domain.sales.CarInsuranceEntity
-import net.dv.tax.domain.sales.EmployeeIndustryEntity
-import net.dv.tax.domain.sales.MedicalBenefitsEntity
-import net.dv.tax.domain.sales.MedicalExamEntity
+import net.dv.tax.domain.sales.*
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.GetMapping
 
@@ -21,5 +18,8 @@ interface DataReceiveFeignService {
 
     @GetMapping("/industry-insurance")
     fun getEmployeeIndustry(): List<EmployeeIndustryEntity>
+
+    @GetMapping("/credit-card")
+    fun getSalesCreditCard(): List<SalesCreditCardEntity>
 
 }
