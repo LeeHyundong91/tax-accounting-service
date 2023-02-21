@@ -45,7 +45,7 @@ data class SalesVaccineEntity(
     val dataPeriod: String? = year.toString() + "-" + month.toString() + "-01",
 
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 

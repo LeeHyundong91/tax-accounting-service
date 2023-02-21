@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class MedicalBenefitsController(private val medicalBenefitsService: MedicalBenefitsService) {
 
     @GetMapping("/list/{year}/{hospitalId}")
-    fun getBenefitsList(@PathVariable year: String, @PathVariable hospitalId: String): List<MedicalBenefitsListDto>{
+    fun getBenefitsList(@PathVariable year: String, @PathVariable hospitalId: String): List<MedicalBenefitsListDto> {
         return medicalBenefitsService.getListData(hospitalId, year)
     }
 

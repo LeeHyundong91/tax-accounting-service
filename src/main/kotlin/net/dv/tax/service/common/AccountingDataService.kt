@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile
 @Component
 class AccountingDataService(
     private val accountingDataRepository: AccountingDataRepository,
-    private val awsS3Service: AwsS3Service
+    private val awsS3Service: AwsS3Service,
 ) {
 
     private val log = KotlinLogging.logger {}

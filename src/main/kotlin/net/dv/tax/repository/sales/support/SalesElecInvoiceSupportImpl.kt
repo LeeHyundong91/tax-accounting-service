@@ -12,7 +12,7 @@ class SalesElecInvoiceSupportImpl(
 ) : CustomQuerydslRepositorySupport(CarInsuranceEntity::class.java), SalesElecInvoiceSupport {
     override fun groupingList(hospitalId: String, year: String): List<SalesElecInvoiceListDto> {
 
-                return query.select(
+        return query.select(
             Projections.bean(
                 SalesElecInvoiceListDto::class.java,
                 salesElecInvoiceEntity.supplyPrice.sum().`as`("supplyPrice"),
