@@ -17,7 +17,7 @@ class SalesHandInvoiceController(private val salesHandInvoiceService: SalesHandI
     }
 
     @GetMapping("/list/{year}/{hospitalId}")
-    fun getList(@PathVariable year: String, @PathVariable hospitalId: String): List<SalesHandInvoiceEntity> {
+    fun getList(@PathVariable year: String, @PathVariable hospitalId: String): List<SalesHandInvoiceEntity?>? {
         return salesHandInvoiceService.getListData(hospitalId, year)
     }
 
