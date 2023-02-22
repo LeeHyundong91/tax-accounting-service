@@ -10,6 +10,6 @@ interface SalesHandInvoiceRepository : JpaRepository<SalesHandInvoiceEntity?, In
     fun findAllByHospitalIdAndIssueDtStartingWithAndIsDeleteIsFalse(
         hospitalId: String,
         issueDt: String,
-    ): List<SalesHandInvoiceEntity>?
+    ): List<SalesHandInvoiceEntity?>?
 
 }

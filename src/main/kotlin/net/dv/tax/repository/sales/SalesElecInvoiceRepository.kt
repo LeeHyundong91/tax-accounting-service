@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface SalesElecInvoiceRepository : JpaRepository<SalesElecInvoiceEntity?, Int>, SalesElecInvoiceSupport {
 
-        fun findAllByHospitalIdAndDataPeriodStartingWith(
+    fun findAllByHospitalIdAndDataPeriodStartingWith(
         hospitalId: String,
         dataPeriod: String,
     ): List<SalesElecInvoiceEntity>

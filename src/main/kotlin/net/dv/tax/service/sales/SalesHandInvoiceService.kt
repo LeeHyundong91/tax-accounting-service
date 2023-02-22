@@ -23,12 +23,12 @@ class SalesHandInvoiceService(private val salesHandInvoiceRepository: SalesHandI
         return ResponseEntity.ok(HttpStatus.OK)
     }
 
-    fun getListData(hospitalId: String, year: String): List<SalesHandInvoiceEntity> {
+    fun getListData(hospitalId: String, year: String): List<SalesHandInvoiceEntity?>? {
 
         return salesHandInvoiceRepository.findAllByHospitalIdAndIssueDtStartingWithAndIsDeleteIsFalse(
             hospitalId,
             year
-        )!!
+        )
     }
 
 

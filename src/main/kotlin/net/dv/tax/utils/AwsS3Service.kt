@@ -1,6 +1,7 @@
 package net.dv.tax.utils
 
 import com.amazonaws.AmazonServiceException
+import com.amazonaws.services.s3.model.GetObjectRequest
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.services.s3.transfer.TransferManager
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder
@@ -43,11 +44,11 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
 
 
     fun getFileFromBucket(filePath: String): File {
-//        val transferManager: TransferManager = TransferManagerBuilder.standard().build()
+        val transferManager: TransferManager = TransferManagerBuilder.standard().build()
         log.error("filePath : $filePath")
         val file = File("/tmp/$filePath")
 
-//        transferManager.download(GetObjectRequest(bucket, filePath), file)
+        transferManager.download(GetObjectRequest(bucket, filePath), file)
 
         return file
 
