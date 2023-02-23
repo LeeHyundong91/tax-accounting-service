@@ -1,6 +1,5 @@
 package net.dv.tax.controller.sales
 
-import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.SalesVaccineEntity
 import net.dv.tax.service.sales.SalesVaccineService
@@ -27,10 +26,10 @@ class SalesVaccineController(
         return salesVaccineService.vaccineSave(hospitalId, vaccineSalesInfo)
     }
 
-    @GetMapping("/download/{hospitalId}")
-    fun vaccineYearListExcelDownload(@PathVariable hospitalId: String, response: HttpServletResponse){
-        salesVaccineService.vaccineListMakeExcel(hospitalId, response)
-    }
+//    @GetMapping("/download/{hospitalId}")
+//    fun vaccineYearListExcelDownload(@PathVariable hospitalId: String, response: HttpServletResponse){
+//        salesVaccineService.vaccineListMakeExcel(hospitalId, response)
+//    }
 
 
 

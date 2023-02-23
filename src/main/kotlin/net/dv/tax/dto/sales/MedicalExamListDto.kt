@@ -2,47 +2,44 @@ package net.dv.tax.dto.sales
 
 import org.hibernate.annotations.Comment
 
-class MedicalExamListDto{
+class MedicalExamListDto {
 
     @Comment("접수년월")
     var dataPeriod: String? = null
 
-//    @Comment("접수일자")
-//    var receptionDate: String? = null
-
-    @Comment("접수금액 - retF")
+    @Comment("접수금액")
     var receptionAmount: Long? = 0
 
-    @Comment("총의료급여비용(의료급여비용 심사결정 내역) - retAJ")
-    var medicalBenefitsAmount: Long? = 0
-
-    @Comment("건수(의료급여비용 심사결정 내역) - retAK")
+    @Comment("건수")
     var benefitsCount: Long? = 0
 
-    @Comment("본인부담금(의료급여비용 심사결정 내역)- retAL" )
+    @Comment("총의료급여비용")
+    var medicalBenefitsAmount: Long? = 0
+
+    @Comment("본인부담금")
     var ownCharge: Long? = 0
 
-    @Comment("장애인의료비(의료급여비용 심사결정 내역) - retAM")
+    @Comment("장애인의료비")
     var disabledExpenses: Long? = 0
 
-    @Comment("기관부담금(의료급여비용 심사결정 내역) - retAN")
+    @Comment("기관부담금")
     var agencyExpenses: Long? = 0
 
-    @Comment("절사금액(의료급여비용 심사결정 내역) - retAO")
+    @Comment("절사금액")
     var cutOffAmount: Long? = 0
 
-    @Comment("기금부담금(지급결정) - retAP")
+    @Comment("기금부담금")
     var fundExpense: Long? = 0
 
-    @Comment("대불금(지급결정) - retAQ")
+    @Comment("대불금")
     var proxyPayment: Long? = 0
 
-    @Comment("본인부담환급금(지급결정) - retAR")
+    @Comment("본인부담환급금")
     var refundPaid: Long? = 0
 
-    @Comment("검사기관지급액(지급결정) - retAS")
+    @Comment("검사기관지급액")
     var agencyPayment: Long? = 0
 
-    @Comment("당차수 실지급액 - retAV")
+    @Comment("당차수 실지급액")
     var actualPayment: Long? = 0
 }
