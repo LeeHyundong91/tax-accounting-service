@@ -3,53 +3,10 @@ package net.dv.tax.domain.employee
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.GenericGenerator
-import org.hibernate.engine.spi.SharedSessionContractImplementor
-import org.hibernate.id.IdentifierGenerator
-import org.hibernate.internal.util.config.ConfigurationHelper
-import org.hibernate.service.ServiceRegistry
-import org.hibernate.type.Type
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.security.MessageDigest
 
 import java.time.LocalDateTime
 import java.util.*
-
-
-interface EmployeeEncoder {
-    fun encodeToBase64(key: String): String
-}
-
-object EmployeeIdentity: EmployeeEncoder {
-
-    private val salt: ByteArray = "dr.village.net".toByteArray(Charsets.UTF_8)
-    override fun encodeToBase64(key: String): String = MessageDigest.getInstance("SHA-256")
-        .run {
-            update(key.toByteArray(Charsets.UTF_8))
-            update(salt)
-            digest()
-        }.let {
-            Base64.getEncoder().encodeToString(it)
-        }
-}
-
-class ResidentNumberGenerator(): IdentifierGenerator, EmployeeEncoder by EmployeeIdentity {
-    private var column: String = "ENCRYPT_RESIDENT_NUMBER"
-
-    override fun configure(type: Type?, params: Properties?, serviceRegistry: ServiceRegistry?) {
-        column = ConfigurationHelper.extractPropertyValue("target_column", params)
-    }
-
-    override fun generate(session: SharedSessionContractImplementor?, obj: Any?): Any {
-        if (obj !is EmployeeEntity) {
-            throw Exception("It's not correct entity type!!")
-        }
-        return generateResidentNumber(obj)
-    }
-
-    private fun generateResidentNumber(obj: EmployeeEntity): String {
-        return encodeToBase64("${obj.residentNumber}")
-    }
-}
 
 @Entity
 @Comment("노무직원관리")
@@ -66,7 +23,7 @@ class EmployeeEntity(
     @Column(name = "ENCRYPT_RESIDENT_NUMBER")
     @GenericGenerator(name = "keyGenerator", strategy = "net.dv.company.domain.ResidentNumberGenerator")
     @GeneratedValue(generator = "keyGenerator")
-    val encryptResidentNumber: String? = null,
+    var encryptResidentNumber: String? = null,
 
     @Comment("주민번호")
     @Column(name = "RESIDENT_NUMBER")
@@ -118,7 +75,7 @@ class EmployeeEntity(
 
     @Comment("신청일")
     @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
     @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
     @Column(name = "REQUEST_STATE")
@@ -186,8 +143,6 @@ class EmployeeHistoryEntity(
 
     @Comment("주민번호 암호화")
     @Column(name = "ENCRYPT_RESIDENT_NUMBER")
-    @GenericGenerator(name = "keyGenerator", strategy = "net.dv.company.domain.ResidentNumberGenerator")
-    @GeneratedValue(generator = "keyGenerator")
     val encryptResidentNumber: String? = null,
 
     @Comment("주민번호")
@@ -240,7 +195,7 @@ class EmployeeHistoryEntity(
 
     @Comment("신청일")
     @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
     @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
     @Column(name = "REQUEST_STATE")
@@ -296,7 +251,7 @@ class EmployeeHistoryEntity(
 
     @Comment("이력 생성일")
     @Column(name = "HISTORY_CREATED_AT")
-    var historyCreatedAt: LocalDateTime? = null,
+    var historyCreatedAt: LocalDateTime? = LocalDateTime.now(),
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
@@ -308,11 +263,15 @@ class EmployeeHistoryEntity(
 @Comment("노무직원급여관리")
 @Table(name = "EMPLOYEE_SALARY")
 @EntityListeners(AuditingEntityListener::class)
-class employeeSalaryEntity(
+class EmployeeSalaryEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
+
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: String? = null,
 
     @Comment("기본 급여")
     @Column(name = "BASIC_SALARY")
@@ -368,7 +327,7 @@ class employeeSalaryEntity(
 
     @Comment("등록일")
     @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
@@ -416,7 +375,7 @@ class employeeAttachFileEntity(
 
     @Comment("등록일")
     @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
