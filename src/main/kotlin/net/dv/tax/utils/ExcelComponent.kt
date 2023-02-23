@@ -1,10 +1,7 @@
 package net.dv.tax.utils
 
-import com.github.javaxcel.core.Javaxcel
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
-import net.dv.tax.dto.purchase.PurchaseCreditCardExcelDto
-import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.dhatim.fastexcel.Workbook
 import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
@@ -79,21 +76,20 @@ class ExcelComponent {
 
     fun readXls(file: File) {
 
-        val oldWorkBook: org.apache.poi.ss.usermodel.Workbook = WorkbookFactory.create(file)
+//        val oldWorkBook: org.apache.poi.ss.usermodel.Workbook = WorkbookFactory.create(file)
 
 //        val ins: InputStream = FileInputStream(file)
 
 //        val oldWorkbook: org.apache.poi.ss.usermodel.Workbook = HSSFWorkbook(file.inputStream())
 
-        var excellist: List<PurchaseCreditCardExcelDto> = LinkedList<PurchaseCreditCardExcelDto>()
 
-        val inputStream = file.inputStream()
-        inputStream.use { fis ->
-            val wb = oldWorkBook
-            excellist = Javaxcel.newInstance()
-                .reader(oldWorkBook, PurchaseCreditCardExcelDto::class.java)
-                .read()
-        }
+//        val inputStream = file.inputStream()
+//        inputStream.use { fis ->
+//            val wb = oldWorkBook
+//            excellist = Javaxcel.newInstance()
+//                .reader(oldWorkBook, PurchaseCreditCardExcelDto::class.java)
+//                .read()
+//        }
 //                val wb = WorkbookFactory.create(fis)
 //                val sheet = wb.getSheetAt(0)
 //                sheet.getRow(0).toCollection(List<Any>)
@@ -107,7 +103,6 @@ class ExcelComponent {
 //        .read()
 
 
-            log.error { excellist }
 
 
 //        log.error { file.name }

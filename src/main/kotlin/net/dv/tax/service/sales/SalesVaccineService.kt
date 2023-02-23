@@ -1,19 +1,14 @@
 package net.dv.tax.service.sales
 
-import com.github.javaxcel.core.Javaxcel
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.SalesVaccineEntity
-import net.dv.tax.dto.sales.SalesVaccineExcelDto
 import net.dv.tax.repository.sales.SalesVaccineRepository
 import net.dv.tax.utils.ExcelComponent
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.Workbook
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.io.OutputStream
 import java.util.*
 
 @Service
@@ -42,33 +37,27 @@ class SalesVaccineService(
     fun vaccineListMakeExcel(hospitalId: String, response: HttpServletResponse) {
         excelWriterService.downloadExcel(response, "test")
             .outputStream.use { os ->
-                getListForExcel(os, hospitalId)
+                excelWriterService.createXlsx(os, getListForFastExcel(hospitalId))
             }
     }
 
     /**
      * TEST #58 인지하냐
      */
-    private fun getListForExcel(os: OutputStream?, hospitalId: String) {
-
-        val excelList: MutableList<SalesVaccineExcelDto> = LinkedList()
-        val workbook: Workbook = HSSFWorkbook()
+        private fun getListForFastExcel(hospitalId: String): List<Map<String, Any>> {
+        val list: MutableList<Map<String, Any>> = LinkedList()
 
         vaccineSalesRepository.findAllByHospitalIdOrderByMonthAscYearAsc(hospitalId)?.forEach {
-            val excelDto = SalesVaccineExcelDto(
-                it.year.toString() + " ." + it.month.toString(),
-                it.payCount!!,
-                it.payAmount!!,
-                it.writer!!,
-                it.createdAt
-            )
-            excelList.add(excelDto)
+            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+            tempMap["기간"] = it.year.toString() + " ." + it.month.toString()
+            tempMap["지급완료 건수"] = it.payCount!!
+            tempMap["지급금액"] = it.payAmount!!
+            tempMap["작성자"] = it.writer!!
+            tempMap["작성일"] = it.createdAt
+            list.add(tempMap)
         }
 
-        Javaxcel.newInstance()
-            .writer(workbook, SalesVaccineExcelDto::class.java)
-            .write(os, excelList)
-
+        return list
     }
 
 }

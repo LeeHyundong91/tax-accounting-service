@@ -23,8 +23,8 @@ class SalesVaccineController(
     }
 
     @PostMapping("/save/{hospitalId}")
-    fun vaccineSave(@PathVariable hospitalId: String, @RequestBody vaccineSalesInfos: List<SalesVaccineEntity>): ResponseEntity<Any>{
-        return salesVaccineService.vaccineSave(hospitalId, vaccineSalesInfos)
+    fun vaccineSave(@PathVariable hospitalId: String, @RequestBody vaccineSalesInfo: List<SalesVaccineEntity>): ResponseEntity<Any>{
+        return salesVaccineService.vaccineSave(hospitalId, vaccineSalesInfo)
     }
 
     @GetMapping("/download/{hospitalId}")

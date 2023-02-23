@@ -69,8 +69,8 @@ dependencies {
 
 
     /*XLS*/
-    implementation("com.github.javaxcel:javaxcel-core:0.9.1")
-    implementation("org.apache.poi:poi-ooxml:5.2.3")
+//    implementation("com.github.javaxcel:javaxcel-core:0.9.1")
+//    implementation("org.apache.poi:poi-ooxml:5.2.3")
 
     /*XLSX*/
     implementation("org.dhatim:fastexcel:0.14.3")
