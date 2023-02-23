@@ -3,10 +3,7 @@ package net.dv.tax.service.sales
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.dto.MenuCategoryCode
-import net.dv.tax.repository.sales.CarInsuranceRepository
-import net.dv.tax.repository.sales.MedicalBenefitsRepository
-import net.dv.tax.repository.sales.MedicalExamRepository
-import net.dv.tax.repository.sales.SalesVaccineRepository
+import net.dv.tax.repository.sales.*
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.stereotype.Component
 import java.util.*
@@ -17,9 +14,16 @@ class ExcelDownloadService(
     private val medicalBenefitsRepository: MedicalBenefitsRepository,
     private val carInsuranceRepository: CarInsuranceRepository,
     private val vaccineRepository: SalesVaccineRepository,
-    private val medicalExamRepository: MedicalExamRepository
+    private val medicalExamRepository: MedicalExamRepository,
+    private val employeeIndustryRepository: EmployeeIndustryRepository,
+    private val hospitalChartRepository: HospitalChartRepository,
+    private val salesCreditCardRepository: SalesCreditCardRepository,
+    private val salesCashReceiptRepository: SalesCashReceiptRepository,
+    private val elecInvoiceRepository: SalesElecInvoiceRepository,
+    private val handInvoiceRepository: SalesHandInvoiceRepository,
 
-) {
+
+    ) {
 
     private val log = KotlinLogging.logger {}
 
@@ -56,8 +60,8 @@ class ExcelDownloadService(
             MenuCategoryCode.CAR_INSURANCE -> carInsurance(hospitalId, year)
             MenuCategoryCode.VACCINE -> vaccine(hospitalId)
             MenuCategoryCode.MEDICAL_EXAM -> medicalExam(hospitalId, year)
-            MenuCategoryCode.EMPLOYEE_INDUSTRY -> TODO()
-            MenuCategoryCode.HOSPITAL_CHART -> TODO()
+            MenuCategoryCode.EMPLOYEE_INDUSTRY -> employeeIndustry(hospitalId, year)
+            MenuCategoryCode.HOSPITAL_CHART -> hospitalChart(hospitalId, year)
             MenuCategoryCode.CREDIT_CARD -> TODO()
             MenuCategoryCode.CASH_RECEIPT -> TODO()
             MenuCategoryCode.ELEC_INVOICE -> TODO()
@@ -138,4 +142,40 @@ class ExcelDownloadService(
         return list
     }
 
+    private fun employeeIndustry(hospitalId: String, year: String): List<Map<String, Any>> {
+        val list: MutableList<Map<String, Any>> = LinkedList()
+
+        employeeIndustryRepository.groupingList(hospitalId, year).forEach {
+            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+            tempMap["기간"] = it.dataPeriod!!
+            tempMap["청구건수"] = it.billingCount!!
+            tempMap["청구금액"] = it.billingAmount!!
+            tempMap["지급금액"] = it.paymentAmount!!
+            tempMap["실지급금액"] = it.actualPayment!!
+            tempMap["소득세"] = it.incomeTax!!
+            tempMap["주민세"] = it.residenceTax!!
+
+            list.add(tempMap)
+        }
+        return list
+    }
+
+    private fun hospitalChart(hospitalId: String, year: String): List<Map<String, Any>> {
+        val list: MutableList<Map<String, Any>> = LinkedList()
+
+        hospitalChartRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year.toInt())?.forEach {
+            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+            tempMap["기간"] = it.year.toString() + " ." + it.month.toString()
+            tempMap["진료비"] = it.medicalExpenses!!
+            tempMap["급여총액"] = it.totalSalary!!
+            tempMap["청구액"] = it.billingAmount!!
+            tempMap["진료수납액"] = it.medicalReceipts!!
+            tempMap["본인부담 금액"] = it.ownExpense!!
+            tempMap["본인부담 비급여"] = it.nonPayment!!
+            tempMap["본인부담 금액 합계"] = it.ownExpenseAmount!!
+
+            list.add(tempMap)
+        }
+        return list
+    }
 }
