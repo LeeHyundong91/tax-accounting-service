@@ -2,22 +2,70 @@ package net.dv.tax.domain.employee
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
+import org.hibernate.annotations.GenericGenerator
+import org.hibernate.engine.spi.SharedSessionContractImplementor
+import org.hibernate.id.IdentifierGenerator
+import org.hibernate.internal.util.config.ConfigurationHelper
+import org.hibernate.service.ServiceRegistry
+import org.hibernate.type.Type
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.security.MessageDigest
 
 import java.time.LocalDateTime
+import java.util.*
+
+
+interface EmployeeEncoder {
+    fun encodeToBase64(key: String): String
+}
+
+object EmployeeIdentity: EmployeeEncoder {
+
+    private val salt: ByteArray = "dr.village.net".toByteArray(Charsets.UTF_8)
+    override fun encodeToBase64(key: String): String = MessageDigest.getInstance("SHA-256")
+        .run {
+            update(key.toByteArray(Charsets.UTF_8))
+            update(salt)
+            digest()
+        }.let {
+            Base64.getEncoder().encodeToString(it)
+        }
+}
+
+class ResidentNumberGenerator(): IdentifierGenerator, EmployeeEncoder by EmployeeIdentity {
+    private var column: String = "ENCRYPT_RESIDENT_NUMBER"
+
+    override fun configure(type: Type?, params: Properties?, serviceRegistry: ServiceRegistry?) {
+        column = ConfigurationHelper.extractPropertyValue("target_column", params)
+    }
+
+    override fun generate(session: SharedSessionContractImplementor?, obj: Any?): Any {
+        if (obj !is EmployeeEntity) {
+            throw Exception("It's not correct entity type!!")
+        }
+        return generateResidentNumber(obj)
+    }
+
+    private fun generateResidentNumber(obj: EmployeeEntity): String {
+        return encodeToBase64("${obj.residentNumber}")
+    }
+}
 
 @Entity
 @Comment("노무직원관리")
 @Table(name = "EMPLOYEE")
 @EntityListeners(AuditingEntityListener::class)
 class EmployeeEntity(
+
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long? = null,
 
     @Comment("주민번호 암호화")
     @Column(name = "ENCRYPT_RESIDENT_NUMBER")
+    @GenericGenerator(name = "keyGenerator", strategy = "net.dv.company.domain.ResidentNumberGenerator")
+    @GeneratedValue(generator = "keyGenerator")
     val encryptResidentNumber: String? = null,
 
     @Comment("주민번호")
@@ -50,7 +98,7 @@ class EmployeeEntity(
 
     @Comment("직위")
     @Column(name = "POSITION")
-    var position: String,
+    var position: String? = null,
 
     @Comment("입사일")
     @Column(name = "JOIN_AT")
@@ -58,7 +106,7 @@ class EmployeeEntity(
 
     @Comment("이메일")
     @Column(name = "EMAIL")
-    var email: String,
+    var email: String? = null,
 
     @Comment("재직구분 재직:W/휴직:L/퇴사:R")
     @Column(name = "JOB_CLASS")
@@ -66,11 +114,11 @@ class EmployeeEntity(
 
     @Comment("사유")
     @Column(name = "REASON")
-    var reason: String,
+    var reason: String? = null,
 
     @Comment("신청일")
     @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime,
+    var createdAt: LocalDateTime? = null,
 
     @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
     @Column(name = "REQUEST_STATE")
@@ -78,39 +126,39 @@ class EmployeeEntity(
 
     @Comment("퇴직일")
     @Column(name = "RESIGNATION_AT")
-    var resignationAt: String,
+    var resignationAt: String? = null,
 
     @Comment("퇴직사유")
     @Column(name = "RESIGNATION_CONTENTS")
-    var resignationContents: String,
+    var resignationContents: String? = null,
 
     @Comment("휴대전화번호")
     @Column(name = "MOBILE_PHONE_NUMBER")
-    var mobilePhoneNumber: String,
+    var mobilePhoneNumber: String? = null,
 
     @Comment("직책")
     @Column(name = "OFFICE")
-    var office: String,
+    var office: String? = null,
 
     @Comment("직무")
     @Column(name = "JOB")
-    var job: Long,
+    var job: Long? = null,
 
     @Comment("직무상세")
     @Column(name = "JOB_DETAIL")
-    var jobDetail: Long,
+    var jobDetail: Long? = null,
 
     @Comment("경력연차")
     @Column(name = "CAREER_NUMBER")
-    var careerNumber: String,
+    var careerNumber: String? = null,
 
     @Comment("부양가족 수")
     @Column(name = "DEPENDENT_CNT")
-    var dependentCnt: String,
+    var dependentCnt: String? = null,
 
     @Comment("주소")
     @Column(name = "ADDRESS")
-    var address: String,
+    var address: String? = null,
 
     @Comment("승인일")
     @Column(name = "APPR_AT")
@@ -118,13 +166,13 @@ class EmployeeEntity(
 
     @Comment("첨부파일 여부")
     @Column(name = "ATTACH_FILE_YN")
-    var attachFileYn: String,
+    var attachFileYn: String? = "N",
 
     @Comment("최종수정일")
     @Column(name = "UPDATED_AT")
     var updatedAt: LocalDateTime? = null,
 
-    )
+)
 
 @Entity
 @Comment("노무직원관리 이력")
@@ -134,10 +182,12 @@ class EmployeeHistoryEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long? = null,
 
     @Comment("주민번호 암호화")
     @Column(name = "ENCRYPT_RESIDENT_NUMBER")
+    @GenericGenerator(name = "keyGenerator", strategy = "net.dv.company.domain.ResidentNumberGenerator")
+    @GeneratedValue(generator = "keyGenerator")
     val encryptResidentNumber: String? = null,
 
     @Comment("주민번호")
@@ -170,7 +220,7 @@ class EmployeeHistoryEntity(
 
     @Comment("직위")
     @Column(name = "POSITION")
-    var position: String,
+    var position: String? = null,
 
     @Comment("입사일")
     @Column(name = "JOIN_AT")
@@ -178,7 +228,7 @@ class EmployeeHistoryEntity(
 
     @Comment("이메일")
     @Column(name = "EMAIL")
-    var email: String,
+    var email: String? = null,
 
     @Comment("재직구분 재직:W/휴직:L/퇴사:R")
     @Column(name = "JOB_CLASS")
@@ -186,11 +236,11 @@ class EmployeeHistoryEntity(
 
     @Comment("사유")
     @Column(name = "REASON")
-    var reason: String,
+    var reason: String? = null,
 
     @Comment("신청일")
     @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime,
+    var createdAt: LocalDateTime? = null,
 
     @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
     @Column(name = "REQUEST_STATE")
@@ -198,39 +248,39 @@ class EmployeeHistoryEntity(
 
     @Comment("퇴직일")
     @Column(name = "RESIGNATION_AT")
-    var resignationAt: String,
+    var resignationAt: String? = null,
 
     @Comment("퇴직사유")
     @Column(name = "RESIGNATION_CONTENTS")
-    var resignationContents: String,
+    var resignationContents: String? = null,
 
     @Comment("휴대전화번호")
     @Column(name = "MOBILE_PHONE_NUMBER")
-    var mobilePhoneNumber: String,
+    var mobilePhoneNumber: String? = null,
 
     @Comment("직책")
     @Column(name = "OFFICE")
-    var office: String,
+    var office: String? = null,
 
     @Comment("직무")
     @Column(name = "JOB")
-    var job: Long,
+    var job: Long? = null,
 
     @Comment("직무상세")
     @Column(name = "JOB_DETAIL")
-    var jobDetail: Long,
+    var jobDetail: Long? = null,
 
     @Comment("경력연차")
     @Column(name = "CAREER_NUMBER")
-    var careerNumber: String,
+    var careerNumber: String? = null,
 
     @Comment("부양가족 수")
     @Column(name = "DEPENDENT_CNT")
-    var dependentCnt: String,
+    var dependentCnt: String? = null,
 
     @Comment("주소")
     @Column(name = "ADDRESS")
-    var address: String,
+    var address: String? = null,
 
     @Comment("승인일")
     @Column(name = "APPR_AT")
@@ -238,7 +288,7 @@ class EmployeeHistoryEntity(
 
     @Comment("첨부파일 여부")
     @Column(name = "ATTACH_FILE_YN")
-    var attachFileYn: String,
+    var attachFileYn: String? = "N",
 
     @Comment("최종수정일")
     @Column(name = "UPDATED_AT")
