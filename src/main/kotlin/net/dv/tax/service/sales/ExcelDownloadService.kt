@@ -62,7 +62,7 @@ class ExcelDownloadService(
             MenuCategoryCode.MEDICAL_EXAM -> medicalExam(hospitalId, year)
             MenuCategoryCode.EMPLOYEE_INDUSTRY -> employeeIndustry(hospitalId, year)
             MenuCategoryCode.HOSPITAL_CHART -> hospitalChart(hospitalId, year)
-            MenuCategoryCode.CREDIT_CARD -> TODO()
+            MenuCategoryCode.CREDIT_CARD -> creditCard(hospitalId, year)
             MenuCategoryCode.CASH_RECEIPT -> TODO()
             MenuCategoryCode.ELEC_INVOICE -> TODO()
             MenuCategoryCode.HAND_INVOICE -> TODO()
@@ -178,4 +178,23 @@ class ExcelDownloadService(
         }
         return list
     }
+
+    private fun creditCard(hospitalId: String, year: String): List<Map<String, Any>> {
+        val list: MutableList<Map<String, Any>> = LinkedList()
+
+        salesCreditCardRepository.groupingList(hospitalId, year).forEach {
+            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+            tempMap["기간"] = it.dataPeriod!!
+            tempMap["자료구분"] = it.cardCategory!!
+            tempMap["건수"] = it.salesCount!!
+            tempMap["매출합계"] = it.totalSales!!
+            tempMap["신용카드 결재"] = it.creditCardSalesAmount!!
+            tempMap["구매전용카드 결재"] = it.purchaseCardSalesAmount!!
+            tempMap["비과세 금액"] = it.dataPeriod!!
+
+            list.add(tempMap)
+        }
+        return list
+    }
+
 }
