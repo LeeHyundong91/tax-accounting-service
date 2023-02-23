@@ -17,7 +17,8 @@ class SalesCashReceiptListDto{
 
     @Comment("봉사료")
     var serviceCharge: Long? = null
-    
+
+    @Comment("건수")
     var count: Long? = null
 
     }

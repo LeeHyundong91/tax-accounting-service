@@ -63,9 +63,9 @@ class ExcelDownloadService(
             MenuCategoryCode.EMPLOYEE_INDUSTRY -> employeeIndustry(hospitalId, year)
             MenuCategoryCode.HOSPITAL_CHART -> hospitalChart(hospitalId, year)
             MenuCategoryCode.CREDIT_CARD -> creditCard(hospitalId, year)
-            MenuCategoryCode.CASH_RECEIPT -> TODO()
-            MenuCategoryCode.ELEC_INVOICE -> TODO()
-            MenuCategoryCode.HAND_INVOICE -> TODO()
+            MenuCategoryCode.CASH_RECEIPT -> cashReceipt(hospitalId, year)
+            MenuCategoryCode.ELEC_INVOICE -> elecInvoice(hospitalId, year)
+            MenuCategoryCode.HAND_INVOICE -> handInvoice(hospitalId, year)
         }
 
     }
@@ -196,5 +196,57 @@ class ExcelDownloadService(
         }
         return list
     }
+
+    private fun cashReceipt(hospitalId: String, year: String): List<Map<String, Any>> {
+        val list: MutableList<Map<String, Any>> = LinkedList()
+
+        salesCashReceiptRepository.groupingList(hospitalId, year).forEach {
+            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+            tempMap["기간"] = it.dataPeriod!!
+            tempMap["건수"] = it.count!!
+            tempMap["합계"] = it.totalAmount!!
+            tempMap["공급가액"] = it.supplyPrice!!
+            tempMap["부가세"] = it.vat!!
+            tempMap["봉사료"] = it.serviceCharge!!
+
+            list.add(tempMap)
+        }
+        return list
+    }
+
+    private fun elecInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
+        val list: MutableList<Map<String, Any>> = LinkedList()
+
+        elecInvoiceRepository.groupingList(hospitalId, year).forEach {
+            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+            tempMap["기간"] = it.dataPeriod!!
+            tempMap["건수"] = it.count!!
+            tempMap["합계"] = it.totalAmount!!
+            tempMap["공급가액"] = it.supplyPrice!!
+            tempMap["세액"] = it.taxAmount!!
+
+            list.add(tempMap)
+        }
+        return list
+    }
+
+    private fun handInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
+        val list: MutableList<Map<String, Any>> = LinkedList()
+
+        handInvoiceRepository.findAllByHospitalIdAndIssueDtStartingWithAndIsDeleteIsFalse(hospitalId, year)?.forEach {
+            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+            tempMap["계산서종류"] = it?.billType!!
+            tempMap["발급일자"] = it.issueDt!!
+            tempMap["품목명"] = it.itemName!!
+            tempMap["공급가액"] = it.supplyPrice!!
+            tempMap["세액"] = it.taxAmount!!
+            tempMap["등록자"] = it.writer!!
+            tempMap["등록일"] = it.createdAt!!
+
+            list.add(tempMap)
+        }
+        return list
+    }
+
 
 }

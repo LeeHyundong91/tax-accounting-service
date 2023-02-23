@@ -44,6 +44,7 @@ data class SalesHandInvoiceEntity(
     @CreatedDate
     @Column(name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Comment("등록일")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Comment("등록자")
