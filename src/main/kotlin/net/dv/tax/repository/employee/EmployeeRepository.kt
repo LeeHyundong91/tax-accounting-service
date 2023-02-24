@@ -11,15 +11,10 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface EmployeeRepository : JpaRepository<EmployeeEntity?, Int>,
     EmployeeSupport {
-    fun findAllByHospitalIdAndRequestState(
-        hospitalId: String,
-        requestState: String,
-    ): List<EmployeeEntity>
 
-    fun findByHospitalIdAndResidentNumberAndRequestStateNot(
+    fun findByHospitalIdAndResidentNumber(
         hospitalId: String,
-        residentNumber: String,
-        requestState: String
+        residentNumber: String
     ): EmployeeEntity?
 
     fun findByHospitalIdAndResidentNumberAndJobClass(

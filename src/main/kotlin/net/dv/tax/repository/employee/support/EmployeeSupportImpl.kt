@@ -11,7 +11,7 @@ class EmployeeSupportImpl(
     private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(EmployeeEntity::class.java), EmployeeSupport {
 
-    override fun employeeRequestList(hospitalId: String, offset:Long, size:Long,  type: String?, keyword: String?): List<EmployeeEntity> {
+    override fun employeeList(hospitalId: String, offset:Long, size:Long,  type: String?, keyword: String?): List<EmployeeEntity> {
         /*val builder = BooleanBuilder()
         builder.and(workEmployeeEntity.)*/
 

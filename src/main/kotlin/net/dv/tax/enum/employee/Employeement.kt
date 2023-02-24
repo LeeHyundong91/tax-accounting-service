@@ -26,7 +26,7 @@ fun getEmployeementName(employeementCode: String): String{
     Employeement.values().filter {
         it.employeementCode.equals(employeementCode)
     }?.also{
-        if ( it.size > 0 ) employeementName = it.get(0).employeementCode
+        if ( it.size > 0 ) employeementName = it.get(0).employeementName
     }
     return employeementName
 }

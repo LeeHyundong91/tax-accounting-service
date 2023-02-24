@@ -2,6 +2,7 @@ package net.dv.tax.service.employee
 
 import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.employee.EmployeeHistoryEntity
+import net.dv.tax.domain.employee.EmployeeRequestEntity
 
 import net.dv.tax.dto.employee.EmployeeDto
 import net.dv.tax.dto.employee.EmployeeRequestDto
@@ -9,6 +10,7 @@ import net.dv.tax.dto.employee.EmployeeSalaryDto
 import net.dv.tax.enum.employee.*
 import net.dv.tax.repository.employee.EmployeeHistoryRepository
 import net.dv.tax.repository.employee.EmployeeRepository
+import net.dv.tax.repository.employee.EmployeeRequestRepository
 import net.dv.tax.repository.employee.EmployeeSalaryRepository
 import net.dv.tax.utils.Encrypt
 
@@ -21,13 +23,61 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class EmployeeService(
+    private val employeeRequestRepository: EmployeeRequestRepository,
     private val employeeRepository: EmployeeRepository,
     private val employeeHistoryRepository: EmployeeHistoryRepository,
     private val employeeSalaryRepository: EmployeeSalaryRepository,
-
     private val encrypt:Encrypt,
     ) {
 
+
+    //직원 요청 사항을 등록 한다.
+    fun registerEmployeeRequest(employeeRequestDto: EmployeeRequestDto): Int{
+
+        employeeRequestDto?.also { employeeRequest ->
+
+            val joinAt = LocalDateTime.parse(employeeRequest.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            var resignationAt: String? = null
+            employeeRequest.resignationAt?.also {
+                if( it.length > 0 ) resignationAt = it
+            }
+
+            var saveEmployeeRequestEntity = EmployeeRequestEntity(
+                encryptResidentNumber = encrypt.encodeToBase64(employeeRequest.residentNumber.toString()),
+                residentNumber = employeeRequest.residentNumber,
+                hospitalId = employeeRequest.hospitalId!!,
+                hospitalName = employeeRequest.hospitalName!!,
+                name = employeeRequest.name,
+                employmentType = employeeRequest.employmentType!!,
+                annualType = employeeRequest.annualType,
+                annualIncome = employeeRequest.annualIncome,
+                position = employeeRequest.position,
+                joinAt = joinAt,
+                email = employeeRequest.email,
+                jobClass = employeeRequest.jobClass,
+                reason = employeeRequest.reason,
+                resignationAt = resignationAt ,
+                resignationContents = employeeRequest.resignationContents,
+                mobilePhoneNumber = employeeRequest.mobilePhoneNumber,
+                office = employeeRequest.office,
+                job = employeeRequest.job,
+                jobDetail = employeeRequest.jobDetail,
+                careerNumber = employeeRequest.careerNumber,
+                dependentCnt = employeeRequest.dependentCnt,
+                address = employeeRequest.address,
+                attachFileYn = employeeRequest.attachFileYn,
+                //등록시에는 무조건 P
+                requestState = RequestState.RequestState_P.requestStateCode
+            )
+
+            employeeRequestRepository.save(saveEmployeeRequestEntity)
+            employeeRequest.id = saveEmployeeRequestEntity.id!!
+        }
+
+        return HttpStatus.OK.value()
+    }
+
+    //직원 요청 목록
     fun getEmployeeRequestList(
         hospitalId: String,
         offset: Long,
@@ -38,7 +88,7 @@ class EmployeeService(
 
         val realOffset = offset * size;
 
-        return employeeRepository.employeeRequestList(hospitalId, realOffset, size, searchType, keyword).map {
+        return employeeRequestRepository.employeeRequestList(hospitalId, realOffset, size, searchType, keyword).map {
             EmployeeRequestDto(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
@@ -47,22 +97,111 @@ class EmployeeService(
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,
                 position = getPositionName(it.position ?: ""),
-                joinAt = it.joinAt,
+                joinAt = it.joinAt.toString(),
                 email = it.email ?: "",
                 jobClass = getJobClassName(it.jobClass),
                 reason = it.reason ?: "",
                 createdAt = it.createdAt!!,
                 requestStateCode = it.requestState,
-                requestStateName = getRequestStateName(it.requestState)
+                requestStateName = getRequestStateName(it.requestState),
             )
         }
     }
+
+    //반영 
+    @Transactional
+    fun updateEmployeeRequestClose(employeeId: String): Int {
+
+        employeeRequestRepository.findById(employeeId.toInt())?.map {  employeeRequestEntity ->
+            employeeRequestEntity?.also {employeeRequest ->
+                updateEmployeeRequestCommonClose(employeeRequest)
+            }
+        }
+
+        return HttpStatus.OK.value()
+    }
+
+    //일괄 반영
+    @Transactional
+    fun updateEmployeeRequestCloseAll(hospitalId: String): Int {
+        employeeRequestRepository.findAllByHospitalIdAndRequestState(
+            hospitalId, RequestState.RequestState_P.requestStateCode ).map{ employeeRequestEntity ->
+            employeeRequestEntity?.also { employeeRequest ->
+                updateEmployeeRequestCommonClose(employeeRequest)
+
+            }
+        }
+
+        return HttpStatus.OK.value()
+    }
+
+    //반영 로직
+    fun updateEmployeeRequestCommonClose( employeeRequest: EmployeeRequestEntity) {
+
+        //현재 등록 된 사용자 인지 확인한다.
+        var resultEmployee  = employeeRepository.findByHospitalIdAndResidentNumber(
+            employeeRequest.hospitalId, employeeRequest.residentNumber!!)
+
+
+        var employeeDto = EmployeeDto(
+            residentNumber = employeeRequest.residentNumber,
+            hospitalId = employeeRequest.hospitalId,
+            hospitalName = employeeRequest.hospitalName,
+            name = employeeRequest.name,
+            employmentType = employeeRequest.employmentType,
+            annualType = employeeRequest.annualType,
+            annualIncome = employeeRequest.annualIncome,
+            position = employeeRequest.position,
+            joinAt = employeeRequest.joinAt.toString().substring(0, 10),
+            email = employeeRequest.email,
+            jobClass = employeeRequest.jobClass,
+            reason = employeeRequest.reason,
+            resignationAt = employeeRequest.resignationAt,
+            resignationContents = employeeRequest.resignationContents,
+            mobilePhoneNumber = employeeRequest.mobilePhoneNumber,
+            office = employeeRequest.office,
+            job = employeeRequest.job,
+            jobDetail = employeeRequest.jobDetail,
+            careerNumber = employeeRequest.careerNumber,
+            dependentCnt = employeeRequest.dependentCnt,
+            address = employeeRequest.address,
+            attachFileYn = employeeRequest.attachFileYn
+        )
+
+        // 등록된 사용자 일경우
+        if( resultEmployee != null) {
+            employeeDto.id = resultEmployee.id!!
+            updateEmployee(employeeDto)
+        //등록된 사용자가 아닐경우
+        }else {
+            registerEmployee(employeeDto)
+        }
+
+        //요청 목록에 데이터를 완료 상태로 변경 한다.
+        employeeRequest.requestState = RequestState.RequestState_C.requestStateCode
+        employeeRequestRepository.save(employeeRequest)
+
+    }
+
+    //완료 항목 삭제
+    fun updateEmployeeRequestDeleteAll( hospitalId: String): Int  {
+        employeeRequestRepository.findAllByHospitalIdAndRequestState(
+            hospitalId, RequestState.RequestState_C.requestStateCode).map{ employeeEntity ->
+
+            employeeEntity.also { employee ->
+                employee.requestState = RequestState.RequestState_D.requestStateCode
+                employeeRequestRepository.save(employee);
+            }
+        }
+        return HttpStatus.OK.value()
+    }
+
 
     //직원등록
     @Transactional
     fun registerEmployee(employeeDto: EmployeeDto): Int {
 
-        employeeRepository.findByHospitalIdAndResidentNumberAndJobClass(employeeDto.hospitalId, employeeDto.residentNumber!!, employeeDto.jobClass)?.also{
+        employeeRepository.findByHospitalIdAndResidentNumberAndJobClass(employeeDto.hospitalId!!, employeeDto.residentNumber!!, employeeDto.jobClass)?.also{
             throw Exception("이미 등록되어 있습니다.")
         }
 
@@ -77,8 +216,8 @@ class EmployeeService(
             var saveEmployeeEntity = EmployeeEntity(
                 encryptResidentNumber = encrypt.encodeToBase64(employee.residentNumber.toString()),
                 residentNumber = employee.residentNumber,
-                hospitalId = employee.hospitalId,
-                hospitalName = employee.hospitalName,
+                hospitalId = employee.hospitalId!!,
+                hospitalName = employee.hospitalName!!,
                 name = employee.name,
                 employmentType = employee.employmentType,
                 annualType = employee.annualType,
@@ -88,7 +227,6 @@ class EmployeeService(
                 email = employee.email,
                 jobClass = employee.jobClass,
                 reason = employee.reason,
-                requestState = employee.requestState,
                 resignationAt = resignationAt ,
                 resignationContents = employee.resignationContents,
                 mobilePhoneNumber = employee.mobilePhoneNumber,
@@ -99,6 +237,7 @@ class EmployeeService(
                 dependentCnt = employee.dependentCnt,
                 address = employee.address,
                 attachFileYn = employee.attachFileYn,
+                apprAt = LocalDateTime.now()
             )
 
             employeeRepository.save(saveEmployeeEntity)
@@ -117,29 +256,25 @@ class EmployeeService(
     fun updateEmployee(employeeDto: EmployeeDto): Int {
 
         //기존의 정보 테이블을 조회 한다.
-        employeeRepository.findById(employeeDto.id.toInt()).map { employeeEntity ->
+        employeeRepository.findById(employeeDto.id!!.toInt()).map { employeeEntity ->
 
             //변경 내용으로 덮기,
             employeeEntity?.also { employee ->
 
                 val joinAt = LocalDateTime.parse(
                     employeeDto.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                val apprAt = LocalDateTime.parse(
-                    employeeDto.apprAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-
 
                 employee.encryptResidentNumber = encrypt.encodeToBase64(employeeDto.residentNumber.toString())
-                employee.residentNumber = employeeDto.residentNumber           
+                employee.residentNumber = employeeDto.residentNumber
                 employee.name = employeeDto.name
                 employee.employmentType = employeeDto.employmentType
                 employee.annualType = employeeDto.annualType
                 employee.annualIncome = employeeDto.annualIncome
                 employee.position = employeeDto.position
                 employee.joinAt = joinAt
-                employee.email = employeeDto.email            
+                employee.email = employeeDto.email
                 employee.jobClass = employeeDto.jobClass
                 employee.reason = employeeDto.reason
-                employee.requestState = employeeDto.requestState
                 employee.resignationAt = employeeDto.resignationAt
                 employee.resignationContents = employeeDto.resignationContents
                 employee.mobilePhoneNumber = employeeDto.mobilePhoneNumber
@@ -149,7 +284,7 @@ class EmployeeService(
                 employee.careerNumber = employeeDto.careerNumber
                 employee.dependentCnt = employeeDto.dependentCnt
                 employee.address = employeeDto.address
-                employee.apprAt = apprAt
+                employee.apprAt = LocalDateTime.now()
                 employee.attachFileYn = employeeDto.attachFileYn
 
                 //저장
@@ -162,6 +297,7 @@ class EmployeeService(
 
         return HttpStatus.OK.value()
     }
+
 
     //직원 등록, 변경시 이력 등록
     fun registerEmployeeHistory(employeeId: Long) {
@@ -181,7 +317,6 @@ class EmployeeService(
                     email = employeeEntity.email,
                     jobClass = employeeEntity.jobClass,
                     reason = employeeEntity.reason,
-                    requestState = employeeEntity.requestState,
                     resignationAt = employeeEntity.resignationAt,
                     resignationContents = employeeEntity.resignationContents,
                     mobilePhoneNumber = employeeEntity.mobilePhoneNumber,
@@ -200,85 +335,96 @@ class EmployeeService(
         }
     }
 
-    //반영 
-    @Transactional
-    fun updateEmployeeRequestClose(employeeId: String): Int {
+    //직원 요청 목록
+    fun getEmployeeList(
+        hospitalId: String,
+        offset: Long,
+        size: Long,
+        searchType: String?,
+        keyword: String?
+    ): List<EmployeeDto> {
 
-        employeeRepository.findById(employeeId.toInt())?.map { employee ->
-            employee?.also {
-                updateEmployeeRequestCommonClose(employee)
+        val realOffset = offset * size;
+
+        return employeeRepository.employeeList(hospitalId, realOffset, size, searchType, keyword).map {
+            EmployeeDto(
+                id = it.id!!,
+                residentNumber = it.residentNumber,
+                name = it.name,
+                employmentName = getEmployeementName(it.employmentType),
+                employmentType = it.employmentType,
+                annualType = it.annualType,
+                annualIncome = it.annualIncome,
+                position = getPositionName(it.position ?: ""),
+                joinAt = it.joinAt.toString(),
+                email = it.email ?: "",
+                jobClass = getJobClassName(it.jobClass),
+                reason = it.reason ?: ""
+            )
+        }
+    }
+
+    fun getEmployee( employeeId: String ): EmployeeDto? {
+
+        var employeeDto: EmployeeDto? = null
+
+        employeeRepository.findById(employeeId.toInt()).map {employeeEntity ->
+            employeeEntity?.also {
+                employeeDto = EmployeeDto(
+                    residentNumber = employeeEntity.residentNumber,
+                    hospitalId = employeeEntity.hospitalId,
+                    hospitalName = employeeEntity.hospitalName,
+                    name = employeeEntity.name,
+                    employmentType = employeeEntity.employmentType,
+                    annualType = employeeEntity.annualType,
+                    annualIncome = employeeEntity.annualIncome,
+                    position = employeeEntity.position,
+                    joinAt = employeeEntity.joinAt.toString(),
+                    email = employeeEntity.email,
+                    jobClass = employeeEntity.jobClass,
+                    reason = employeeEntity.reason,
+                    resignationAt = employeeEntity.resignationAt,
+                    resignationContents = employeeEntity.resignationContents,
+                    mobilePhoneNumber = employeeEntity.mobilePhoneNumber,
+                    office = employeeEntity.office,
+                    job = employeeEntity.job,
+                    jobDetail = employeeEntity.jobDetail,
+                    careerNumber = employeeEntity.careerNumber,
+                    dependentCnt = employeeEntity.dependentCnt,
+                    address = employeeEntity.address,
+                    apprAt = employeeEntity.apprAt,
+                    attachFileYn = employeeEntity.attachFileYn,
+                    id = employeeEntity.id!!
+                )
             }
         }
-
-        return HttpStatus.OK.value()
+        return employeeDto;
     }
 
-    //일괄 반영
-    @Transactional
-    fun updateEmployeeRequestCloseAll(hospitalId: String): Int {
-        employeeRepository.findAllByHospitalIdAndRequestState(
-            hospitalId, RequestState.RequestState_P.requestStateCode ).map{ employeeEntity ->
-            employeeEntity?.also { employee ->
-                updateEmployeeRequestCommonClose(employee)
-            }
-        }
+    //급여 조회
+    fun getSalaryList(hospitalId: String): List<EmployeeSalaryDto> {
 
-        return HttpStatus.OK.value()
+        return employeeSalaryRepository.findByHospitalId(hospitalId).map {
+            EmployeeSalaryDto(
+                id = it.id,
+                hospitalId = it.hospitalId,
+                basicSalary =  it.basicSalary,
+                totalSalary = it.totalSalary,
+                detailSalary = it.detailSalary,
+                nationalPension = it.nationalPension,
+                healthInsurance = it.healthInsurance,
+                careInsurance = it.careInsurance,
+                unemployementInsurance = it.unemployementInsurance,
+                incomeTax = it.incomeTax,
+                localIncomeTax = it.localIncomeTax,
+                incomeTaxYearEnd = it.incomeTaxYearEnd,
+                localIncomeTaxYearEnd = it.localIncomeTaxYearEnd,
+                actualPayment = it.actualPayment,
+                paymentsAt = it.paymentsAt,
+                createdAt = it.createdAt,
+                employeeId = it.employeeEntity!!.id,
+            )
+        }
     }
-
-    //반영 로직
-    fun updateEmployeeRequestCommonClose( employee: EmployeeEntity) {
-
-        var resultEmployee  = employeeRepository.findByHospitalIdAndResidentNumberAndRequestStateNot(
-            employee.hospitalId, employee.residentNumber!!, RequestState.RequestState_P.requestStateCode)
-
-        var historyEmployeeId: Long? = null
-
-        // 등록된 행이 있으면 상태값(재직, 휴직, 퇴직)만 변경한다.
-        // 반영시 상태값(재직, 휴직, 퇴직) 뿐 아니라 다른 데이터도 업데이트가 필요 하다면 수정 해야 한다.
-        if( resultEmployee != null) {
-
-            resultEmployee.requestState = employee.requestState
-            resultEmployee.requestState = RequestState.RequestState_C.requestStateCode
-            resultEmployee.apprAt = LocalDateTime.now()
-
-            //수정 사항을 등록한다.
-            employeeRepository.save(resultEmployee)
-            historyEmployeeId = resultEmployee.id
-
-            //현재 등록된 행을 삭제 한다.
-            employeeRepository.delete(employee);
-
-        //등록된 행이 없으면 ( 신규등록 )
-        }else {
-            employee.requestState = RequestState.RequestState_C.requestStateCode
-            employee.apprAt = LocalDateTime.now()
-
-            //반영상태를 저장한다.
-            employeeRepository.save(employee)
-            historyEmployeeId = employee.id
-        }
-
-        //이력사항을 등록 한다.
-        historyEmployeeId?.also{ employeeId ->
-            registerEmployeeHistory( employeeId)
-        }
-
-    }
-
-    //완료 항목 삭제
-    fun updateEmployeeRequestDeleteAll( hospitalId: String): Int  {
-        employeeRepository.findAllByHospitalIdAndRequestState(
-            hospitalId, RequestState.RequestState_C.requestStateCode).map{ employeeEntity ->
-
-            employeeEntity.also { employee ->
-                employee.requestState = RequestState.RequestState_D.requestStateCode
-                employeeRepository.save(employee);
-            }
-        }
-        return HttpStatus.OK.value()
-    }
-
-
 
 }
