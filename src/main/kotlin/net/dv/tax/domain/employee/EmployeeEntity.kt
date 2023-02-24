@@ -162,7 +162,7 @@ class EmployeeEntity(
 
     @Comment("이름")
     @Column(name = "NAME")
-    var name: String,
+    var name: String? = null,
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT_TYPE")
@@ -370,7 +370,7 @@ class EmployeeHistoryEntity(
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employeeEntity: EmployeeEntity? = null
+    val employee: EmployeeEntity? = null
 )
 
 @Entity
@@ -445,7 +445,7 @@ class EmployeeSalaryEntity(
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employeeEntity: EmployeeEntity? = null
+    val employee: EmployeeEntity? = null
 )
 
 
@@ -453,15 +453,11 @@ class EmployeeSalaryEntity(
 @Comment("노무직원관리파일")
 @Table(name = "EMPLOYEE_ATTACH_FILE")
 @EntityListeners(AuditingEntityListener::class)
-class employeeAttachFileEntity(
+class EmployeeAttachFileEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
-
-    @Comment("기본 급여")
-    @Column(name = "BASIC_SALARY")
-    var basicSalary: Long? = null,
 
     @Comment("파일명")
     @Column(name = "FILE_NAME")
@@ -473,7 +469,7 @@ class employeeAttachFileEntity(
 
     @Comment("저장소 파일 위치")
     @Column(name = "PATH")
-    var path: Long? = null,
+    var path: String? = null,
 
     @Comment("파일 용량")
     @Column(name = "FILE_SIZE")
@@ -493,7 +489,7 @@ class employeeAttachFileEntity(
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employeeEntity: EmployeeEntity? = null
+    val employee: EmployeeEntity? = null
 )
 
 

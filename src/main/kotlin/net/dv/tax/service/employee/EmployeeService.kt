@@ -3,15 +3,10 @@ package net.dv.tax.service.employee
 import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.employee.EmployeeHistoryEntity
 import net.dv.tax.domain.employee.EmployeeRequestEntity
+import net.dv.tax.dto.employee.*
 
-import net.dv.tax.dto.employee.EmployeeDto
-import net.dv.tax.dto.employee.EmployeeRequestDto
-import net.dv.tax.dto.employee.EmployeeSalaryDto
 import net.dv.tax.enum.employee.*
-import net.dv.tax.repository.employee.EmployeeHistoryRepository
-import net.dv.tax.repository.employee.EmployeeRepository
-import net.dv.tax.repository.employee.EmployeeRequestRepository
-import net.dv.tax.repository.employee.EmployeeSalaryRepository
+import net.dv.tax.repository.employee.*
 import net.dv.tax.utils.Encrypt
 
 import org.springframework.http.HttpStatus
@@ -20,6 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.LinkedList
 
 @Service
 class EmployeeService(
@@ -27,6 +23,7 @@ class EmployeeService(
     private val employeeRepository: EmployeeRepository,
     private val employeeHistoryRepository: EmployeeHistoryRepository,
     private val employeeSalaryRepository: EmployeeSalaryRepository,
+    private val employeeAttachFileRepository: EmployeeAttachFileRepository,
     private val encrypt:Encrypt,
     ) {
 
@@ -265,8 +262,17 @@ class EmployeeService(
                     employeeDto.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
                 employee.encryptResidentNumber = encrypt.encodeToBase64(employeeDto.residentNumber.toString())
-                employee.residentNumber = employeeDto.residentNumber
-                employee.name = employeeDto.name
+
+
+                //퇴직일 경우 주민등록 번호 및 이름 공백 처리.
+                if( employeeDto.jobClass.equals(JobClass.JobClass_R)) {
+                    employee.residentNumber = null
+                    employee.name = null
+                } else {
+                    employee.residentNumber = employeeDto.residentNumber
+                    employee.name = employeeDto.name
+                }
+
                 employee.employmentType = employeeDto.employmentType
                 employee.annualType = employeeDto.annualType
                 employee.annualIncome = employeeDto.annualIncome
@@ -308,7 +314,7 @@ class EmployeeService(
                     residentNumber = employeeEntity.residentNumber,
                     hospitalId = employeeEntity.hospitalId,
                     hospitalName = employeeEntity.hospitalName,
-                    name = employeeEntity.name,
+                    name = employeeEntity.name!!,
                     employmentType = employeeEntity.employmentType,
                     annualType = employeeEntity.annualType,
                     annualIncome = employeeEntity.annualIncome,
@@ -328,7 +334,7 @@ class EmployeeService(
                     address = employeeEntity.address,
                     apprAt = employeeEntity.apprAt,
                     attachFileYn = employeeEntity.attachFileYn,
-                    employeeEntity = employeeEntity
+                    employee = employeeEntity
                 )
                 employeeHistoryRepository.save(saveEmployeeHistoryEntity);
             }
@@ -350,7 +356,7 @@ class EmployeeService(
             EmployeeDto(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
-                name = it.name,
+                name = it.name!!,
                 employmentName = getEmployeementName(it.employmentType),
                 employmentType = it.employmentType,
                 annualType = it.annualType,
@@ -364,7 +370,7 @@ class EmployeeService(
         }
     }
 
-    fun getEmployee( employeeId: String ): EmployeeDto? {
+    fun getEmployee( employeeId: String ): EmployeeDetailDto? {
 
         var employeeDto: EmployeeDto? = null
 
@@ -374,7 +380,7 @@ class EmployeeService(
                     residentNumber = employeeEntity.residentNumber,
                     hospitalId = employeeEntity.hospitalId,
                     hospitalName = employeeEntity.hospitalName,
-                    name = employeeEntity.name,
+                    name = employeeEntity.name!!,
                     employmentType = employeeEntity.employmentType,
                     annualType = employeeEntity.annualType,
                     annualIncome = employeeEntity.annualIncome,
@@ -398,13 +404,40 @@ class EmployeeService(
                 )
             }
         }
-        return employeeDto;
+
+
+        val attachFileList = employeeRepository.employeeFileList(employeeId.toLong()).map{fileEntity ->
+
+            EmployeeAttachFileDto(
+                id = fileEntity.id,
+                fileName = fileEntity.fileName,
+                localFileName = fileEntity.localFileName,
+                path = fileEntity.path,
+                fileSize = fileEntity.fileSize,
+                fileExt = fileEntity.fileExt,
+                createdAt = fileEntity.createdAt,
+                employeeId = employeeId
+            )
+        }
+
+        val employeeDetailDto = EmployeeDetailDto(
+            employee = employeeDto,
+            attachFileList = attachFileList
+        )
+
+
+        return employeeDetailDto;
     }
 
     //급여 조회
-    fun getSalaryList(hospitalId: String): List<EmployeeSalaryDto> {
+    fun getSalaryList(hospitalId: String, employeeId: String): List<EmployeeSalaryDto> {
 
-        return employeeSalaryRepository.findByHospitalId(hospitalId).map {
+
+        val employee: EmployeeEntity = employeeRepository.findById(employeeId.toInt()).get()
+
+        employee?.also{}?: throw Exception("사용자가 없습니다.")
+
+        return employeeSalaryRepository.findByHospitalIdAndEmployee(hospitalId, employee).map {
             EmployeeSalaryDto(
                 id = it.id,
                 hospitalId = it.hospitalId,
@@ -422,7 +455,7 @@ class EmployeeService(
                 actualPayment = it.actualPayment,
                 paymentsAt = it.paymentsAt,
                 createdAt = it.createdAt,
-                employeeId = it.employeeEntity!!.id,
+                employeeId = it.employee!!.id,
             )
         }
     }

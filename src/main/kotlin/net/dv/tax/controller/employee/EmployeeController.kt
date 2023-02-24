@@ -1,9 +1,6 @@
 package net.dv.tax.controller.employee
 
-import net.dv.tax.dto.employee.EmployeeDto
-import net.dv.tax.dto.employee.EmployeeRequestCloseDto
-import net.dv.tax.dto.employee.EmployeeRequestDto
-import net.dv.tax.dto.employee.EmployeeSalaryDto
+import net.dv.tax.dto.employee.*
 import net.dv.tax.service.employee.EmployeeService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -82,15 +79,15 @@ class EmployeeController(private val employeeService: EmployeeService) {
 
    //직원 목록 상세
     @GetMapping("{employeeId}/detail")
-    fun getEmployee(@PathVariable employeeId: String ): EmployeeDto? {
+    fun getEmployee(@PathVariable employeeId: String ): EmployeeDetailDto? {
 
         return employeeService.getEmployee(employeeId);
     }
 
-    //급여내역
-    @GetMapping("salary/{hospitalId}/list")
-    fun getSalaryList(@PathVariable hospitalId: String): List<EmployeeSalaryDto> {
-        return employeeService.getSalaryList(hospitalId);
+    //월별 급여 내역
+    @GetMapping("salary/{hospitalId}/{employeeId}/list")
+    fun getSalaryList(@PathVariable hospitalId: String, @PathVariable employeeId: String ): List<EmployeeSalaryDto> {
+        return employeeService.getSalaryList(hospitalId, employeeId);
     }
 
 }
