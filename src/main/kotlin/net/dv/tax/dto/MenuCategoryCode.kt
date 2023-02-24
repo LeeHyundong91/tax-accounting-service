@@ -17,7 +17,7 @@ enum class MenuCategoryCode(
     HAND_INVOICE("hand-invoice", "수기세금계산서매출목록");
 
     companion object {
-        fun getName(value: String): String {
+        fun convert(value: String): String {
             var codeName: String? = null
             MenuCategoryCode.values().forEach { enums ->
                 if (enums.code == value) {

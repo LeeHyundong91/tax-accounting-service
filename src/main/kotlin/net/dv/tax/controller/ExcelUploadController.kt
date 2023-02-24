@@ -18,7 +18,7 @@ class ExcelUploadController(
 
 
     @PostMapping("/{categoryName}")
-    fun uploadExcel(contents: MultipartFile, @PathVariable categoryName: String): String {
+    fun uploadExcel(contents: List<MultipartFile>, @PathVariable categoryName: String): String {
 
         /**
          * TODO 임시 값 추후 AUth 정보에서 추출 해서 박아넣어야함
@@ -26,18 +26,18 @@ class ExcelUploadController(
          */
         val hospitalId: String = "cid01"
         val writer: String = "tester"
+        log.error { categoryName }
 
-
-        log.error { MenuCategoryCode.getName(categoryName) }
+        log.error { MenuCategoryCode.convert(categoryName) }
 
         accountingDataService.saveOriginData(
             hospitalId,
             writer,
-            MenuCategoryCode.valueOf(MenuCategoryCode.getName(categoryName)),
+            MenuCategoryCode.valueOf(MenuCategoryCode.convert(categoryName)),
             contents
         )
 
-        return contents.originalFilename ?: "없어 그런거 야발!!"
+        return ""
     }
 
 

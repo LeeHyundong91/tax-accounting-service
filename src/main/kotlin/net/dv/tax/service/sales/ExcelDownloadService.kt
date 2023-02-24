@@ -28,16 +28,6 @@ class ExcelDownloadService(
 
     private val log = KotlinLogging.logger {}
 
-    fun getName(value: String): String {
-        var codeName: String? = null
-        MenuCategoryCode.values().forEach { enums ->
-            if (enums.code == value) {
-                codeName = enums.name
-            }
-        }
-        return codeName!!
-    }
-
 
     fun makeExcel(
         year: String,
@@ -47,7 +37,7 @@ class ExcelDownloadService(
     ) {
 
 
-        val menu = MenuCategoryCode.valueOf(getName(categoryCode))
+        val menu = MenuCategoryCode.valueOf(MenuCategoryCode.convert(categoryCode))
 
         excelComponent.downloadExcel(response, year + "_" + menu.fileName)
             .outputStream.use { os ->

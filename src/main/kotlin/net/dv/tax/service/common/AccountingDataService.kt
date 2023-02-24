@@ -17,24 +17,35 @@ class AccountingDataService(
     private val log = KotlinLogging.logger {}
 
 
-    fun saveOriginData(hospitalId: String, writer: String, dataCategory: MenuCategoryCode, multipartFile: MultipartFile) {
+    fun saveOriginData(
+        hospitalId: String,
+        writer: String,
+        dataCategory: MenuCategoryCode,
+        multipartFiles: List<MultipartFile>,
+    ) {
+
+
+        multipartFiles.forEach {
+
         val accountingDataEntity = AccountingDataEntity()
 
+            var tempMap = awsS3Service.upload(dataCategory.code, it)
 
-        var tempMap = awsS3Service.upload(dataCategory.name, multipartFile)
+            accountingDataEntity.also {
+                it.hospitalId = hospitalId
+                it.dataCategory = tempMap["category"]!!
+                it.uploadFileName = tempMap["fileName"]!!
+                it.uploadFilePath = tempMap["filePath"]!!
+                it.writer = writer
+            }
 
-        accountingDataEntity.also {
-            it.hospitalId = hospitalId
-            it.dataCategory = tempMap["category"]!!
-            it.uploadFileName = tempMap["fileName"]!!
-            it.uploadFilePath = tempMap["filePath"]!!
-            it.writer = writer
+            log.error { accountingDataEntity }
+
+
+            accountingDataRepository.save(accountingDataEntity)
+
         }
 
-        log.error { accountingDataEntity }
-
-
-        accountingDataRepository.save(accountingDataEntity)
 
     }
 
