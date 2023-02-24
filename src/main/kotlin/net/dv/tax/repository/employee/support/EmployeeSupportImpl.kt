@@ -10,25 +10,8 @@ import org.springframework.stereotype.Repository
 class EmployeeSupportImpl(
     private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(EmployeeEntity::class.java), EmployeeSupport {
-    /*override fun groupingList(hospitalId: String, year: String): List<CarInsuranceListDto> {
-    *//*`as`*//*
-        return query.select(
-            Projections.bean(
-                CarInsuranceListDto::class.java,
-                carInsuranceEntity.billingAmount.sum().`as`("billingAmount"),
-                carInsuranceEntity.decisionAmount.sum().`as`("decisionAmount"),
-                carInsuranceEntity.dataPeriod,
-            )
-        ).from(carInsuranceEntity)
-            .where(
-                carInsuranceEntity.hospitalId.eq(hospitalId),
-                carInsuranceEntity.dataPeriod.startsWith(year)
-            ).groupBy(carInsuranceEntity.dataPeriod)
-            .fetch()
 
-    }*/
-
-    override fun workEmployeeRequestList(hospitalId: String, offset:Long, size:Long,  type: String?, keyword: String?): List<EmployeeEntity> {
+    override fun employeeRequestList(hospitalId: String, offset:Long, size:Long,  type: String?, keyword: String?): List<EmployeeEntity> {
         /*val builder = BooleanBuilder()
         builder.and(workEmployeeEntity.)*/
 
