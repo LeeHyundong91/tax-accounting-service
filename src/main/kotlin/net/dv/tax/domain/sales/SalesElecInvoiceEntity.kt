@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "sales_elec_invoice")
+@Table(name = "SALES_ELEC_INVOICE")
 @Comment("전자계산서매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)

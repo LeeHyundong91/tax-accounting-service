@@ -1,4 +1,4 @@
-package net.dv.tax.controller
+package net.dv.tax.controller.sales
 
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/sales/download")
-class ExcelDownloadController(private val excelDownloadService: ExcelDownloadService) {
+class SalesExcelDownloadController(private val excelDownloadService: ExcelDownloadService) {
 
     private val log = KotlinLogging.logger {}
 
@@ -22,7 +22,7 @@ class ExcelDownloadController(private val excelDownloadService: ExcelDownloadSer
         response: HttpServletResponse,
     ) {
 
-        log.error { categoryName }
+        log.info { categoryName }
         excelDownloadService.makeExcel(year, hospitalId, categoryName, response)
     }
 

@@ -10,12 +10,11 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "accounting_data")
 @Comment("매입 엑셀 업로드 데이터")
-@Suppress("JpaAttributeTypeInspection")
 @DynamicUpdate
 data class AccountingDataEntity(
 
     @Id
-    @Column(name = "ID", insertable = false, updatable = false)
+    @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
@@ -35,7 +34,7 @@ data class AccountingDataEntity(
 
     @Comment("등록일(업로드일시")
     @CreatedDate
-    @Column(name = "UPLOADED_AT")
+    @Column(name = "uploaded_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val uploadedAt: LocalDateTime? = LocalDateTime.now(),
 

@@ -81,6 +81,7 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
 
             nameMap["filePath"] = fullPath
             nameMap["fileName"] = originFileName
+            nameMap["category"] = reportType
 
             return nameMap
         } catch (e: AmazonServiceException) {

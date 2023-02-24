@@ -25,7 +25,19 @@ class ExcelDownloadService(
 
     ) {
 
+
     private val log = KotlinLogging.logger {}
+
+    fun getName(value: String): String {
+        var codeName: String? = null
+        MenuCategoryCode.values().forEach { enums ->
+            if (enums.code == value) {
+                codeName = enums.name
+            }
+        }
+        return codeName!!
+    }
+
 
     fun makeExcel(
         year: String,
@@ -34,14 +46,8 @@ class ExcelDownloadService(
         response: HttpServletResponse,
     ) {
 
-        var codeName: String? = null
-        MenuCategoryCode.values().forEach { enums ->
-            if (enums.code == categoryCode) {
-                codeName = enums.name
-            }
-        }
 
-        val menu = MenuCategoryCode.valueOf(codeName!!)
+        val menu = MenuCategoryCode.valueOf(getName(categoryCode))
 
         excelComponent.downloadExcel(response, year + "_" + menu.fileName)
             .outputStream.use { os ->
@@ -66,6 +72,7 @@ class ExcelDownloadService(
             MenuCategoryCode.CASH_RECEIPT -> cashReceipt(hospitalId, year)
             MenuCategoryCode.ELEC_INVOICE -> elecInvoice(hospitalId, year)
             MenuCategoryCode.HAND_INVOICE -> handInvoice(hospitalId, year)
+            MenuCategoryCode.ELEC_TAX_INVOICE -> TODO()
         }
 
     }
@@ -148,12 +155,12 @@ class ExcelDownloadService(
         employeeIndustryRepository.groupingList(hospitalId, year).forEach {
             val tempMap: MutableMap<String, Any> = LinkedHashMap()
             tempMap["기간"] = it.dataPeriod!!
-            tempMap["청구건수"] = it.billingCount!!
-            tempMap["청구금액"] = it.billingAmount!!
-            tempMap["지급금액"] = it.paymentAmount!!
-            tempMap["실지급금액"] = it.actualPayment!!
-            tempMap["소득세"] = it.incomeTax!!
-            tempMap["주민세"] = it.residenceTax!!
+            tempMap["청구건수"] = it.billingCount
+            tempMap["청구금액"] = it.billingAmount
+            tempMap["지급금액"] = it.paymentAmount
+            tempMap["실지급금액"] = it.actualPayment
+            tempMap["소득세"] = it.incomeTax
+            tempMap["주민세"] = it.residenceTax
 
             list.add(tempMap)
         }
@@ -241,7 +248,7 @@ class ExcelDownloadService(
             tempMap["공급가액"] = it.supplyPrice!!
             tempMap["세액"] = it.taxAmount!!
             tempMap["등록자"] = it.writer!!
-            tempMap["등록일"] = it.createdAt!!
+            tempMap["등록일"] = it.createdAt
 
             list.add(tempMap)
         }

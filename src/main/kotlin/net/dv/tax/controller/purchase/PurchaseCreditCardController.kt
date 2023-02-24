@@ -35,7 +35,7 @@ class PurchaseCreditCardController(
         purchaseCreditCardEntity.writer = "작성자"
 
 
-        accountingDataService.saveOriginData(hospitalId, "tester", "credit-card", contents)
+//        accountingDataService.saveOriginData(hospitalId, "tester", "credit-card", contents)
 
 
         return contents.originalFilename ?: "없어 그런거 야발!!"
