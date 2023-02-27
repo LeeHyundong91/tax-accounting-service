@@ -29,7 +29,7 @@ class AccountingDataService(
 
         val accountingDataEntity = AccountingDataEntity()
 
-            var tempMap = awsS3Service.upload(dataCategory.code, it)
+            var tempMap = awsS3Service.upload(dataCategory.name, it)
 
             accountingDataEntity.also {
                 it.hospitalId = hospitalId
