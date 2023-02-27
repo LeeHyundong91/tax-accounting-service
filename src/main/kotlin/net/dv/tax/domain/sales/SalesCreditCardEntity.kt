@@ -30,7 +30,6 @@ data class SalesCreditCardEntity(
     val receiveDataId: Long,
 
     @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String,
 
     @Comment("승인년월")
@@ -40,7 +39,7 @@ data class SalesCreditCardEntity(
     @Comment("자료구분")
     val cardCategory: String? = null,
 
-    @Comment("건수 - crdcstlScnt")
+    @Comment("건수")
     val salesCount: Long? = 0,
 
     @Comment("매출합계")

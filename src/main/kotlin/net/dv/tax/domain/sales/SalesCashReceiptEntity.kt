@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 data class SalesCashReceiptEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 

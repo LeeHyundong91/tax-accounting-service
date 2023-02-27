@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 data class SalesVaccineEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 

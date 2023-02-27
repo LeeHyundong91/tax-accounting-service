@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 data class CarInsuranceEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
@@ -27,7 +27,6 @@ data class CarInsuranceEntity(
     val receiveDataId: Long,
 
     @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String,
 
     @Comment("기간(년,월)")

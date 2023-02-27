@@ -26,11 +26,10 @@ data class MedicalBenefitsEntity(
     @JsonIgnore
     val id: Long,
 
-    @Column(name = "RECEIVE_DATA_ID")
-    val medicalBenefitsId : Long?,
+    @JsonProperty("medicalBenefitsId")
+    val receiveDataId : Long?,
 
     @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String?,
 
     @Comment("진료년원")

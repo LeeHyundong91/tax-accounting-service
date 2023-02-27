@@ -16,12 +16,11 @@ import java.time.LocalDateTime
 data class HospitalChartEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
     @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
     @Comment("연도")
@@ -52,8 +51,8 @@ data class HospitalChartEntity(
     var ownExpenseAmount: Int? = 0,
 
     @CreatedDate
-    @Column(name = "created_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(updatable = false, name = "CREATED_AT")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Comment("작성자")
