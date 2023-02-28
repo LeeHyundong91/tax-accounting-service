@@ -1,24 +1,20 @@
 package net.dv.tax.dto.employee
 
-import jakarta.persistence.Column
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import org.hibernate.annotations.Comment
-import org.hibernate.annotations.GenericGenerator
 import java.time.LocalDateTime
 
 data class EmployeeDto(
 
-    var id: Long,
+    var id: Long? = null,
 
     var residentNumber: String? = null,
 
-    var hospitalId: String,
+    var hospitalId: String? = null ,
 
-    var hospitalName: String,
+    var hospitalName: String? = null ,
 
     var name: String,
+
+    var employmentName: String? = null,
 
     var employmentType: String,
 
@@ -38,8 +34,6 @@ data class EmployeeDto(
 
     var createdAt: String? = null,
 
-    var requestState: String,
-
     var resignationAt: String? = null,
 
     var resignationContents: String? = null,
@@ -58,7 +52,7 @@ data class EmployeeDto(
 
     var address: String? = null,
 
-    var apprAt: String? = null,
+    var apprAt: LocalDateTime? = null,
 
     var attachFileYn: String? = "N",
 

@@ -9,10 +9,10 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-@Comment("노무직원관리")
-@Table(name = "EMPLOYEE")
+@Comment("노무직원요청관리")
+@Table(name = "EMPLOYEE_REQUEST")
 @EntityListeners(AuditingEntityListener::class)
-class EmployeeEntity(
+class EmployeeRequestEntity(
 
     @Id
     @Column(name = "id", insertable = false, updatable = false)
@@ -132,6 +132,125 @@ class EmployeeEntity(
 )
 
 @Entity
+@Comment("노무직원관리")
+@Table(name = "EMPLOYEE")
+@EntityListeners(AuditingEntityListener::class)
+class EmployeeEntity(
+
+    @Id
+    @Column(name = "id", insertable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
+
+    @Comment("주민번호 암호화")
+    @Column(name = "ENCRYPT_RESIDENT_NUMBER")
+    @GenericGenerator(name = "keyGenerator", strategy = "net.dv.company.domain.ResidentNumberGenerator")
+    @GeneratedValue(generator = "keyGenerator")
+    var encryptResidentNumber: String? = null,
+
+    @Comment("주민번호")
+    @Column(name = "RESIDENT_NUMBER")
+    var residentNumber: String? = null,
+
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: String,
+
+    @Comment("병원명")
+    @Column(name = "HOSPITAL_NAME")
+    var hospitalName: String,
+
+    @Comment("이름")
+    @Column(name = "NAME")
+    var name: String? = null,
+
+    @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
+    @Column(name = "EMPLOYMENT_TYPE")
+    var employmentType: String,
+
+    @Comment("세전/세후")
+    @Column(name = "ANNUAL_TYPE")
+    var annualType: String,
+
+    @Comment("연봉")
+    @Column(name = "ANNUAL_INCOME")
+    var annualIncome: String,
+
+    @Comment("직위")
+    @Column(name = "POSITION")
+    var position: String? = null,
+
+    @Comment("입사일")
+    @Column(name = "JOIN_AT")
+    var joinAt: LocalDateTime,
+
+    @Comment("이메일")
+    @Column(name = "EMAIL")
+    var email: String? = null,
+
+    @Comment("재직구분 재직:W/휴직:L/퇴사:R")
+    @Column(name = "JOB_CLASS")
+    var jobClass: String,
+
+    @Comment("사유")
+    @Column(name = "REASON")
+    var reason: String? = null,
+
+    @Comment("신청일")
+    @Column(name = "CREATED_AT")
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
+
+    @Comment("퇴직일")
+    @Column(name = "RESIGNATION_AT")
+    var resignationAt: String? = null,
+
+    @Comment("퇴직사유")
+    @Column(name = "RESIGNATION_CONTENTS")
+    var resignationContents: String? = null,
+
+    @Comment("휴대전화번호")
+    @Column(name = "MOBILE_PHONE_NUMBER")
+    var mobilePhoneNumber: String? = null,
+
+    @Comment("직책")
+    @Column(name = "OFFICE")
+    var office: String? = null,
+
+    @Comment("직무")
+    @Column(name = "JOB")
+    var job: Long? = null,
+
+    @Comment("직무상세")
+    @Column(name = "JOB_DETAIL")
+    var jobDetail: Long? = null,
+
+    @Comment("경력연차")
+    @Column(name = "CAREER_NUMBER")
+    var careerNumber: String? = null,
+
+    @Comment("부양가족 수")
+    @Column(name = "DEPENDENT_CNT")
+    var dependentCnt: String? = null,
+
+    @Comment("주소")
+    @Column(name = "ADDRESS")
+    var address: String? = null,
+
+    @Comment("승인일")
+    @Column(name = "APPR_AT")
+    var apprAt: LocalDateTime? = null,
+
+    @Comment("첨부파일 여부")
+    @Column(name = "ATTACH_FILE_YN")
+    var attachFileYn: String? = "N",
+
+    @Comment("최종수정일")
+    @Column(name = "UPDATED_AT")
+    var updatedAt: LocalDateTime? = null,
+
+    )
+
+@Entity
 @Comment("노무직원관리 이력")
 @Table(name = "EMPLOYEE_HISTORY")
 @EntityListeners(AuditingEntityListener::class)
@@ -197,10 +316,6 @@ class EmployeeHistoryEntity(
     @Column(name = "CREATED_AT")
     var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-    @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
-    @Column(name = "REQUEST_STATE")
-    var requestState: String,
-
     @Comment("퇴직일")
     @Column(name = "RESIGNATION_AT")
     var resignationAt: String? = null,
@@ -255,8 +370,7 @@ class EmployeeHistoryEntity(
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employeeEntity: EmployeeEntity? = null
-
+    val employee: EmployeeEntity? = null
 )
 
 @Entity
@@ -331,7 +445,7 @@ class EmployeeSalaryEntity(
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employeeEntity: EmployeeEntity? = null
+    val employee: EmployeeEntity? = null
 )
 
 
@@ -339,15 +453,11 @@ class EmployeeSalaryEntity(
 @Comment("노무직원관리파일")
 @Table(name = "EMPLOYEE_ATTACH_FILE")
 @EntityListeners(AuditingEntityListener::class)
-class employeeAttachFileEntity(
+class EmployeeAttachFileEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
-
-    @Comment("기본 급여")
-    @Column(name = "BASIC_SALARY")
-    var basicSalary: Long? = null,
 
     @Comment("파일명")
     @Column(name = "FILE_NAME")
@@ -359,7 +469,7 @@ class employeeAttachFileEntity(
 
     @Comment("저장소 파일 위치")
     @Column(name = "PATH")
-    var path: Long? = null,
+    var path: String? = null,
 
     @Comment("파일 용량")
     @Column(name = "FILE_SIZE")
@@ -379,7 +489,7 @@ class employeeAttachFileEntity(
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employeeEntity: EmployeeEntity? = null
+    val employee: EmployeeEntity? = null
 )
 
 

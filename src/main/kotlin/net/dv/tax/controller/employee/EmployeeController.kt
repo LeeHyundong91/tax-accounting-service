@@ -1,9 +1,6 @@
 package net.dv.tax.controller.employee
 
-import net.dv.tax.dto.employee.EmployeeDto
-import net.dv.tax.dto.employee.EmployeeRequestCloseDto
-import net.dv.tax.dto.employee.EmployeeRequestDto
-import net.dv.tax.dto.employee.EmployeeSalaryDto
+import net.dv.tax.dto.employee.*
 import net.dv.tax.service.employee.EmployeeService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,29 +15,20 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/employee")
 class EmployeeController(private val employeeService: EmployeeService) {
 
-    //요청 목록
-    @GetMapping("request/list/{hospitalId}")
-    fun getEmployeeRequest(@PathVariable hospitalId: String
+    //직원 요청 등록
+    @PostMapping("request/insert")
+    fun registerEmployeeRequest(@RequestBody data: EmployeeRequestDto): ResponseEntity<Int> {
+        var res = employeeService.registerEmployeeRequest(data);
+        return ResponseEntity.ok(res)
+    }
+
+    //직원 요청 목록
+    @GetMapping("request/{hospitalId}/list")
+    fun getEmployeeRequestList(@PathVariable hospitalId: String
                             , offset: Long?, size: Long?
                             , searchType: String?, keyword: String?): List<EmployeeRequestDto> {
 
         return employeeService.getEmployeeRequestList(hospitalId, offset?: 0, size?: 30, searchType, keyword);
-    }
-
-    //직원등록
-    @PostMapping("insert")
-    fun registerEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {
-
-        var res = employeeService.registerEmployee(data);
-        return ResponseEntity.ok(res)
-    }
-
-    //직원수정
-    @PutMapping("update")
-    fun updateEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {
-
-        var res = employeeService.updateEmployee(data);
-        return ResponseEntity.ok(res)
     }
 
     //직원 요청 반영
@@ -64,6 +52,42 @@ class EmployeeController(private val employeeService: EmployeeService) {
         return ResponseEntity.ok(res)
     }
 
+    //직원 신규 등록
+    @PostMapping("insert")
+    fun registerEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {
 
+        var res = employeeService.registerEmployee(data);
+        return ResponseEntity.ok(res)
+    }
+
+    //직원 수정
+    @PutMapping("update")
+    fun updateEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {
+
+        var res = employeeService.updateEmployee(data);
+        return ResponseEntity.ok(res)
+    }
+
+    //직원 목록
+    @GetMapping("{hospitalId}/list")
+    fun getEmployeeList(@PathVariable hospitalId: String
+                        , offset: Long?, size: Long?
+                        , searchType: String?, keyword: String?): List<EmployeeDto> {
+
+        return employeeService.getEmployeeList(hospitalId, offset?: 0, size?: 30, searchType, keyword);
+    }
+
+   //직원 목록 상세
+    @GetMapping("{employeeId}/detail")
+    fun getEmployee(@PathVariable employeeId: String ): EmployeeDetailDto? {
+
+        return employeeService.getEmployee(employeeId);
+    }
+
+    //월별 급여 내역
+    @GetMapping("salary/{hospitalId}/{employeeId}/list")
+    fun getSalaryList(@PathVariable hospitalId: String, @PathVariable employeeId: String ): List<EmployeeSalaryDto> {
+        return employeeService.getSalaryList(hospitalId, employeeId);
+    }
 
 }
