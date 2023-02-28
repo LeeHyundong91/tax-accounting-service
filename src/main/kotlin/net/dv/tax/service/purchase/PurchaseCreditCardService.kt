@@ -6,8 +6,6 @@ import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 
 @Service
@@ -51,8 +49,7 @@ class PurchaseCreditCardService(
         rows.forEach {
 
 
-            val with2022Temp = "2022-" + it.getCell(0).rawValue
-            val billingDate = LocalDate.parse(with2022Temp, DateTimeFormatter.ISO_DATE)
+            val billingDate = "2022-" + it.getCell(0).rawValue
 
             var isDeduction = false
             var isRecommendDeduction = false
@@ -97,7 +94,6 @@ class PurchaseCreditCardService(
                     writer = cardEntity.writer,
                     isDelete = true
                 )
-
             creditCardList.add(useInForCreditCardEntity)
         }
 

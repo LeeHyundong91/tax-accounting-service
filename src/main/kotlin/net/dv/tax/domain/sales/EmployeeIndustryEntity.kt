@@ -18,13 +18,12 @@ import java.time.LocalDateTime
 data class EmployeeIndustryEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     val id: Long,
 
     @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String,
 
     @JsonProperty("industryInsId")

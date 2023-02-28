@@ -61,4 +61,4 @@ data class SalesCashReceiptEntity(
     @Column(updatable = false, name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    )
+)

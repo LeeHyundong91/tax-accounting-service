@@ -12,7 +12,7 @@ import java.time.LocalDate
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
-data class PurchaseElecInvoiceEntity (
+data class PurchaseElecInvoiceEntity(
 
     @Id
     @Column(name = "ID", insertable = false, updatable = false)

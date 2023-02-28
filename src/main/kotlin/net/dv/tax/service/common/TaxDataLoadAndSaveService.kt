@@ -6,6 +6,7 @@ import net.dv.tax.service.feign.DataReceiveFeignService
 import org.springframework.stereotype.Component
 
 @Component
+/*TODO ADD SCHEDULE*/
 class TaxDataLoadAndSaveService(
     private val dataReceiveFeignService: DataReceiveFeignService,
     private val medicalExamRepository: MedicalExamRepository,

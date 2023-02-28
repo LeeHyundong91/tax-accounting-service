@@ -4,7 +4,6 @@ import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDate
 
 @Entity
 @Table(name = "purchase_cash_receipt")
@@ -19,16 +18,15 @@ class PurchaseCashReceiptEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
-    @Column(name = "BILLING_DATE")
-    var billingDate: LocalDate? = null,
+    @Comment("일자")
+    var billingDate: String? = null,
 
-    @Column(name = "ACCOUNT_CODE")
+    @Comment("회계코드")
     var accountCode: String? = null,
 
-    @Column(name = "FRANCHISEE_NAME")
+    @Comment("거래처")
     var franchiseeName: String? = null,
 
     @Column(name = "CORPORATION_TYPE")
