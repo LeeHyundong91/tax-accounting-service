@@ -1,5 +1,6 @@
 package net.dv.tax.controller.employee
 
+import feign.Response
 import net.dv.tax.dto.employee.*
 import net.dv.tax.service.employee.EmployeeService
 import org.springframework.http.ResponseEntity
@@ -24,11 +25,9 @@ class EmployeeController(private val employeeService: EmployeeService) {
 
     //직원 요청 목록
     @GetMapping("request/{hospitalId}/list")
-    fun getEmployeeRequestList(@PathVariable hospitalId: String
-                            , offset: Long?, size: Long?
-                            , searchType: String?, keyword: String?): List<EmployeeRequestDto> {
+    fun getEmployeeRequestList(@PathVariable hospitalId: String, employeeQueryDto: EmployeeQueryDto): ResponseEntity<EmployeeRequestReturnDto> {
 
-        return employeeService.getEmployeeRequestList(hospitalId, offset?: 0, size?: 30, searchType, keyword);
+        return ResponseEntity.ok( employeeService.getEmployeeRequestList(hospitalId, employeeQueryDto) ) ;
     }
 
     //직원 요청 반영
@@ -70,11 +69,9 @@ class EmployeeController(private val employeeService: EmployeeService) {
 
     //직원 목록
     @GetMapping("{hospitalId}/list")
-    fun getEmployeeList(@PathVariable hospitalId: String
-                        , offset: Long?, size: Long?
-                        , searchType: String?, keyword: String?): List<EmployeeDto> {
+    fun getEmployeeList(@PathVariable hospitalId: String, employeeQueryDto: EmployeeQueryDto): ResponseEntity<EmployeeReturnDto> {
 
-        return employeeService.getEmployeeList(hospitalId, offset?: 0, size?: 30, searchType, keyword);
+        return ResponseEntity.ok( employeeService.getEmployeeList(hospitalId, employeeQueryDto));
     }
 
    //직원 목록 상세
@@ -84,10 +81,42 @@ class EmployeeController(private val employeeService: EmployeeService) {
         return employeeService.getEmployee(employeeId);
     }
 
-    //월별 급여 내역
+    //월별 직원 급여 내역
     @GetMapping("salary/{hospitalId}/{employeeId}/list")
-    fun getSalaryList(@PathVariable hospitalId: String, @PathVariable employeeId: String ): List<EmployeeSalaryDto> {
-        return employeeService.getSalaryList(hospitalId, employeeId);
+    fun getSalaryEmployeeList(@PathVariable hospitalId: String, @PathVariable employeeId: String ): List<EmployeeSalaryDto> {
+        return employeeService.getSalaryEmployeeList(hospitalId, employeeId);
+    }
+
+    //급여대장 목록 조회
+    @GetMapping("salary/mng/{hospitalId}/list")
+    fun getSalaryMngList(@PathVariable hospitalId: String, employeeQueryDto: EmployeeQueryDto): ResponseEntity<EmployeeSalaryMngReturnDto> {
+        return ResponseEntity.ok(employeeService.getSalaryMngList(hospitalId, employeeQueryDto));
+    }
+
+    //월별 급여 내역
+    @GetMapping("salary/mng/{hospitalId}/{salaryMngId}/list")
+    fun getSalaryMngDetailList(@PathVariable hospitalId: String, @PathVariable salaryMngId: String ): List<EmployeeSalaryDto> {
+        return employeeService.getSalaryMngDetailList(hospitalId, salaryMngId);
+    }
+
+    //승인요청 하기
+    @PutMapping("salary/mng/{salaryMngId}/appr")
+    fun updateSalaryMngAppr(@PathVariable salaryMngId: String, apprCode: String ): ResponseEntity<Int> {
+        var res = employeeService.updateSalaryMngAppr(salaryMngId, apprCode);
+        return ResponseEntity.ok(res)
+    }
+
+    //확정 하기
+    @PutMapping("salary/mng/{salaryMngId}/fixed")
+    fun updateSalaryMngFixed(@PathVariable salaryMngId: String, fixedCode: String ): ResponseEntity<Int> {
+        var res = employeeService.updateSalaryMngFixed(salaryMngId, fixedCode);
+        return ResponseEntity.ok(res)
+    }
+
+    //급여대장 등록
+    @PostMapping("salary/mng/insert")
+    fun insertSalary(@RequestBody data: EmployeeSalary): ResponseEntity<Int> {
+        return ResponseEntity.ok(employeeService.insertSalary( data));
     }
 
 }
