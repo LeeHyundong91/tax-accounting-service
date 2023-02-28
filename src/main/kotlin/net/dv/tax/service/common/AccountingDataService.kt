@@ -60,6 +60,8 @@ class AccountingDataService(
     fun deleteOriginData(id: Long): ResponseEntity<HttpStatus> {
         accountingDataRepository.findById(id).get().also {
             it.isDelete = true
+
+            accountingDataRepository.save(it)
         }
         return ResponseEntity.ok(HttpStatus.OK)
     }
@@ -67,6 +69,8 @@ class AccountingDataService(
     fun updateOriginData(id: Long): ResponseEntity<HttpStatus> {
         accountingDataRepository.findById(id).get().also {
             it.isApply = true
+
+            accountingDataRepository.save(it)
         }
         return ResponseEntity.ok(HttpStatus.OK)
     }
