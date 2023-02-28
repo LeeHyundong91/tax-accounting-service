@@ -16,7 +16,7 @@ data class AccountingDataEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null,
+    var id: Long? = null,
 
     var hospitalId: String? = null,
 

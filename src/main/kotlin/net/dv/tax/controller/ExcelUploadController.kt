@@ -52,5 +52,15 @@ class ExcelUploadController(
         )
     }
 
+    @PatchMapping("/excel/update/{id}")
+    fun updateExcelFile(@PathVariable id: Long): ResponseEntity<HttpStatus>{
+        return accountingDataService.deleteOriginData(id)
+    }
+
+    @DeleteMapping("/excel/update/{id}")
+    fun deleteExcelFile(@PathVariable id: Long): ResponseEntity<HttpStatus>{
+        return accountingDataService.deleteOriginData(id)
+    }
+
 
 }

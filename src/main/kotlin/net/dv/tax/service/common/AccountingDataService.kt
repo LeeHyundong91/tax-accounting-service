@@ -51,8 +51,24 @@ class AccountingDataService(
     }
 
     fun getOriginDataList(hospitalId: String, dataCategory: MenuCategoryCode): List<AccountingDataEntity> {
+        return accountingDataRepository.findAllByHospitalIdAndDataCategoryAndIsDeleteFalse(
+            hospitalId,
+            dataCategory.name
+        )
+    }
 
-        return accountingDataRepository.findAllByHospitalIdAndAndDataCategory(hospitalId, dataCategory.name)
+    fun deleteOriginData(id: Long): ResponseEntity<HttpStatus> {
+        accountingDataRepository.findById(id).get().also {
+            it.isDelete = true
+        }
+        return ResponseEntity.ok(HttpStatus.OK)
+    }
+
+    fun updateOriginData(id: Long): ResponseEntity<HttpStatus> {
+        accountingDataRepository.findById(id).get().also {
+            it.isApply = true
+        }
+        return ResponseEntity.ok(HttpStatus.OK)
     }
 
 
