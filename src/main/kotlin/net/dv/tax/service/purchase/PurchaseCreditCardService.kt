@@ -2,6 +2,7 @@ package net.dv.tax.service.purchase
 
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
+import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service
 class PurchaseCreditCardService(
     private val excelComponent: ExcelComponent,
     private val purchaseCreditCardRepository: PurchaseCreditCardRepository,
-    private val awsS3Service: AwsS3Service
+    private val awsS3Service: AwsS3Service,
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -28,12 +29,9 @@ class PurchaseCreditCardService(
      * only accept xlsx
      */
 
-    fun cellToEntity(cardEntity: PurchaseCreditCardEntity, fileName: String) {
+    fun excelToEntity(requiredDto: ExcelRequiredDto) {
 
-//        val filePath = "origin/2023/01/25/credit-card_17:27_90e636c7d68247559ffe0b6dfd586533.xlsx"
-
-
-        var rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(fileName))
+        var rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(requiredDto.filePath))
 
         val creditCardList = mutableListOf<PurchaseCreditCardEntity>()
 
@@ -48,8 +46,7 @@ class PurchaseCreditCardService(
 
         rows.forEach {
 
-
-            val billingDate = "2022-" + it.getCell(0).rawValue
+            val billingDate = requiredDto.year + "-" + it.getCell(0).rawValue
 
             var isDeduction = false
             var isRecommendDeduction = false
@@ -73,7 +70,7 @@ class PurchaseCreditCardService(
 
             val useInForCreditCardEntity =
                 PurchaseCreditCardEntity(
-                    hospitalId = cardEntity.hospitalId,
+                    hospitalId = requiredDto.hospitalId,
                     billingDate = billingDate,
                     accountCode = it.getCell(1)?.rawValue,
                     franchiseeName = it.getCell(2)?.rawValue,
@@ -91,7 +88,7 @@ class PurchaseCreditCardService(
                     creditAccount = it.getCell(14)?.rawValue,
                     separateSend = it.getCell(15)?.rawValue,
                     statementStatus = it.getCell(16)?.rawValue,
-                    writer = cardEntity.writer,
+                    writer = requiredDto.writer,
                     isDelete = true
                 )
             creditCardList.add(useInForCreditCardEntity)

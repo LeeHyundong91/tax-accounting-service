@@ -3,7 +3,9 @@ package net.dv.tax.service.common
 import mu.KotlinLogging
 import net.dv.tax.domain.common.AccountingDataEntity
 import net.dv.tax.dto.MenuCategoryCode
+import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.repository.common.AccountingDataRepository
+import net.dv.tax.service.purchase.PurchaseCreditCardService
 import net.dv.tax.utils.AwsS3Service
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile
 class AccountingDataService(
     private val accountingDataRepository: AccountingDataRepository,
     private val awsS3Service: AwsS3Service,
+
+    private val purchaseCreditCardService: PurchaseCreditCardService,
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -57,22 +61,58 @@ class AccountingDataService(
         )
     }
 
-    fun deleteOriginData(id: Long): ResponseEntity<HttpStatus> {
+    fun deleteOriginData(id: Long, writer: String): ResponseEntity<HttpStatus> {
         accountingDataRepository.findById(id).get().also {
             it.isDelete = true
+            it.writer = writer
 
             accountingDataRepository.save(it)
         }
         return ResponseEntity.ok(HttpStatus.OK)
     }
 
-    fun updateOriginData(id: Long): ResponseEntity<HttpStatus> {
-        accountingDataRepository.findById(id).get().also {
-            it.isApply = true
+    fun updateOriginData(id: Long, writer: String): ResponseEntity<HttpStatus> {
 
-            accountingDataRepository.save(it)
+
+        accountingDataRepository.findById(id).get().also {
+            val excelDto = ExcelRequiredDto(
+                it.writer!!,
+                it.hospitalId!!,
+                it.uploadFilePath!!,
+                it.uploadFileName?.trimStart()?.substring(0, 4)!!
+            )
+
+            it.isApply = true
+            it.writer = writer
+
+//            awsS3Service.getFileFromBucket(it.uploadFilePath!!)
+
+            when (MenuCategoryCode.valueOf(it.dataCategory!!)) {
+                MenuCategoryCode.MEDICAL_BENEFITS -> TODO()
+                MenuCategoryCode.CAR_INSURANCE -> TODO()
+                MenuCategoryCode.VACCINE -> TODO()
+                MenuCategoryCode.MEDICAL_EXAM -> TODO()
+                MenuCategoryCode.EMPLOYEE_INDUSTRY -> TODO()
+                MenuCategoryCode.HOSPITAL_CHART -> TODO()
+                MenuCategoryCode.CREDIT_CARD -> log.error { purchaseCreditCardService.excelToEntity(excelDto) }
+                MenuCategoryCode.CASH_RECEIPT -> TODO()
+                MenuCategoryCode.ELEC_INVOICE -> TODO()
+                MenuCategoryCode.ELEC_TAX_INVOICE -> TODO()
+                MenuCategoryCode.HAND_INVOICE -> TODO()
+            }
+
+//            accountingDataRepository.save(it)
         }
         return ResponseEntity.ok(HttpStatus.OK)
+    }
+
+    fun makeExcel(path: String, menuCategoryCode: MenuCategoryCode) {
+
+        log.error { path }
+        log.error { menuCategoryCode }
+
+        return
+
     }
 
 

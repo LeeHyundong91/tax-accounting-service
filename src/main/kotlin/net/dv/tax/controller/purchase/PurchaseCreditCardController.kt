@@ -58,16 +58,16 @@ class PurchaseCreditCardController(
     @GetMapping("/test")
     fun testFile() {
 
-        var hospitalId: String = "cid01"
-
-        var fileName = "origin/2023/01/27/credit-card_18:32_6d41c4e3e09b47e4baccf26a7066a392.xls"
-
-        var purchaseCreditCardEntity = PurchaseCreditCardEntity()
-        purchaseCreditCardEntity.hospitalId = hospitalId
-        purchaseCreditCardEntity.writer = "작성자"
-
-
-        purchaseCreditCardService.cellToEntity(purchaseCreditCardEntity, fileName)
+//        var hospitalId: String = "cid01"
+//
+//        var fileName = "origin/2023/01/27/credit-card_18:32_6d41c4e3e09b47e4baccf26a7066a392.xls"
+//
+//        var purchaseCreditCardEntity = PurchaseCreditCardEntity()
+//        purchaseCreditCardEntity.hospitalId = hospitalId
+//        purchaseCreditCardEntity.writer = "작성자"
+//
+//
+//        purchaseCreditCardService.excelToEntity(purchaseCreditCardEntity, fileName)
 
 
     }

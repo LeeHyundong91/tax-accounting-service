@@ -1,4 +1,4 @@
-package net.dv.tax.controller
+package net.dv.tax.controller.purchase
 
 import mu.KotlinLogging
 import net.dv.tax.domain.common.AccountingDataEntity
@@ -54,12 +54,16 @@ class ExcelUploadController(
 
     @PatchMapping("/excel/update/{id}")
     fun updateExcelFile(@PathVariable id: Long): ResponseEntity<HttpStatus>{
-        return accountingDataService.updateOriginData(id)
+        /*TODO Jwt use get data*/
+        val writer = "tester"
+        return accountingDataService.updateOriginData(id, writer)
     }
 
     @DeleteMapping("/excel/update/{id}")
     fun deleteExcelFile(@PathVariable id: Long): ResponseEntity<HttpStatus>{
-        return accountingDataService.deleteOriginData(id)
+        /*TODO Jwt use get data*/
+        val writer = "tester"
+        return accountingDataService.deleteOriginData(id, writer)
     }
 
 

@@ -51,7 +51,6 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
         transferManager.download(GetObjectRequest(bucket, filePath), file)
 
         return file
-
     }
 
     @Throws(Exception::class)
