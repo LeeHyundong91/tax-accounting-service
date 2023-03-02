@@ -20,7 +20,7 @@ data class EmployeeAttachFileDto (
 
     var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-    val employeeId: String
+    var employeeId: Long
 
 )
 
