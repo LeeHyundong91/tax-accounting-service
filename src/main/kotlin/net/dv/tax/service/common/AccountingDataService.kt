@@ -5,6 +5,7 @@ import net.dv.tax.domain.common.AccountingDataEntity
 import net.dv.tax.dto.MenuCategoryCode
 import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.repository.common.AccountingDataRepository
+import net.dv.tax.service.purchase.PurchaseCashReceiptService
 import net.dv.tax.service.purchase.PurchaseCreditCardService
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
@@ -21,6 +22,7 @@ class AccountingDataService(
     private val excelComponent: ExcelComponent,
 
     private val purchaseCreditCardService: PurchaseCreditCardService,
+    private val purchaseCashReceiptService: PurchaseCashReceiptService
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -98,7 +100,7 @@ class AccountingDataService(
                 MenuCategoryCode.EMPLOYEE_INDUSTRY -> TODO()
                 MenuCategoryCode.HOSPITAL_CHART -> TODO()
                 MenuCategoryCode.CREDIT_CARD -> log.error { purchaseCreditCardService.excelToEntitySave(excelDto, rows) }
-                MenuCategoryCode.CASH_RECEIPT -> TODO()
+                MenuCategoryCode.CASH_RECEIPT -> purchaseCashReceiptService.excelToEntitySave(excelDto, rows)
                 MenuCategoryCode.ELEC_INVOICE -> TODO()
                 MenuCategoryCode.ELEC_TAX_INVOICE -> TODO()
                 MenuCategoryCode.HAND_INVOICE -> TODO()
