@@ -20,8 +20,7 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
         /*Remove Title*/
         rows.removeFirst()
 
-        /*Remove sum data 카드리스트는 하위 3개*/
-        rows.removeLast()
+        /*Remove sum data 카드리스트는 하위 2개*/
         rows.removeLast()
         rows.removeLast()
 
