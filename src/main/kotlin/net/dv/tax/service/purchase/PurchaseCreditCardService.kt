@@ -31,7 +31,7 @@ class PurchaseCreditCardService(
 
     fun excelToEntity(requiredDto: ExcelRequiredDto) {
 
-        var rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(requiredDto.filePath))
+        val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(requiredDto.filePath))
 
         val creditCardList = mutableListOf<PurchaseCreditCardEntity>()
 

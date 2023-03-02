@@ -75,17 +75,16 @@ class AccountingDataService(
 
 
         accountingDataRepository.findById(id).get().also {
+
             val excelDto = ExcelRequiredDto(
-                it.writer!!,
-                it.hospitalId!!,
-                it.uploadFilePath!!,
-                it.uploadFileName?.trimStart()?.substring(0, 4)!!
+                writer = it.writer!!,
+                hospitalId = it.hospitalId!!,
+                filePath = it.uploadFilePath!!,
+                year = it.uploadFileName?.trimStart()?.substring(0, 4)!!
             )
 
             it.isApply = true
             it.writer = writer
-
-//            awsS3Service.getFileFromBucket(it.uploadFilePath!!)
 
             when (MenuCategoryCode.valueOf(it.dataCategory!!)) {
                 MenuCategoryCode.MEDICAL_BENEFITS -> TODO()
@@ -104,15 +103,6 @@ class AccountingDataService(
 //            accountingDataRepository.save(it)
         }
         return ResponseEntity.ok(HttpStatus.OK)
-    }
-
-    fun makeExcel(path: String, menuCategoryCode: MenuCategoryCode) {
-
-        log.error { path }
-        log.error { menuCategoryCode }
-
-        return
-
     }
 
 
