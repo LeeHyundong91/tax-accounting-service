@@ -1,8 +1,6 @@
 package net.dv.tax.service.employee
 
-import net.dv.tax.domain.employee.EmployeeEntity
-import net.dv.tax.domain.employee.EmployeeHistoryEntity
-import net.dv.tax.domain.employee.EmployeeRequestEntity
+import net.dv.tax.domain.employee.*
 import net.dv.tax.dto.employee.*
 
 import net.dv.tax.enum.employee.*
@@ -15,15 +13,16 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.LinkedList
+
 
 @Service
 class EmployeeService(
     private val employeeRequestRepository: EmployeeRequestRepository,
     private val employeeRepository: EmployeeRepository,
     private val employeeHistoryRepository: EmployeeHistoryRepository,
-    private val employeeSalaryRepository: EmployeeSalaryRepository,
     private val employeeAttachFileRepository: EmployeeAttachFileRepository,
+    private val employeeSalaryRepository: EmployeeSalaryRepository,
+    private val employeeSalaryMngRepository:EmployeeSalaryMngRepository,
     private val encrypt:Encrypt,
     ) {
 
@@ -68,24 +67,19 @@ class EmployeeService(
             )
 
             employeeRequestRepository.save(saveEmployeeRequestEntity)
-            employeeRequest.id = saveEmployeeRequestEntity.id!!
         }
 
         return HttpStatus.OK.value()
     }
 
     //직원 요청 목록
-    fun getEmployeeRequestList(
-        hospitalId: String,
-        offset: Long,
-        size: Long,
-        searchType: String?,
-        keyword: String?
-    ): List<EmployeeRequestDto> {
+    fun getEmployeeRequestList( hospitalId: String, employeeQueryDto: EmployeeQueryDto ): EmployeeRequestReturnDto {
 
-        val realOffset = offset * size;
+        // 전체 카운트
+        val employeeRequestListCnt = employeeRequestRepository.employeeRequestListCnt(hospitalId, employeeQueryDto)
 
-        return employeeRequestRepository.employeeRequestList(hospitalId, realOffset, size, searchType, keyword).map {
+        //리스트
+        val employeeRequestList = employeeRequestRepository.employeeRequestList(hospitalId, employeeQueryDto).map {
             EmployeeRequestDto(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
@@ -103,6 +97,11 @@ class EmployeeService(
                 requestStateName = getRequestStateName(it.requestState),
             )
         }
+
+        return EmployeeRequestReturnDto(
+            employeeRequestListCnt = employeeRequestListCnt,
+            employeeRequestList = employeeRequestList
+        )
     }
 
     //반영 
@@ -281,7 +280,6 @@ class EmployeeService(
                 employee.email = employeeDto.email
                 employee.jobClass = employeeDto.jobClass
                 employee.reason = employeeDto.reason
-                employee.resignationAt = employeeDto.resignationAt
                 employee.resignationContents = employeeDto.resignationContents
                 employee.mobilePhoneNumber = employeeDto.mobilePhoneNumber
                 employee.office = employeeDto.office
@@ -292,6 +290,13 @@ class EmployeeService(
                 employee.address = employeeDto.address
                 employee.apprAt = LocalDateTime.now()
                 employee.attachFileYn = employeeDto.attachFileYn
+
+                employeeDto.resignationAt?.also {
+                    if( employeeDto.resignationAt!!.length > 0 ) {
+                        employee.resignationAt = employeeDto.resignationAt
+                    }
+
+                }
 
                 //저장
                 employeeRepository.save(employee)
@@ -342,17 +347,10 @@ class EmployeeService(
     }
 
     //직원 요청 목록
-    fun getEmployeeList(
-        hospitalId: String,
-        offset: Long,
-        size: Long,
-        searchType: String?,
-        keyword: String?
-    ): List<EmployeeDto> {
+    fun getEmployeeList( hospitalId: String, employeeQueryDto: EmployeeQueryDto ): EmployeeReturnDto {
 
-        val realOffset = offset * size;
-
-        return employeeRepository.employeeList(hospitalId, realOffset, size, searchType, keyword).map {
+        val employeeListCnt = employeeRepository.employeeListCnt(hospitalId, employeeQueryDto)
+        val employeeList = employeeRepository.employeeList(hospitalId, employeeQueryDto).map {
             EmployeeDto(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
@@ -368,6 +366,12 @@ class EmployeeService(
                 reason = it.reason ?: ""
             )
         }
+
+        return EmployeeReturnDto(
+            employeeListCnt = employeeListCnt,
+            employeeList = employeeList
+
+        )
     }
 
     fun getEmployee( employeeId: String ): EmployeeDetailDto? {
@@ -429,9 +433,8 @@ class EmployeeService(
         return employeeDetailDto;
     }
 
-    //급여 조회
-    fun getSalaryList(hospitalId: String, employeeId: String): List<EmployeeSalaryDto> {
-
+    //직원 급여 조회
+    fun getSalaryEmployeeList(hospitalId: String, employeeId: String): List<EmployeeSalaryDto> {
 
         val employee: EmployeeEntity = employeeRepository.findById(employeeId.toInt()).get()
 
@@ -439,7 +442,7 @@ class EmployeeService(
 
         return employeeSalaryRepository.findByHospitalIdAndEmployee(hospitalId, employee).map {
             EmployeeSalaryDto(
-                id = it.id,
+                id = it.id!!,
                 hospitalId = it.hospitalId,
                 basicSalary =  it.basicSalary,
                 totalSalary = it.totalSalary,
@@ -460,4 +463,114 @@ class EmployeeService(
         }
     }
 
+    fun getSalaryMngList( hospitalId: String, employeeQueryDto: EmployeeQueryDto): EmployeeSalaryMngReturnDto {
+
+         val employeeSalaryMngListCnt = employeeSalaryMngRepository.getSalaryMngListCnt(hospitalId, employeeQueryDto);
+         val employeeSalaryMngList = employeeSalaryMngRepository.getSalaryMngList(hospitalId, employeeQueryDto).map {
+            EmployeeSalaryMngDto(
+                id = it.id!!,
+                hospitalId = it.hospitalId,
+                hospitalName = it.hospitalName,
+                paymentsAt = it.paymentsAt,
+                employeeCnt = it.employeeCnt,
+                createdAt = it.createdAt,
+                payrollCreatedAt = it.payrollCreatedAt,
+                apprState = getApprovalName(it.apprState!!) ,
+                fixedState = getFixedName(it.fixedState!!)
+            )
+        }
+
+        return EmployeeSalaryMngReturnDto(
+            employeeSalaryMngListCnt = employeeSalaryMngListCnt,
+            employeeSalaryMngList = employeeSalaryMngList
+        )
+    }
+
+    fun getSalaryMngDetailList(hospitalId: String, salaryMngId: String): List<EmployeeSalaryDto> {
+
+        val salaryMngEntity = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get();
+
+        return employeeSalaryRepository.findByHospitalIdAndEmployeeSalaryMng(hospitalId, salaryMngEntity).map {
+            EmployeeSalaryDto(
+                id = it.id!!,
+                hospitalId = it.hospitalId,
+                basicSalary =  it.basicSalary,
+                totalSalary = it.totalSalary,
+                detailSalary = it.detailSalary,
+                nationalPension = it.nationalPension,
+                healthInsurance = it.healthInsurance,
+                careInsurance = it.careInsurance,
+                unemployementInsurance = it.unemployementInsurance,
+                incomeTax = it.incomeTax,
+                localIncomeTax = it.localIncomeTax,
+                incomeTaxYearEnd = it.incomeTaxYearEnd,
+                localIncomeTaxYearEnd = it.localIncomeTaxYearEnd,
+                actualPayment = it.actualPayment,
+                paymentsAt = it.paymentsAt,
+                createdAt = it.createdAt,
+                employeeId = it.employee!!.id,
+            )
+        }
+    }
+
+    fun updateSalaryMngAppr(salaryMngId: String, apprCode: String): Int{
+
+        val employeeSalaryMng = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get()
+        employeeSalaryMng.apprState = apprCode;
+
+        employeeSalaryMngRepository.save(employeeSalaryMng)
+
+        return HttpStatus.OK.value()
+    }
+
+    fun updateSalaryMngFixed(salaryMngId: String, fixedCode: String): Int{
+
+        val employeeSalaryMng = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get()
+        employeeSalaryMng.fixedState = fixedCode;
+
+        employeeSalaryMngRepository.save(employeeSalaryMng)
+
+        return HttpStatus.OK.value()
+    }
+
+    fun insertSalary( employeeSalary: EmployeeSalary ): Int{
+
+        val employeeSalaryMngEntity =  EmployeeSalaryMngEntity(
+            hospitalId = employeeSalary.hospitalId,
+            hospitalName = employeeSalary.hospitalName,
+            paymentsAt = employeeSalary.paymentsAt,
+            employeeCnt = employeeSalary.employeeSalaryList!!.size.toString(),
+            createdAt = LocalDateTime.now()
+        )
+
+        val paymentsAt = LocalDateTime.parse(employeeSalary.paymentsAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+
+
+        employeeSalaryMngRepository.save(employeeSalaryMngEntity)
+
+        employeeSalary.employeeSalaryList.map {
+
+            val employee = employeeRepository.findById(it.employeeId!!.toInt()).get()
+
+            val employeeSalaryEntity = EmployeeSalaryEntity (
+                hospitalId = it.hospitalId,
+                basicSalary = it.basicSalary,
+                totalSalary = it.totalSalary,
+                detailSalary = it.detailSalary,
+                nationalPension = it.nationalPension,
+                healthInsurance = it.healthInsurance,
+                careInsurance = it.careInsurance,
+                unemployementInsurance = it.unemployementInsurance,
+                incomeTax = it.incomeTax,
+                localIncomeTax = it.localIncomeTax,
+                incomeTaxYearEnd = it.incomeTaxYearEnd,
+                localIncomeTaxYearEnd = it.localIncomeTaxYearEnd,
+                actualPayment = it.actualPayment,
+                paymentsAt = paymentsAt,
+                employee = employee
+            )
+            employeeSalaryRepository.save(employeeSalaryEntity)
+        }
+        return HttpStatus.OK.value()
+    }
 }

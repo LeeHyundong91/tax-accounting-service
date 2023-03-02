@@ -1,13 +1,32 @@
 package net.dv.tax.dto.employee
 
-
 import java.time.LocalDateTime
+
+data class EmployeeSalary(
+
+    var hospitalId: String? = null,
+
+    var hospitalName: String? = null,
+
+    var paymentsAt: String? = null,
+
+    var employeeCnt: String? = null,
+
+    var createdAt: LocalDateTime? = null,
+
+    var payrollCreatedAt: LocalDateTime? = null,
+
+    val employeeSalaryList: List<EmployeeSalaryDto>? = null
+)
+
 
 data class EmployeeSalaryDto (
 
     val id: Long,
 
     var hospitalId: String? = null,
+
+    var hospitalName: String? = null,
 
     var basicSalary: Long? = null,
 
