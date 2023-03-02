@@ -374,14 +374,101 @@ class EmployeeHistoryEntity(
 )
 
 @Entity
+@Comment("노무직원관리파일")
+@Table(name = "EMPLOYEE_ATTACH_FILE")
+@EntityListeners(AuditingEntityListener::class)
+class EmployeeAttachFileEntity(
+    @Id
+    @Column(name = "id", insertable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long,
+
+    @Comment("파일명")
+    @Column(name = "FILE_NAME")
+    var fileName: String? = null,
+
+    @Comment("저장소 파일명")
+    @Column(name = "LOCAL_FILE_NAME")
+    var localFileName: String? = null,
+
+    @Comment("저장소 파일 위치")
+    @Column(name = "PATH")
+    var path: String? = null,
+
+    @Comment("파일 용량")
+    @Column(name = "FILE_SIZE")
+    var fileSize: Long? = null,
+
+    @Comment("파일 확장자")
+    @Column(name = "FILE_EXT")
+    var fileExt: String? = null,
+
+    @Comment("사용 여부")
+    @Column(name = "USE_YN")
+    var useYn: String? = null,
+
+    @Comment("등록일")
+    @Column(name = "CREATED_AT")
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
+
+    @ManyToOne
+    @JoinColumn(name = "EMPLOYEE_ID")
+    val employee: EmployeeEntity? = null
+)
+
+@Entity
 @Comment("노무직원급여관리")
+@Table(name = "EMPLOYEE_SALARY_MNG")
+@EntityListeners(AuditingEntityListener::class)
+class EmployeeSalaryMngEntity(
+    @Id
+    @Column(name = "id", insertable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
+
+    @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
+    var hospitalId: String? = null,
+
+    @Comment("병원 명")
+    @Column(name = "HOSPITAL_NAME")
+    var hospitalName: String? = null,
+
+    @Comment("지급일")
+    @Column(name = "PAYMENTS_AT")
+    var paymentsAt: String? = null,
+
+    @Comment("직원수")
+    @Column(name = "EMPLOYEE_CNT")
+    var employeeCnt: String? = null,
+
+    @Comment("등록일")
+    @Column(name = "CREATED_AT")
+    var createdAt: LocalDateTime? = null,
+
+    @Comment("급여대장발급일시")
+    @Column(name = "PAYROLL_CREATED_AT")
+    var payrollCreatedAt: LocalDateTime? = null,
+
+    @Comment("승인요청상태")
+    @Column(name = "APPR_STATE")
+    var apprState: String? = null,
+
+    @Comment("확정처리상태")
+    @Column(name = "FIXED_STATE")
+    var fixedState: String? = null,
+
+)
+
+@Entity
+@Comment("노무직원급여")
 @Table(name = "EMPLOYEE_SALARY")
 @EntityListeners(AuditingEntityListener::class)
 class EmployeeSalaryEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long? = null,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
@@ -443,53 +530,14 @@ class EmployeeSalaryEntity(
     @Column(name = "CREATED_AT")
     var createdAt: LocalDateTime? = LocalDateTime.now(),
 
+    @Comment("사용자 아아디")
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employee: EmployeeEntity? = null
-)
+    val employee: EmployeeEntity? = null,
 
 
-@Entity
-@Comment("노무직원관리파일")
-@Table(name = "EMPLOYEE_ATTACH_FILE")
-@EntityListeners(AuditingEntityListener::class)
-class EmployeeAttachFileEntity(
-    @Id
-    @Column(name = "id", insertable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
-
-    @Comment("파일명")
-    @Column(name = "FILE_NAME")
-    var fileName: String? = null,
-
-    @Comment("저장소 파일명")
-    @Column(name = "LOCAL_FILE_NAME")
-    var localFileName: String? = null,
-
-    @Comment("저장소 파일 위치")
-    @Column(name = "PATH")
-    var path: String? = null,
-
-    @Comment("파일 용량")
-    @Column(name = "FILE_SIZE")
-    var fileSize: Long? = null,
-
-    @Comment("파일 확장자")
-    @Column(name = "FILE_EXT")
-    var fileExt: String? = null,
-
-    @Comment("사용 여부")
-    @Column(name = "USE_YN")
-    var useYn: String? = null,
-
-    @Comment("등록일")
-    @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime? = LocalDateTime.now(),
-
+    @Comment("관리 아아디")
     @ManyToOne
-    @JoinColumn(name = "EMPLOYEE_ID")
-    val employee: EmployeeEntity? = null
+    @JoinColumn(name = "SALARY_MNG_ID")
+    var employeeSalaryMng: EmployeeSalaryMngEntity? = null
 )
-
-
