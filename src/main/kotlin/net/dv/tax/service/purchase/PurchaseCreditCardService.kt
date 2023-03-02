@@ -72,6 +72,7 @@ class PurchaseCreditCardService(
                 PurchaseCreditCardEntity(
                     hospitalId = requiredDto.hospitalId,
                     billingDate = billingDate,
+                    dataFileId = requiredDto.fileId,
                     accountCode = it.getCell(1)?.rawValue,
                     franchiseeName = it.getCell(2)?.rawValue,
                     corporationType = it.getCell(3)?.rawValue,
@@ -89,7 +90,7 @@ class PurchaseCreditCardService(
                     separateSend = it.getCell(15)?.rawValue,
                     statementStatus = it.getCell(16)?.rawValue,
                     writer = requiredDto.writer,
-                    isDelete = true
+                    isDelete = false
                 )
             creditCardList.add(useInForCreditCardEntity)
         }

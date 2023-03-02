@@ -8,6 +8,8 @@ data class ExcelRequiredDto (
 
     val filePath: String,
 
-    val year: String
+    val year: String,
+
+    val fileId: Long
 
 )

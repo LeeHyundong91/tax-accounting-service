@@ -16,9 +16,12 @@ class PurchaseCashReceiptEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    val id: Long? = null,
 
     var hospitalId: String? = null,
+
+    @Comment("업로드 파일 ID")
+    var dataFileId: Long? = null,
 
     @Comment("일자")
     var billingDate: String? = null,
@@ -29,52 +32,67 @@ class PurchaseCashReceiptEntity(
     @Comment("거래처")
     var franchiseeName: String? = null,
 
-    @Column(name = "CORPORATION_TYPE")
+    @Comment("구분")
     var corporationType: String? = null,
 
     @Column(name = "ITEM_NAME")
+    @Comment("품명")
     var itemName: String? = null,
 
     @Column(name = "SUPPLY_PRICE")
-    var supplyPrice: Int? = null,
+    @Comment("공급가액")
+    var supplyPrice: Long? = 0,
 
     @Column(name = "TAX_AMOUNT")
-    var taxAmount: Int? = null,
+    @Comment("세액")
+    var taxAmount: Long? = 0,
 
     @Column(name = "SERVICE_CHARGE")
-    var serviceCharge: Int? = null,
+    @Comment("봉사료")
+    var serviceCharge: Long? = 0,
 
     @Column(name = "TOTAL_AMOUNT")
-    var totalAmount: Int? = null,
+    @Comment("합계")
+    var totalAmount: Long? = 0,
 
     @Column(name = "IS_DEDUCTION")
+    @Comment("국세청(공제여부)")
     var isDeduction: Boolean? = null,
 
     @Column(name = "IS_RECOMMEND_DEDUCTION")
+    @Comment("추천유형(불공제")
     var isRecommendDeduction: Boolean? = null,
 
+    @Comment("전표유형 1")
     @Column(name = "STATEMENT_TYPE_1")
     var statementType1: String? = null,
 
+    @Comment("전표유형 2")
     @Column(name = "STATEMENT_TYPE_2")
     var statementType2: String? = null,
 
+    @Comment("차변계정")
     @Column(name = "DEBTOR_ACCOUNT")
     var debtorAccount: String? = null,
 
+    @Comment("대변계정")
     @Column(name = "CREDIT_ACCOUNT")
     var creditAccount: String? = null,
 
+    @Comment("분개전송")
     @Column(name = "SEPARATE_SEND")
-    var separateSend: String? = null,
+    var separateSend: Boolean? = null,
 
+    @Comment("부서")
     @Column(name = "DEPARTMENT")
     var department: String? = null,
 
+    @Comment("전표상태")
     @Column(name = "STATEMENT_STATUS")
     var statementStatus: String? = null,
 
+    @Comment("작성자")
     @Column(name = "WRITER")
     var writer: String? = null,
 
-)
+    )
