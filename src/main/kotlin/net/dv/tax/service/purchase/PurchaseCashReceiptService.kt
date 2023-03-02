@@ -1,30 +1,21 @@
 package net.dv.tax.service.purchase
 
 import mu.KotlinLogging
-import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
+import net.dv.tax.domain.purchase.PurchaseCashReceiptEntity
 import net.dv.tax.dto.purchase.ExcelRequiredDto
-import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
+import net.dv.tax.repository.purchase.PurchaseCashReceiptRepository
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
 
-
 @Service
-class PurchaseCreditCardService(
-    private val purchaseCreditCardRepository: PurchaseCreditCardRepository,
-) {
+class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: PurchaseCashReceiptRepository) {
 
     private val log = KotlinLogging.logger {}
 
 
-    /**
-     * TODO Only Use Single Upload Excel File
-     * do not use xls
-     * only accept xlsx
-     */
-
     fun excelToEntitySave(requiredDto: ExcelRequiredDto, rows: MutableList<Row>) {
 
-        val dataList = mutableListOf<PurchaseCreditCardEntity>()
+        val dataList = mutableListOf<PurchaseCashReceiptEntity>()
 
         /*Remove Title*/
         rows.removeFirst()
@@ -58,9 +49,8 @@ class PurchaseCreditCardService(
                 isRecommendDeduction = true
             }
 
-
             val data =
-                PurchaseCreditCardEntity(
+                PurchaseCashReceiptEntity(
                     hospitalId = requiredDto.hospitalId,
                     billingDate = billingDate,
                     dataFileId = requiredDto.fileDataId,
@@ -70,7 +60,7 @@ class PurchaseCreditCardService(
                     itemName = it.getCell(4)?.rawValue,
                     supplyPrice = it.getCell(5)?.rawValue?.toLong(),
                     taxAmount = it.getCell(6)?.rawValue?.toLong(),
-                    nonTaxAmount = it.getCell(7)?.rawValue?.toLong(),
+                    serviceCharge = it.getCell(7)?.rawValue?.toLong(),
                     totalAmount = it.getCell(8)?.rawValue?.toLong(),
                     isDeduction = isDeduction,
                     isRecommendDeduction = isRecommendDeduction,
@@ -79,17 +69,16 @@ class PurchaseCreditCardService(
                     debtorAccount = it.getCell(13)?.rawValue,
                     creditAccount = it.getCell(14)?.rawValue,
                     separateSend = it.getCell(15)?.rawValue,
-                    statementStatus = it.getCell(16)?.rawValue,
+                    department = it.getCell(16)?.rawValue,
+                    statementStatus = it.getCell(17)?.rawValue,
                     writer = requiredDto.writer,
-                    isDelete = false
                 )
             dataList.add(data)
         }
 
         log.error { dataList }
 
-        purchaseCreditCardRepository.saveAll(dataList)
+        purchaseCashReceiptRepository.saveAll(dataList)
     }
-
 
 }

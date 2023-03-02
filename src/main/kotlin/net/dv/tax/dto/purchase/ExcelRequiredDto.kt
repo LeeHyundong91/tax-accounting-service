@@ -6,10 +6,8 @@ data class ExcelRequiredDto (
 
     val hospitalId: String,
 
-    val filePath: String,
-
     val year: String,
 
-    val fileId: Long
+    val fileDataId: Long
 
 )

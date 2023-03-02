@@ -7,6 +7,7 @@ import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.repository.common.AccountingDataRepository
 import net.dv.tax.service.purchase.PurchaseCreditCardService
 import net.dv.tax.utils.AwsS3Service
+import net.dv.tax.utils.ExcelComponent
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile
 class AccountingDataService(
     private val accountingDataRepository: AccountingDataRepository,
     private val awsS3Service: AwsS3Service,
+    private val excelComponent: ExcelComponent,
 
     private val purchaseCreditCardService: PurchaseCreditCardService,
 ) {
@@ -79,13 +81,14 @@ class AccountingDataService(
             val excelDto = ExcelRequiredDto(
                 writer = it.writer!!,
                 hospitalId = it.hospitalId!!,
-                filePath = it.uploadFilePath!!,
                 year = it.uploadFileName?.trimStart()?.substring(0, 4)!!,
                 it.id!!
             )
 
             it.isApply = true
             it.writer = writer
+
+            val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(it.uploadFilePath!!))
 
             when (MenuCategoryCode.valueOf(it.dataCategory!!)) {
                 MenuCategoryCode.MEDICAL_BENEFITS -> TODO()
@@ -94,7 +97,7 @@ class AccountingDataService(
                 MenuCategoryCode.MEDICAL_EXAM -> TODO()
                 MenuCategoryCode.EMPLOYEE_INDUSTRY -> TODO()
                 MenuCategoryCode.HOSPITAL_CHART -> TODO()
-                MenuCategoryCode.CREDIT_CARD -> log.error { purchaseCreditCardService.excelToEntity(excelDto) }
+                MenuCategoryCode.CREDIT_CARD -> log.error { purchaseCreditCardService.excelToEntitySave(excelDto, rows) }
                 MenuCategoryCode.CASH_RECEIPT -> TODO()
                 MenuCategoryCode.ELEC_INVOICE -> TODO()
                 MenuCategoryCode.ELEC_TAX_INVOICE -> TODO()

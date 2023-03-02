@@ -81,7 +81,7 @@ class PurchaseCashReceiptEntity(
 
     @Comment("분개전송")
     @Column(name = "SEPARATE_SEND")
-    var separateSend: Boolean? = null,
+    var separateSend: String? = null,
 
     @Comment("부서")
     @Column(name = "DEPARTMENT")
