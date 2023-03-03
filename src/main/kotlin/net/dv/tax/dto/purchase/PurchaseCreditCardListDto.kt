@@ -1,26 +1,44 @@
-package net.dv.tax.domain.purchase
-
-import jakarta.persistence.*
+package net.dv.tax.dto.purchase
 import org.hibernate.annotations.Comment
-import org.hibernate.annotations.DynamicUpdate
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
-@Entity
-@Table(name = "purchase_credit_card")
-@Comment("신용카드매입관리")
-@Suppress("JpaAttributeTypeInspection")
-@DynamicUpdate
-data class PurchaseCreditCardEntity(
+data class PurchaseCreditCardListDto (
+    
+    //list 데이터
+    var listPurchaseCreditCard: List<PurchaseCreditCardDto>,
 
-    @Id
-    @Column(name = "ID", insertable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //합계 정보
+    var purchaseCreditCardTotal: PurchaseCreditCardTotal,
+
+    //총게시물 수
+    var totalCount: Long? = null
+)
+
+//합계 항목
+data class PurchaseCreditCardTotal(
+
+    //공제
+    val totalSupplyPrice: Long? = 0,
+    val totalTaxAmount: Long? = 0,
+    val totalAmount: Long? = 0,
+
+    //불공제
+    val totalNonSupplyPrice: Long? = 0,
+    val totalNonTaxAmount: Long? = 0,
+    val totalNonAmount: Long? = 0,
+)
+
+data class PurchaseCreditCardTotalSearch(
+    val totalSupplyPrice: Long? = 0,
+    val totalTaxAmount: Long? = 0,
+    val totalAmount: Long? = 0,
+)
+
+data class PurchaseCreditCardDto (
+
     val id: Int? = null,
 
     @Comment("병원아이디")
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
     @Comment("업로드 파일 ID")
@@ -60,11 +78,9 @@ data class PurchaseCreditCardEntity(
     var isRecommendDeduction: Boolean? = false,
 
     @Comment("전표유형1")
-    @Column(name = "STATEMENT_TYPE_1")
     var statementType1: String? = null,
 
     @Comment("전표유형2")
-    @Column(name = "STATEMENT_TYPE_2")
     var statementType2: String? = null,
 
     @Comment("차변계정")
@@ -86,8 +102,5 @@ data class PurchaseCreditCardEntity(
     var isDelete: Boolean? = false,
 
     @Comment("등록일(업로드일시")
-    @CreatedDate
-    @Column(name = "CREATED_AT")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: LocalDateTime? = null,
 )
