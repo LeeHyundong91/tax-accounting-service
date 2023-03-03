@@ -38,16 +38,16 @@ data class PurchaseElecInvoiceEntity(
     var itemName: String? = null,
 
     @Column(name = "SUPPLY_PRICE")
-    var supplyPrice: Int? = null,
+    var supplyPrice: Long? = null,
 
     @Column(name = "TAX_AMOUNT")
-    var taxAmount: Int? = null,
+    var taxAmount: Long? = null,
 
     @Column(name = "TOTAL_AMOUNT")
-    var totalAmount: Int? = null,
+    var totalAmount: Long? = null,
 
     @Column(name = "IS_DEDUCTION")
-    var isDeduction: Byte? = null,
+    var isDeduction: String? = null,
 
     @Column(name = "DEBTOR_ACCOUNT")
     var debtorAccount: String? = null,
