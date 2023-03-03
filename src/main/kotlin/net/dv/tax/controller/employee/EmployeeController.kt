@@ -1,10 +1,8 @@
 package net.dv.tax.controller.employee
 
-import feign.Response
+import net.dv.tax.TaxAccountingApplication
 import net.dv.tax.dto.employee.*
 import net.dv.tax.service.employee.EmployeeService
-import net.dv.tax.utils.AwsS3Service
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -12,13 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
-import java.util.LinkedList
 
 @RestController
-@RequestMapping("/v1/employee")
+@RequestMapping("/${TaxAccountingApplication.VERSION}/employee")
 class EmployeeController(
     private val employeeService: EmployeeService,
 

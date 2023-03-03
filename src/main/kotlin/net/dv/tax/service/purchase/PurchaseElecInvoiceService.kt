@@ -3,6 +3,9 @@ package net.dv.tax.service.purchase
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseElecInvoiceEntity
 import net.dv.tax.dto.purchase.ExcelRequiredDto
+import net.dv.tax.dto.purchase.PurchaseElecInvoiceDto
+import net.dv.tax.dto.purchase.PurchaseElecInvoiceListDto
+import net.dv.tax.dto.purchase.PurchaseQueryDto
 import net.dv.tax.repository.purchase.PurchaseElecInvoiceRepository
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
@@ -23,7 +26,6 @@ class PurchaseElecInvoiceService(
      * do not use xls
      * only accept xlsx
      */
-
     fun excelToEntitySave(requiredDto: ExcelRequiredDto, rows: MutableList<Row>) {
 
         val elecInvoiceList = mutableListOf<PurchaseElecInvoiceEntity>()
@@ -68,5 +70,49 @@ class PurchaseElecInvoiceService(
         }
         log.error { elecInvoiceList }
         saveElecInvoiceList(elecInvoiceList)
+    }
+
+    fun getPurchaseElecInvoice(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseElecInvoiceListDto{
+
+        var elecInvoiceList = getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto)
+        var totalCount = purchaseElecInvoiceRepository.purchaseElecInvoiceListCnt(hospitalId, purchaseQueryDto)
+        var purchaseElecInvoiceTotal = purchaseElecInvoiceRepository.purchaseElecInvoiceTotal(hospitalId, purchaseQueryDto)
+
+        return PurchaseElecInvoiceListDto(
+            listPurchaseElecInvoice = elecInvoiceList,
+            totalCount=totalCount,
+            purchaseElecInvoiceTotal = purchaseElecInvoiceTotal
+        )
+    }
+
+    fun getPurchaseElecInvoiceList(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseElecInvoiceDto>{
+
+        var elecInvoiceList = purchaseElecInvoiceRepository.purchaseElecInvoiceList(hospitalId, purchaseQueryDto).map{ purchaseElecInvoice ->
+            PurchaseElecInvoiceDto(
+                id = purchaseElecInvoice.id,
+                issueDate = purchaseElecInvoice.issueDate,
+                sendDate = purchaseElecInvoice.sendDate,
+                accountCode = purchaseElecInvoice.accountCode,
+                franchiseeName = purchaseElecInvoice.franchiseeName,
+                itemName = purchaseElecInvoice.itemName,
+                supplyPrice = purchaseElecInvoice.supplyPrice,
+                taxAmount = purchaseElecInvoice.taxAmount,
+                totalAmount = purchaseElecInvoice.totalAmount,
+                isDeduction = purchaseElecInvoice.isDeduction,
+                debtorAccount = purchaseElecInvoice.debtorAccount,
+                creditAccount = purchaseElecInvoice.creditAccount,
+                separateSend = purchaseElecInvoice.separateSend,
+                statementStatus = purchaseElecInvoice.statementStatus,
+                taskType = purchaseElecInvoice.taskType,
+                approvalNo = purchaseElecInvoice.approvalNo,
+                invoiceType = purchaseElecInvoice.invoiceType,
+                billingType = purchaseElecInvoice.billingType,
+                issueType = purchaseElecInvoice.issueType,
+                writer = purchaseElecInvoice.writer,
+            )
+        }
+
+        return elecInvoiceList
+
     }
 }

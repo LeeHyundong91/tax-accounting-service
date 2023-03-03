@@ -8,7 +8,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableFeignClients
-class TaxAccountingApplication
+class TaxAccountingApplication{
+    companion object {
+        const val VERSION: String = "v1"
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<TaxAccountingApplication>(*args)
