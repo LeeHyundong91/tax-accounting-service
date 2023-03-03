@@ -121,7 +121,7 @@ class EmployeeService(
     @Transactional
     fun updateEmployeeRequestCloseAll(hospitalId: String): Int {
         employeeRequestRepository.findAllByHospitalIdAndRequestState(
-            hospitalId, RequestState.RequestState_P.requestStateCode ).map{ employeeRequestEntity ->
+            hospitalId, RequestState.RequestState_P.requestStateCode ).forEach{ employeeRequestEntity ->
             employeeRequestEntity?.also { employeeRequest ->
                 updateEmployeeRequestCommonClose(employeeRequest)
 
@@ -182,7 +182,7 @@ class EmployeeService(
     //완료 항목 삭제
     fun updateEmployeeRequestDeleteAll( hospitalId: String): Int  {
         employeeRequestRepository.findAllByHospitalIdAndRequestState(
-            hospitalId, RequestState.RequestState_C.requestStateCode).map{ employeeEntity ->
+            hospitalId, RequestState.RequestState_C.requestStateCode).forEach{ employeeEntity ->
 
             employeeEntity.also { employee ->
                 employee.requestState = RequestState.RequestState_D.requestStateCode
@@ -235,12 +235,18 @@ class EmployeeService(
                 attachFileYn = employee.attachFileYn,
                 apprAt = LocalDateTime.now()
             )
-
             employeeRepository.save(saveEmployeeEntity)
-            employee.id = saveEmployeeEntity.id!!
 
             //이력 등록
             registerEmployeeHistory(saveEmployeeEntity.id!!);
+
+            //파일 목록이 있으면
+            employeeDto.fileList?.also {
+                it.forEach {
+                    it.employeeId = saveEmployeeEntity.id!!
+                    saveFile(it)
+                }
+            }
         }
 
         return HttpStatus.OK.value()
@@ -303,12 +309,56 @@ class EmployeeService(
 
                 //이력 등록
                 registerEmployeeHistory(employee.id!!);
+
+                //파일 목록이 있으면
+                employeeDto.fileList?.also {
+                    it.forEach {
+                        it.employeeId = employee.id!!
+                        saveFile(it)
+                    }
+                }
             }
         }
 
         return HttpStatus.OK.value()
     }
+    //파일 등록 및 수정
+    fun saveFile( employeeAttachFileDto: EmployeeAttachFileDto): Int{
 
+        var path: String = ""
+
+        employeeAttachFileDto.path?.also {
+            path = it
+        }?: throw Exception("filePath is null ")
+
+        val localFileName = path.substringAfterLast("/")
+        val ext = path.substringAfterLast(".")
+
+        employeeAttachFileDto.employeeId?.also {
+            val employee = employeeRepository.findById(employeeAttachFileDto.employeeId.toInt()).get()
+
+            val employeeAttachFileEntity = EmployeeAttachFileEntity(
+                fileName =  employeeAttachFileDto.fileName,
+                localFileName = localFileName,
+                path = path,
+                fileExt = ext,
+                useYn = employeeAttachFileDto.useYn,
+                createdAt = LocalDateTime.now(),
+                employee = employee
+            )
+
+            //아이디가 있으면 수정 없으면 등록
+            employeeAttachFileDto.id?.also {
+                employeeAttachFileEntity.id = employeeAttachFileDto.id
+                employeeAttachFileDto.createdAt = employeeAttachFileDto.createdAt
+            }
+
+            employeeAttachFileRepository.save(employeeAttachFileEntity)
+
+        }?: throw Exception("employeeId is null")
+
+        return HttpStatus.OK.value()
+    }
 
     //직원 등록, 변경시 이력 등록
     fun registerEmployeeHistory(employeeId: Long) {
@@ -411,16 +461,15 @@ class EmployeeService(
 
 
         val attachFileList = employeeRepository.employeeFileList(employeeId.toLong()).map{fileEntity ->
-
             EmployeeAttachFileDto(
-                id = fileEntity.id,
+                id = fileEntity.id!!,
                 fileName = fileEntity.fileName,
                 localFileName = fileEntity.localFileName,
                 path = fileEntity.path,
                 fileSize = fileEntity.fileSize,
                 fileExt = fileEntity.fileExt,
                 createdAt = fileEntity.createdAt,
-                employeeId = employeeId
+                employeeId = employeeId.toLong()
             )
         }
 
@@ -486,11 +535,11 @@ class EmployeeService(
         )
     }
 
-    fun getSalaryMngDetailList(hospitalId: String, salaryMngId: String): List<EmployeeSalaryDto> {
+    fun getSalaryMngDetailList(salaryMngId: String): List<EmployeeSalaryDto> {
 
         val salaryMngEntity = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get();
 
-        return employeeSalaryRepository.findByHospitalIdAndEmployeeSalaryMng(hospitalId, salaryMngEntity).map {
+        return employeeSalaryRepository.findByEmployeeSalaryMng(salaryMngEntity).map {
             EmployeeSalaryDto(
                 id = it.id!!,
                 hospitalId = it.hospitalId,
@@ -548,7 +597,7 @@ class EmployeeService(
 
         employeeSalaryMngRepository.save(employeeSalaryMngEntity)
 
-        employeeSalary.employeeSalaryList.map {
+        employeeSalary.employeeSalaryList.forEach{
 
             val employee = employeeRepository.findById(it.employeeId!!.toInt()).get()
 
@@ -573,4 +622,6 @@ class EmployeeService(
         }
         return HttpStatus.OK.value()
     }
+
+
 }

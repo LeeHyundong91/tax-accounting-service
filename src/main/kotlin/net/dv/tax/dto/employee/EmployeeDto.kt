@@ -58,4 +58,6 @@ data class EmployeeDto(
 
     var updatedAt: String? = null,
 
+    var fileList: List<EmployeeAttachFileDto>? = null
+
     )

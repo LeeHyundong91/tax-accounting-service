@@ -381,7 +381,7 @@ class EmployeeAttachFileEntity(
     @Id
     @Column(name = "id", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long? = null,
 
     @Comment("파일명")
     @Column(name = "FILE_NAME")

@@ -15,8 +15,7 @@ interface EmployeeSalaryRepository : JpaRepository<EmployeeSalaryEntity?, Int>,
         employee: EmployeeEntity
     ): List<EmployeeSalaryEntity>
 
-    fun findByHospitalIdAndEmployeeSalaryMng(
-        hospitalId: String,
+    fun findByEmployeeSalaryMng(
         employeeSalaryMng: EmployeeSalaryMngEntity
     ): List<EmployeeSalaryEntity>
 
