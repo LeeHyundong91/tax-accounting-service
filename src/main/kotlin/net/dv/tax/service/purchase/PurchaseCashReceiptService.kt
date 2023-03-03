@@ -3,6 +3,9 @@ package net.dv.tax.service.purchase
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCashReceiptEntity
 import net.dv.tax.dto.purchase.ExcelRequiredDto
+import net.dv.tax.dto.purchase.PurchaseCashReceiptDto
+import net.dv.tax.dto.purchase.PurchaseCashReceiptListDto
+import net.dv.tax.dto.purchase.PurchaseQueryDto
 import net.dv.tax.repository.purchase.PurchaseCashReceiptRepository
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
@@ -11,7 +14,6 @@ import org.springframework.stereotype.Service
 class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: PurchaseCashReceiptRepository) {
 
     private val log = KotlinLogging.logger {}
-
 
     fun excelToEntitySave(requiredDto: ExcelRequiredDto, rows: MutableList<Row>) {
 
@@ -78,6 +80,48 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
         log.error { dataList }
 
         purchaseCashReceiptRepository.saveAll(dataList)
+    }
+
+    fun getPurchaseCashReceipt( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
+
+        var CashReceiptList = getPurchaseCashReceiptList(hospitalId, purchaseQueryDto)
+        var totalCount = purchaseCashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, purchaseQueryDto)
+        var purchaseCashReceiptTotal =
+            purchaseCashReceiptRepository.purchaseCashReceiptTotal(hospitalId, purchaseQueryDto)
+
+        return PurchaseCashReceiptListDto(
+            listPurchaseCashReceipt = CashReceiptList,
+            purchaseCashReceiptTotal = purchaseCashReceiptTotal,
+            totalCount = totalCount
+        )
+    }
+
+    fun getPurchaseCashReceiptList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseCashReceiptDto>{
+        return purchaseCashReceiptRepository.purchaseCashReceiptList(hospitalId, purchaseQueryDto)
+            .map { purchaseCashReceipt ->
+                PurchaseCashReceiptDto(
+                    id = purchaseCashReceipt.id,
+                    hospitalId = purchaseCashReceipt.hospitalId,
+                    dataFileId = purchaseCashReceipt.dataFileId,
+                    billingDate = purchaseCashReceipt.billingDate,
+                    accountCode = purchaseCashReceipt.accountCode,
+                    franchiseeName = purchaseCashReceipt.franchiseeName,
+                    corporationType = purchaseCashReceipt.corporationType,
+                    itemName = purchaseCashReceipt.itemName,
+                    supplyPrice = purchaseCashReceipt.supplyPrice,
+                    taxAmount = purchaseCashReceipt.taxAmount,
+                    totalAmount = purchaseCashReceipt.totalAmount,
+                    isDeduction = purchaseCashReceipt.isDeduction,
+                    isRecommendDeduction = purchaseCashReceipt.isRecommendDeduction,
+                    statementType1 = purchaseCashReceipt.statementType1,
+                    statementType2 = purchaseCashReceipt.statementType2,
+                    debtorAccount = purchaseCashReceipt.debtorAccount,
+                    creditAccount = purchaseCashReceipt.creditAccount,
+                    separateSend = purchaseCashReceipt.separateSend,
+                    statementStatus = purchaseCashReceipt.statementStatus,
+                    writer = purchaseCashReceipt.writer,
+                )
+            }
     }
 
 }
