@@ -74,8 +74,14 @@ data class PurchaseCreditCardDto (
     @Comment("국세청(공제여부)")
     var isDeduction: Boolean? = false,
 
-    @Comment("추천유형(불공제")
+    @Comment("국세청(공제여부)이름")
+    var deductionName: String? = null,
+
+    @Comment("추천유형(불공제)")
     var isRecommendDeduction: Boolean? = false,
+
+    @Comment("추천유형(불공제)명")
+    var recommendDeductionName: String? = null,
 
     @Comment("전표유형1")
     var statementType1: String? = null,

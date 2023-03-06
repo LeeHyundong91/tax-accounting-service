@@ -4,10 +4,13 @@ import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.dto.MenuCategoryCode
 import net.dv.tax.dto.purchase.PurchaseQueryDto
+import net.dv.tax.enum.purchase.getDeductionName
+import net.dv.tax.enum.purchase.getRecommendDeductionName
 import net.dv.tax.repository.sales.*
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.stereotype.Component
 import java.util.*
+import kotlin.reflect.full.memberProperties
 
 @Component
 class PurchaseExcelDownloadService(
@@ -80,24 +83,24 @@ class PurchaseExcelDownloadService(
     private fun purchaseCreditCard(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()
 
-        purchaseCreditCardService.getPurchaseCreditCardList(hospitalId, purchaseQueryDto).forEach {
+        purchaseCreditCardService.getPurchaseCreditCardList(hospitalId, purchaseQueryDto, true).forEach {
             val tempMap: MutableMap<String, Any> = LinkedHashMap()
             tempMap["일자"] = it.billingDate!!
-            tempMap["코드"] = it.accountCode!!
+            tempMap["코드"] = it.accountCode?:""
             tempMap["거래처"] = it.franchiseeName!!
             tempMap["구분"] = it.corporationType!!
-            tempMap["품명"] = it.itemName!!
+            tempMap["품명"] = it.itemName?:""
             tempMap["공급가액"] = it.supplyPrice!!
-            tempMap["세액"] = it.taxAmount!!
-            tempMap["비과세"] = it.nonTaxAmount!!
+            tempMap["세액"] = it.taxAmount?:""
+            tempMap["비과세"] = it.nonTaxAmount?:""
             tempMap["합계"] = it.totalAmount!!
-            tempMap["국세청(공제여부)"] = it.isDeduction!!
-            tempMap["추천유형"] = it.isRecommendDeduction!!
+            tempMap["국세청(공제여부)"] = getDeductionName(it.isDeduction!!)
+            tempMap["추천유형"] = getRecommendDeductionName(it.isRecommendDeduction!!)
             tempMap["전표유형1"] = it.statementType1!!
-            tempMap["전표유형2"] = it.statementType2!!
+            tempMap["전표유형2"] = it.statementType2?:""
             tempMap["차변계정"] = it.debtorAccount!!
             tempMap["대변계정"] = it.creditAccount!!
-            tempMap["분개전송"] = it.separateSend!!
+            tempMap["분개전송"] = it.separateSend?:""
             tempMap["전표상태"] = it.statementStatus!!
             tempMap["작성자"] = it.writer!!
             list.add(tempMap)
@@ -131,7 +134,6 @@ class PurchaseExcelDownloadService(
         }
         return list
     }
-
 
 
 

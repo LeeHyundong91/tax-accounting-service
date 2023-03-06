@@ -10,5 +10,7 @@ data class PurchaseQueryDto (
 
     val offset: Long? = 0,
 
-    val size: Long? = 30
+    val size: Long? = 30,
+
+    var deduction: Long? = null
 )
