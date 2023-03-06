@@ -98,4 +98,8 @@ data class PurchaseElecInvoiceEntity(
     @Comment("작성자")
     @Column(name = "WRITER")
     var writer: String? = null,
+
+    @Comment("전자세금계산서 : true / 전자계산서 : false")
+    @Column(name = "IS_TAX")
+    val tax: Boolean? = false
 )

@@ -48,7 +48,7 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
         log.error("filePath : $filePath")
         val file = File("/tmp/$filePath")
 
-        transferManager.download(GetObjectRequest(bucket, filePath), file)
+        transferManager.download(GetObjectRequest(bucket, filePath), file).waitForCompletion()
 
         return file
     }

@@ -24,7 +24,7 @@ class AccountingDataService(
 
     private val purchaseCreditCardService: PurchaseCreditCardService,
     private val purchaseCashReceiptService: PurchaseCashReceiptService,
-    private val purchaseElecInvoiceService: PurchaseElecInvoiceService
+    private val purchaseElecInvoiceService: PurchaseElecInvoiceService,
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -94,9 +94,16 @@ class AccountingDataService(
             val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(it.uploadFilePath!!))
 
             when (MenuCategoryCode.valueOf(it.dataCategory!!)) {
-                MenuCategoryCode.CREDIT_CARD -> log.error { purchaseCreditCardService.excelToEntitySave(excelDto, rows) }
+                MenuCategoryCode.CREDIT_CARD -> purchaseCreditCardService.excelToEntitySave(excelDto, rows)
                 MenuCategoryCode.CASH_RECEIPT -> purchaseCashReceiptService.excelToEntitySave(excelDto, rows)
-                MenuCategoryCode.ELEC_INVOICE -> log.error { purchaseElecInvoiceService.excelToEntitySave(excelDto, rows) }
+                MenuCategoryCode.ELEC_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(excelDto, rows)
+                MenuCategoryCode.ELEC_TAX_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(
+                    excelDto
+                        .also { dto ->
+                            dto.isTax = true
+                        }, rows
+                )
+
                 else -> null
             }
 
