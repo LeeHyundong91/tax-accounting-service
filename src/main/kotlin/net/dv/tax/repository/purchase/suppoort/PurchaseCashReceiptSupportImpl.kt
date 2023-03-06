@@ -8,8 +8,10 @@ import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.dto.purchase.PurchaseQueryDto
 import net.dv.tax.domain.purchase.PurchaseCashReceiptEntity
 import net.dv.tax.domain.purchase.QPurchaseCashReceiptEntity.purchaseCashReceiptEntity
+import net.dv.tax.domain.purchase.QPurchaseCreditCardEntity
 import net.dv.tax.dto.purchase.PurchaseCashReceiptTotal
 import net.dv.tax.dto.purchase.PurchaseCashReceiptTotalSearch
+import net.dv.tax.enum.purchase.Deduction
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 
@@ -21,27 +23,40 @@ class PurchaseCashReceiptSupportImpl(
 
     override fun purchaseCashReceiptList(
         hospitalId: String,
-        purchaseQueryDto: PurchaseQueryDto
+        purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean
     ): List<PurchaseCashReceiptEntity> {
 
         val realOffset = purchaseQueryDto.offset!! * purchaseQueryDto.size!!;
 
-        val builder = BooleanBuilder()
-        builder.and(purchaseCashReceiptEntity.hospitalId.eq(hospitalId))
+        val builder = getBuilder(hospitalId, purchaseQueryDto)
 
-        return query
-            .select(purchaseCashReceiptEntity)
-            .from(purchaseCashReceiptEntity)
-            .where(builder)
-            .offset(realOffset)
-            .limit(purchaseQueryDto.size)
-            .fetch()
+        var res: List<PurchaseCashReceiptEntity>
+
+        if( isExcel ) {
+            res = query
+                .select(purchaseCashReceiptEntity)
+                .from(purchaseCashReceiptEntity)
+                .where(builder)
+                .orderBy(purchaseCashReceiptEntity.billingDate.desc())
+                .fetch()
+        } else {
+            res = query
+                .select(purchaseCashReceiptEntity)
+                .from(purchaseCashReceiptEntity)
+                .where(builder)
+                .orderBy(purchaseCashReceiptEntity.billingDate.desc())
+                .offset(realOffset)
+                .limit(purchaseQueryDto.size)
+                .fetch()
+        }
+
+        return res
 
     }
 
     override fun purchaseCashReceiptListCnt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): Long {
-        val builder = BooleanBuilder()
-        builder.and(purchaseCashReceiptEntity.hospitalId.eq(hospitalId))
+        val builder = getBuilder(hospitalId, purchaseQueryDto)
 
         return query
             .select(purchaseCashReceiptEntity.count())
@@ -55,8 +70,7 @@ class PurchaseCashReceiptSupportImpl(
         purchaseQueryDto: PurchaseQueryDto
     ): PurchaseCashReceiptTotal {
 
-        val builder = BooleanBuilder()
-        builder.and(purchaseCashReceiptEntity.hospitalId.eq(hospitalId))
+        val builder = getBuilder(hospitalId, purchaseQueryDto)
 
         var total = query
             .select(
@@ -64,6 +78,7 @@ class PurchaseCashReceiptSupportImpl(
                     PurchaseCashReceiptTotalSearch::class.java,
                     purchaseCashReceiptEntity.supplyPrice.sum().`as`("totalSupplyPrice"),
                     purchaseCashReceiptEntity.taxAmount.sum().`as`("totalTaxAmount"),
+                    purchaseCashReceiptEntity.serviceCharge.sum().`as`("totalServiceCharge"),
                     purchaseCashReceiptEntity.totalAmount.sum().`as`("totalAmount"),
                 )
             )
@@ -78,6 +93,7 @@ class PurchaseCashReceiptSupportImpl(
                     PurchaseCashReceiptTotalSearch::class.java,
                     purchaseCashReceiptEntity.supplyPrice.sum().`as`("totalSupplyPrice"),
                     purchaseCashReceiptEntity.taxAmount.sum().`as`("totalTaxAmount"),
+                    purchaseCashReceiptEntity.serviceCharge.sum().`as`("totalServiceCharge"),
                     purchaseCashReceiptEntity.totalAmount.sum().`as`("totalAmount"),
                 )
             )
@@ -87,12 +103,29 @@ class PurchaseCashReceiptSupportImpl(
             .fetchFirst()
 
         return PurchaseCashReceiptTotal(
-            totalSupplyPrice = total.totalSupplyPrice,
-            totalTaxAmount = total.totalTaxAmount,
-            totalAmount = total.totalAmount,
-            totalNonSupplyPrice = nonTotal.totalSupplyPrice,
-            totalNonTaxAmount = nonTotal.totalTaxAmount,
-            totalNonAmount = nonTotal.totalAmount
+            totalSupplyPrice = total.totalSupplyPrice?: 0,
+            totalTaxAmount = total.totalTaxAmount?: 0,
+            totalServiceCharge = total.totalServiceCharge?: 0,
+            totalAmount = total.totalAmount?: 0,
+            totalNonSupplyPrice = nonTotal.totalSupplyPrice?: 0,
+            totalNonTaxAmount = nonTotal.totalTaxAmount?: 0,
+            totalNonServiceCharge = nonTotal.totalServiceCharge?: 0,
+            totalNonAmount = nonTotal.totalAmount?: 0
         )
+    }
+
+    fun getBuilder(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): BooleanBuilder{
+
+        val builder = BooleanBuilder()
+        builder.and(purchaseCashReceiptEntity.hospitalId.eq(hospitalId))
+
+        //공제 불공제 전체
+        when(purchaseQueryDto.deduction){
+            1L -> builder.and(purchaseCashReceiptEntity.isDeduction.eq(Deduction.Deduction_1.isDeduction))
+            2L -> builder.and(purchaseCashReceiptEntity.isDeduction.eq(Deduction.Deduction_2.isDeduction))
+            else -> null
+        }
+
+        return builder
     }
 }

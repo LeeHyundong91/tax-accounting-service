@@ -24,17 +24,20 @@ data class PurchaseCashReceiptTotal(
     //공제
     val totalSupplyPrice: Long? = 0,
     val totalTaxAmount: Long? = 0,
+    val totalServiceCharge: Long? = 0,
     val totalAmount: Long? = 0,
 
     //불공제
     val totalNonSupplyPrice: Long? = 0,
     val totalNonTaxAmount: Long? = 0,
+    val totalNonServiceCharge: Long? = 0,
     val totalNonAmount: Long? = 0,
 )
 
 data class PurchaseCashReceiptTotalSearch(
     val totalSupplyPrice: Long? = 0,
     val totalTaxAmount: Long? = 0,
+    val totalServiceCharge: Long? = 0,
     val totalAmount: Long? = 0,
 )
 
@@ -78,8 +81,14 @@ data class PurchaseCashReceiptDto (
     @Comment("국세청(공제여부)")
     var isDeduction: Boolean? = null,
 
-    @Comment("추천유형(불공제")
+    @Comment("국세청(공제여부)명")
+    var deductionName: String? = null,
+
+    @Comment("추천유형(불공제)")
     var isRecommendDeduction: Boolean? = null,
+
+    @Comment("추천유형(불공제)명")
+    var recommendDeductionName: String? = null,
 
     @Comment("전표유형 1")
     var statementType1: String? = null,

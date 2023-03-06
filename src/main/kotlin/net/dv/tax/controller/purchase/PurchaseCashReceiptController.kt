@@ -16,7 +16,7 @@ class PurchaseCashReceiptController(
 ) {
     private val log = KotlinLogging.logger {}
 
-    //신용카드매입관리 항목 조회
+    //매입 현금 영수증 항목 조회
     @GetMapping("{hospitalId}/list")
     fun getCashReceiptInvoice(@PathVariable hospitalId: String, purchaseQueryDto: PurchaseQueryDto): ResponseEntity<PurchaseCashReceiptListDto> {
 

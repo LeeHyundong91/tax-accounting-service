@@ -7,7 +7,7 @@ import net.dv.tax.dto.purchase.PurchaseQueryDto
 
 interface PurchaseCashReceiptSupport {
 
-    fun purchaseCashReceiptList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseCashReceiptEntity>
+    fun purchaseCashReceiptList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseCashReceiptEntity>
 
     fun purchaseCashReceiptListCnt( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): Long
 

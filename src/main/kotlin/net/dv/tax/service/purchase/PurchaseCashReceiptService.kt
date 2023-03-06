@@ -6,6 +6,8 @@ import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.dto.purchase.PurchaseCashReceiptDto
 import net.dv.tax.dto.purchase.PurchaseCashReceiptListDto
 import net.dv.tax.dto.purchase.PurchaseQueryDto
+import net.dv.tax.enum.purchase.getDeductionName
+import net.dv.tax.enum.purchase.getRecommendDeductionName
 import net.dv.tax.repository.purchase.PurchaseCashReceiptRepository
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
@@ -84,7 +86,7 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
 
     fun getPurchaseCashReceipt( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
 
-        var CashReceiptList = getPurchaseCashReceiptList(hospitalId, purchaseQueryDto)
+        var CashReceiptList = getPurchaseCashReceiptList(hospitalId, purchaseQueryDto, false)
         var totalCount = purchaseCashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, purchaseQueryDto)
         var purchaseCashReceiptTotal =
             purchaseCashReceiptRepository.purchaseCashReceiptTotal(hospitalId, purchaseQueryDto)
@@ -96,8 +98,8 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
         )
     }
 
-    fun getPurchaseCashReceiptList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseCashReceiptDto>{
-        return purchaseCashReceiptRepository.purchaseCashReceiptList(hospitalId, purchaseQueryDto)
+    fun getPurchaseCashReceiptList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseCashReceiptDto>{
+        return purchaseCashReceiptRepository.purchaseCashReceiptList(hospitalId, purchaseQueryDto, isExcel)
             .map { purchaseCashReceipt ->
                 PurchaseCashReceiptDto(
                     id = purchaseCashReceipt.id,
@@ -111,8 +113,10 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
                     supplyPrice = purchaseCashReceipt.supplyPrice,
                     taxAmount = purchaseCashReceipt.taxAmount,
                     totalAmount = purchaseCashReceipt.totalAmount,
-                    isDeduction = purchaseCashReceipt.isDeduction,
-                    isRecommendDeduction = purchaseCashReceipt.isRecommendDeduction,
+                    deductionName = getDeductionName(purchaseCashReceipt.isDeduction!!),
+                    isDeduction = purchaseCashReceipt.isDeduction!!,
+                    recommendDeductionName = getRecommendDeductionName(purchaseCashReceipt.isRecommendDeduction!!),
+                    isRecommendDeduction = purchaseCashReceipt.isRecommendDeduction!!,
                     statementType1 = purchaseCashReceipt.statementType1,
                     statementType2 = purchaseCashReceipt.statementType2,
                     debtorAccount = purchaseCashReceipt.debtorAccount,
