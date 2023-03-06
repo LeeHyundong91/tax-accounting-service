@@ -85,6 +85,7 @@ class PurchaseElecInvoiceSupportImpl(
 
         val builder = BooleanBuilder()
         builder.and(purchaseElecInvoiceEntity.hospitalId.eq(hospitalId))
+        builder.and(purchaseElecInvoiceEntity.tax.eq(purchaseQueryDto.isTax))
 
         return builder
     }

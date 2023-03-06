@@ -12,5 +12,7 @@ data class PurchaseQueryDto (
 
     val size: Long? = 30,
 
-    var deduction: Long? = null
+    var deduction: Long? = null,
+
+    var isTax: Boolean = false
 )
