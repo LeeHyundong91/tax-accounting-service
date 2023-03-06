@@ -19,27 +19,39 @@ class PurchaseElecInvoiceSupportImpl(
 
     override fun purchaseElecInvoiceList(
         hospitalId: String,
-        purchaseQueryDto: PurchaseQueryDto
+        purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean
     ): List<PurchaseElecInvoiceEntity> {
 
         val realOffset = purchaseQueryDto.offset!! * purchaseQueryDto.size!!;
 
-        val builder = BooleanBuilder()
-        builder.and(purchaseElecInvoiceEntity.hospitalId.eq(hospitalId))
+        val builder = getBuilder( hospitalId, purchaseQueryDto)
 
-        return query
-            .select(purchaseElecInvoiceEntity)
-            .from(purchaseElecInvoiceEntity)
-            .where(builder)
-            .offset(realOffset)
-            .limit(purchaseQueryDto.size)
-            .fetch()
+        var res: List<PurchaseElecInvoiceEntity>
+
+        if( isExcel ) {
+            res =  query
+                .select(purchaseElecInvoiceEntity)
+                .from(purchaseElecInvoiceEntity)
+                .where(builder)
+                .fetch()
+        } else{
+            res =  query
+                .select(purchaseElecInvoiceEntity)
+                .from(purchaseElecInvoiceEntity)
+                .where(builder)
+                .offset(realOffset)
+                .limit(purchaseQueryDto.size)
+                .fetch()
+        }
+
+        return res
 
     }
 
     override fun purchaseElecInvoiceListCnt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): Long {
-        val builder = BooleanBuilder()
-        builder.and(purchaseElecInvoiceEntity.hospitalId.eq(hospitalId))
+
+        val builder = getBuilder( hospitalId, purchaseQueryDto)
 
         return query
             .select(purchaseElecInvoiceEntity.count())
@@ -53,8 +65,7 @@ class PurchaseElecInvoiceSupportImpl(
         purchaseQueryDto: PurchaseQueryDto
     ): PurchaseElecInvoiceTotal {
 
-        val builder = BooleanBuilder()
-        builder.and(purchaseElecInvoiceEntity.hospitalId.eq(hospitalId))
+        val builder = getBuilder( hospitalId, purchaseQueryDto)
 
         return query
             .select(
@@ -68,5 +79,13 @@ class PurchaseElecInvoiceSupportImpl(
             .from(purchaseElecInvoiceEntity)
             .where(builder)
             .fetchFirst()
+    }
+
+    fun getBuilder(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): BooleanBuilder{
+
+        val builder = BooleanBuilder()
+        builder.and(purchaseElecInvoiceEntity.hospitalId.eq(hospitalId))
+
+        return builder
     }
 }

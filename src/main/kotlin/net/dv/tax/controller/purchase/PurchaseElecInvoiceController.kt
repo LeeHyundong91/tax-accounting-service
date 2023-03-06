@@ -11,7 +11,7 @@ import java.util.*
 
 
 @RestController
-@RequestMapping("/${TaxAccountingApplication.VERSION}/purchase/tax-invoice")
+@RequestMapping("/${TaxAccountingApplication.VERSION}/purchase/elec-invoice")
 class PurchaseElecInvoiceController(
     private val purchaseElecInvoiceService: PurchaseElecInvoiceService,
 ) {

@@ -54,7 +54,7 @@ class PurchaseExcelDownloadService(
     private fun purchaseElecInvoice(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()
 
-        purchaseElecInvoiceService.getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto).forEach {
+        purchaseElecInvoiceService.getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto, true).forEach {
             val tempMap: MutableMap<String, Any> = LinkedHashMap()
             tempMap["발급 일자"] = it.issueDate!!
             tempMap["전송 일자"] = it.sendDate!!
@@ -67,13 +67,13 @@ class PurchaseExcelDownloadService(
             tempMap["유형(공제여부)"] = it.isDeduction!!
             tempMap["차변계정"] = it.debtorAccount!!
             tempMap["대변계정"] = it.creditAccount!!
-            tempMap["분개전송"] = it.separateSend!!
+            tempMap["분개전송"] = it.separateSend?: ""
             tempMap["전표상태"] = it.statementStatus!!
-            tempMap["작업상태"] = it.taskType!!
+            tempMap["작업상태"] = it.taskType?: ""
             tempMap["승인번호"] = it.approvalNo!!
             tempMap["종류(계산서)"] = it.invoiceType!!
             tempMap["구분(청구)"] = it.billingType!!
-            tempMap["발급유형"] = String!!
+//             tempMap["발급유형"] = String!!
             tempMap["작성자"] = it.writer!!
 
             list.add(tempMap)
