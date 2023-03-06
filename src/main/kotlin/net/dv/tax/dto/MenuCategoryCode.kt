@@ -15,7 +15,6 @@ enum class MenuCategoryCode(
     ELEC_INVOICE("elec-invoice", "전자계산서매출목록"),
     ELEC_TAX_INVOICE("elec-tax-invoice", "전자세금계산서매출목록"),
     HAND_INVOICE("hand-invoice", "수기세금계산서매출목록");
-
     companion object {
         fun convert(value: String): String {
             var codeName: String? = null

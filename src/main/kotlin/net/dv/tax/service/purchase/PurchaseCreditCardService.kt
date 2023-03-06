@@ -2,7 +2,7 @@ package net.dv.tax.service.purchase
 
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
-import net.dv.tax.dto.purchase.ExcelRequiredDto
+import net.dv.tax.dto.purchase.*
 import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
@@ -89,6 +89,51 @@ class PurchaseCreditCardService(
         log.error { dataList }
 
         purchaseCreditCardRepository.saveAll(dataList)
+    }
+    fun getPurchaseCreditCard( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCreditCardListDto{
+
+        var creditCardList = getPurchaseCreditCardList(hospitalId, purchaseQueryDto)
+        var totalCount = purchaseCreditCardRepository.purchaseCreditCardListCnt(hospitalId, purchaseQueryDto)
+        var purchaseCreditcardTotal =
+            purchaseCreditCardRepository.purchaseCreditCardTotal(hospitalId, purchaseQueryDto)
+
+        return PurchaseCreditCardListDto(
+            listPurchaseCreditCard = creditCardList,
+            purchaseCreditCardTotal = purchaseCreditcardTotal,
+            totalCount = totalCount
+        )
+    }
+
+
+    fun getPurchaseCreditCardList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseCreditCardDto>{
+        return purchaseCreditCardRepository.purchaseCreditCardList(hospitalId, purchaseQueryDto)
+            .map { purchaseCreditCard ->
+                PurchaseCreditCardDto(
+                    id = purchaseCreditCard.id,
+                    hospitalId = purchaseCreditCard.hospitalId,
+                    dataFileId = purchaseCreditCard.dataFileId,
+                    billingDate = purchaseCreditCard.billingDate,
+                    accountCode = purchaseCreditCard.accountCode,
+                    franchiseeName = purchaseCreditCard.franchiseeName,
+                    corporationType = purchaseCreditCard.corporationType,
+                    itemName = purchaseCreditCard.itemName,
+                    supplyPrice = purchaseCreditCard.supplyPrice,
+                    taxAmount = purchaseCreditCard.taxAmount,
+                    nonTaxAmount = purchaseCreditCard.nonTaxAmount,
+                    totalAmount = purchaseCreditCard.totalAmount,
+                    isDeduction = purchaseCreditCard.isDeduction,
+                    isRecommendDeduction = purchaseCreditCard.isRecommendDeduction,
+                    statementType1 = purchaseCreditCard.statementType1,
+                    statementType2 = purchaseCreditCard.statementType2,
+                    debtorAccount = purchaseCreditCard.debtorAccount,
+                    creditAccount = purchaseCreditCard.creditAccount,
+                    separateSend = purchaseCreditCard.separateSend,
+                    statementStatus = purchaseCreditCard.statementStatus,
+                    writer = purchaseCreditCard.writer,
+                    isDelete = purchaseCreditCard.isDelete,
+                    createdAt = purchaseCreditCard.createdAt,
+                )
+            }
     }
 
 

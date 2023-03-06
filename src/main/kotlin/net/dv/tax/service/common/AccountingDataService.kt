@@ -7,6 +7,7 @@ import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.repository.common.AccountingDataRepository
 import net.dv.tax.service.purchase.PurchaseCashReceiptService
 import net.dv.tax.service.purchase.PurchaseCreditCardService
+import net.dv.tax.service.purchase.PurchaseElecInvoiceService
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.http.HttpStatus
@@ -22,11 +23,11 @@ class AccountingDataService(
     private val excelComponent: ExcelComponent,
 
     private val purchaseCreditCardService: PurchaseCreditCardService,
-    private val purchaseCashReceiptService: PurchaseCashReceiptService
+    private val purchaseCashReceiptService: PurchaseCashReceiptService,
+    private val purchaseElecInvoiceService: PurchaseElecInvoiceService
 ) {
 
     private val log = KotlinLogging.logger {}
-
 
     @Throws
     @Transactional
@@ -93,17 +94,10 @@ class AccountingDataService(
             val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(it.uploadFilePath!!))
 
             when (MenuCategoryCode.valueOf(it.dataCategory!!)) {
-                MenuCategoryCode.MEDICAL_BENEFITS -> TODO()
-                MenuCategoryCode.CAR_INSURANCE -> TODO()
-                MenuCategoryCode.VACCINE -> TODO()
-                MenuCategoryCode.MEDICAL_EXAM -> TODO()
-                MenuCategoryCode.EMPLOYEE_INDUSTRY -> TODO()
-                MenuCategoryCode.HOSPITAL_CHART -> TODO()
                 MenuCategoryCode.CREDIT_CARD -> log.error { purchaseCreditCardService.excelToEntitySave(excelDto, rows) }
                 MenuCategoryCode.CASH_RECEIPT -> purchaseCashReceiptService.excelToEntitySave(excelDto, rows)
-                MenuCategoryCode.ELEC_INVOICE -> TODO()
-                MenuCategoryCode.ELEC_TAX_INVOICE -> TODO()
-                MenuCategoryCode.HAND_INVOICE -> TODO()
+                MenuCategoryCode.ELEC_INVOICE -> log.error { purchaseElecInvoiceService.excelToEntitySave(excelDto, rows) }
+                else -> null
             }
 
 //            accountingDataRepository.save(it)

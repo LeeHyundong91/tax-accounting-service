@@ -51,6 +51,7 @@ class ExcelDownloadService(
         hospitalId: String,
         categoryCode: MenuCategoryCode,
     ): List<Map<String, Any>> {
+
         return when (categoryCode) {
             MenuCategoryCode.MEDICAL_BENEFITS -> benefits(hospitalId, year)
             MenuCategoryCode.CAR_INSURANCE -> carInsurance(hospitalId, year)
@@ -62,9 +63,8 @@ class ExcelDownloadService(
             MenuCategoryCode.CASH_RECEIPT -> cashReceipt(hospitalId, year)
             MenuCategoryCode.ELEC_INVOICE -> elecInvoice(hospitalId, year)
             MenuCategoryCode.HAND_INVOICE -> handInvoice(hospitalId, year)
-            MenuCategoryCode.ELEC_TAX_INVOICE -> TODO()
+            else -> mutableListOf()
         }
-
     }
 
     /*http://localhost:8080/v1/sales/download/car-insurance/2022/cid01*/
