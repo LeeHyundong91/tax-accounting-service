@@ -7,7 +7,7 @@ import net.dv.tax.dto.purchase.PurchaseQueryDto
 
 interface PurchaseCreditCardSupport {
 
-    fun purchaseCreditCardList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseCreditCardEntity>
+    fun purchaseCreditCardList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseCreditCardEntity>
 
     fun purchaseCreditCardListCnt( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): Long
 

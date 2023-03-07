@@ -10,6 +10,7 @@ import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.domain.purchase.QPurchaseCreditCardEntity.purchaseCreditCardEntity
 import net.dv.tax.dto.purchase.PurchaseCreditCardTotal
 import net.dv.tax.dto.purchase.PurchaseCreditCardTotalSearch
+import net.dv.tax.enum.purchase.Deduction
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 
@@ -21,27 +22,41 @@ class PurchaseCreditCardSupportImpl(
 
     override fun purchaseCreditCardList(
         hospitalId: String,
-        purchaseQueryDto: PurchaseQueryDto
+        purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean
     ): List<PurchaseCreditCardEntity> {
 
         val realOffset = purchaseQueryDto.offset!! * purchaseQueryDto.size!!;
 
-        val builder = BooleanBuilder()
-        builder.and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
+        val builder = getBuilder( hospitalId, purchaseQueryDto)
 
-        return query
-            .select(purchaseCreditCardEntity)
-            .from(purchaseCreditCardEntity)
-            .where(builder)
-            .offset(realOffset)
-            .limit(purchaseQueryDto.size)
-            .fetch()
+        var res: List<PurchaseCreditCardEntity>
+
+        if( isExcel ) {
+           res = query
+                .select(purchaseCreditCardEntity)
+                .from(purchaseCreditCardEntity)
+                .where(builder)
+                .orderBy(purchaseCreditCardEntity.billingDate.desc())
+                .fetch()
+        } else {
+            res = query
+                .select(purchaseCreditCardEntity)
+                .from(purchaseCreditCardEntity)
+                .where(builder)
+                .orderBy(purchaseCreditCardEntity.billingDate.desc())
+                .offset(realOffset)
+                .limit(purchaseQueryDto.size)
+                .fetch()
+        }
+
+        return res
 
     }
 
     override fun purchaseCreditCardListCnt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): Long {
-        val builder = BooleanBuilder()
-        builder.and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
+
+        val builder = getBuilder( hospitalId, purchaseQueryDto)
 
         return query
             .select(purchaseCreditCardEntity.count())
@@ -55,8 +70,7 @@ class PurchaseCreditCardSupportImpl(
         purchaseQueryDto: PurchaseQueryDto
     ): PurchaseCreditCardTotal {
 
-        val builder = BooleanBuilder()
-        builder.and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
+        val builder = getBuilder( hospitalId, purchaseQueryDto)
 
         var total = query
             .select(
@@ -87,12 +101,28 @@ class PurchaseCreditCardSupportImpl(
             .fetchFirst()
 
         return PurchaseCreditCardTotal(
-            totalSupplyPrice = total.totalSupplyPrice,
-            totalTaxAmount = total.totalTaxAmount,
-            totalAmount = total.totalAmount,
-            totalNonSupplyPrice = nonTotal.totalSupplyPrice,
-            totalNonTaxAmount = nonTotal.totalTaxAmount,
-            totalNonAmount = nonTotal.totalAmount
+            totalSupplyPrice = total.totalSupplyPrice?: 0,
+            totalTaxAmount = total.totalTaxAmount?: 0,
+            totalAmount = total.totalAmount?: 0,
+            totalNonSupplyPrice = nonTotal.totalSupplyPrice?: 0,
+            totalNonTaxAmount = nonTotal.totalTaxAmount?: 0,
+            totalNonAmount = nonTotal.totalAmount?: 0
         )
+    }
+
+    fun getBuilder(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): BooleanBuilder{
+
+        val builder = BooleanBuilder()
+        builder.and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
+
+
+        //공제 불공제 전체
+        when(purchaseQueryDto.deduction){
+            1L -> builder.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_1.isDeduction))
+            2L -> builder.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_2.isDeduction))
+            else -> null
+        }
+
+        return builder
     }
 }
