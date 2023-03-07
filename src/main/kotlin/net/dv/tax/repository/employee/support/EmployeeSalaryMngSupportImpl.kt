@@ -3,7 +3,6 @@ package net.dv.tax.repository.employee.support
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.domain.employee.EmployeeSalaryMngEntity
-import net.dv.tax.domain.employee.QEmployeeSalaryMngEntity
 import net.dv.tax.domain.employee.QEmployeeSalaryMngEntity.employeeSalaryMngEntity
 import net.dv.tax.dto.employee.EmployeeQueryDto
 
@@ -20,22 +19,7 @@ class EmployeeSalaryMngSupportImpl(
 
     override fun getSalaryMngListCnt( hospitalId: String, employeeQueryDto: EmployeeQueryDto): Long {
 
-        val builder = BooleanBuilder()
-        builder.and(employeeSalaryMngEntity.hospitalId.eq(hospitalId))
-
-        employeeQueryDto.from?.also {
-            if( it.length > 0 ) {
-                val fromDateTime = LocalDateTime.parse(it + "-01-01 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeSalaryMngEntity.createdAt.after(fromDateTime))
-            }
-        }
-
-        employeeQueryDto.to?.also {
-            if( it.length > 0 ) {
-                val toDateTime = LocalDateTime.parse(it + "-12-31 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeSalaryMngEntity.createdAt.before(toDateTime))
-            }
-        }
+        val builder = getBuilder(hospitalId, employeeQueryDto)
 
         return query
             .select(employeeSalaryMngEntity.count())
@@ -49,6 +33,20 @@ class EmployeeSalaryMngSupportImpl(
 
         val realOffset = employeeQueryDto.offset!! * employeeQueryDto.size!!;
 
+        val builder = getBuilder(hospitalId, employeeQueryDto)
+
+        return query
+            .select(employeeSalaryMngEntity)
+            .from(employeeSalaryMngEntity)
+            .where(builder)
+            .offset(realOffset)
+            .limit(employeeQueryDto.size)
+            .fetch()
+
+    }
+
+    fun getBuilder(hospitalId: String, employeeQueryDto: EmployeeQueryDto): BooleanBuilder{
+
         val builder = BooleanBuilder()
         builder.and(employeeSalaryMngEntity.hospitalId.eq(hospitalId))
 
@@ -66,15 +64,7 @@ class EmployeeSalaryMngSupportImpl(
             }
         }
 
-     return query
-            .select(employeeSalaryMngEntity)
-            .from(employeeSalaryMngEntity)
-            .where(builder)
-            .offset(realOffset)
-            .limit(employeeQueryDto.size)
-            .fetch()
-
+        return builder
     }
-
 
 }

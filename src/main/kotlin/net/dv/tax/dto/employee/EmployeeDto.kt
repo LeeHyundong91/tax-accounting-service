@@ -16,11 +16,11 @@ data class EmployeeDto(
 
     var employmentName: String? = null,
 
-    var employmentType: String,
+    var employmentType: String? = null,
 
-    var annualType: String,
+    var annualType: String? = null,
 
-    var annualIncome: String,
+    var annualIncome: String? = null,
 
     var position: String? = null,
 
@@ -42,9 +42,7 @@ data class EmployeeDto(
 
     var office: String? = null,
 
-    var job: Long? = null,
-
-    var jobDetail: Long? = null,
+    var job: String? = null,
 
     var careerNumber: String? = null,
 

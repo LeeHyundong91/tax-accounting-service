@@ -25,35 +25,7 @@ class EmployeeRequestSupportImpl(
 
         val realOffset = employeeQueryDto.offset!! * employeeQueryDto.size!!;
 
-        val builder = BooleanBuilder()
-        builder.and(employeeRequestEntity.hospitalId.eq(hospitalId))
-        builder.and(employeeRequestEntity.requestState.notEqualsIgnoreCase(RequestState.RequestState_D.requestStateCode))
-
-        //이름
-        employeeQueryDto.name?.also {
-            if( it.length > 0 ) builder.and(employeeRequestEntity.name.contains(it))
-        }
-
-        //주민번호
-        employeeQueryDto.regidentNumber?.also {
-            if( it.length > 0 ) builder.and(employeeRequestEntity.residentNumber.contains(it))
-        }
-
-        //시작일
-        employeeQueryDto.from?.also {
-            if( it.length > 0 ) {
-                val fromDateTime = LocalDateTime.parse(it + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(QEmployeeSalaryMngEntity.employeeSalaryMngEntity.createdAt.after(fromDateTime.minusDays(1)));
-            }
-        }
-
-        //종료일
-        employeeQueryDto.to?.also {
-            if( it.length > 0 ) {
-                val toDateTime = LocalDateTime.parse(it + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(QEmployeeSalaryMngEntity.employeeSalaryMngEntity.createdAt.before(toDateTime.plusDays(1)));
-            }
-        }
+        val builder = getBuilder(hospitalId, employeeQueryDto)
 
        return query
             .select(employeeRequestEntity)
@@ -66,6 +38,17 @@ class EmployeeRequestSupportImpl(
 
     //총 개수 계산
     override fun employeeRequestListCnt(hospitalId: String, employeeQueryDto: EmployeeQueryDto): Long {
+        val builder = getBuilder(hospitalId, employeeQueryDto)
+
+        return query
+            .select(employeeRequestEntity.count())
+            .from(employeeRequestEntity)
+            .where(builder)
+            .fetchFirst()
+    }
+
+    fun getBuilder(hospitalId: String, employeeQueryDto: EmployeeQueryDto): BooleanBuilder{
+
         val builder = BooleanBuilder()
         builder.and(employeeRequestEntity.hospitalId.eq(hospitalId))
         builder.and(employeeRequestEntity.requestState.notEqualsIgnoreCase(RequestState.RequestState_D.requestStateCode))
@@ -96,11 +79,8 @@ class EmployeeRequestSupportImpl(
             }
         }
 
-        return query
-            .select(employeeRequestEntity.count())
-            .from(employeeRequestEntity)
-            .where(builder)
-            .fetchFirst()
+
+        return builder
     }
 
 }
