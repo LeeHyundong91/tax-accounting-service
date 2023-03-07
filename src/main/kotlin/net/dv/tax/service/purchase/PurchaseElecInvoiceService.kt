@@ -45,6 +45,7 @@ class PurchaseElecInvoiceService(
             val useInForPurchaseElecInvoiceEntity =
                 PurchaseElecInvoiceEntity(
                     hospitalId = requiredDto.hospitalId,
+                    dataFileId = requiredDto.fileDataId,
                     issueDate = issueDate,
                     sendDate = sendDate,
                     accountCode = it.getCell(3)?.rawValue,
