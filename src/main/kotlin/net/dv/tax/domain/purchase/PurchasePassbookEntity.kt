@@ -13,6 +13,7 @@ import java.time.LocalDateTime
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
+@Entity
 data class PurchasePassbookEntity(
 
     @Id
