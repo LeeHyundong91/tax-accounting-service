@@ -6,7 +6,7 @@ import net.dv.tax.dto.purchase.PurchaseQueryDto
 
 interface PurchaseElecInvoiceSupport {
 
-    fun purchaseElecInvoiceList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseElecInvoiceEntity>
+    fun purchaseElecInvoiceList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseElecInvoiceEntity>
 
     fun purchaseElecInvoiceListCnt( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): Long
 

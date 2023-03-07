@@ -3,6 +3,8 @@ package net.dv.tax.service.purchase
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.dto.purchase.*
+import net.dv.tax.enum.purchase.getDeductionName
+import net.dv.tax.enum.purchase.getRecommendDeductionName
 import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
@@ -92,7 +94,7 @@ class PurchaseCreditCardService(
     }
     fun getPurchaseCreditCard( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCreditCardListDto{
 
-        var creditCardList = getPurchaseCreditCardList(hospitalId, purchaseQueryDto)
+        var creditCardList = getPurchaseCreditCardList(hospitalId, purchaseQueryDto, false)
         var totalCount = purchaseCreditCardRepository.purchaseCreditCardListCnt(hospitalId, purchaseQueryDto)
         var purchaseCreditcardTotal =
             purchaseCreditCardRepository.purchaseCreditCardTotal(hospitalId, purchaseQueryDto)
@@ -105,8 +107,9 @@ class PurchaseCreditCardService(
     }
 
 
-    fun getPurchaseCreditCardList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseCreditCardDto>{
-        return purchaseCreditCardRepository.purchaseCreditCardList(hospitalId, purchaseQueryDto)
+    fun getPurchaseCreditCardList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseCreditCardDto>{
+
+        return purchaseCreditCardRepository.purchaseCreditCardList(hospitalId, purchaseQueryDto, isExcel)
             .map { purchaseCreditCard ->
                 PurchaseCreditCardDto(
                     id = purchaseCreditCard.id,
@@ -121,8 +124,8 @@ class PurchaseCreditCardService(
                     taxAmount = purchaseCreditCard.taxAmount,
                     nonTaxAmount = purchaseCreditCard.nonTaxAmount,
                     totalAmount = purchaseCreditCard.totalAmount,
-                    isDeduction = purchaseCreditCard.isDeduction,
-                    isRecommendDeduction = purchaseCreditCard.isRecommendDeduction,
+                    deductionName = getDeductionName(purchaseCreditCard.isDeduction!!),
+                    recommendDeductionName = getRecommendDeductionName(purchaseCreditCard.isRecommendDeduction!!),
                     statementType1 = purchaseCreditCard.statementType1,
                     statementType2 = purchaseCreditCard.statementType2,
                     debtorAccount = purchaseCreditCard.debtorAccount,

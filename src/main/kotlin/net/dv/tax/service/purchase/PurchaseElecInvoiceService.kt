@@ -76,7 +76,7 @@ class PurchaseElecInvoiceService(
 
     fun getPurchaseElecInvoice(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseElecInvoiceListDto {
 
-        var elecInvoiceList = getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto)
+        var elecInvoiceList = getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto, false)
         var totalCount = purchaseElecInvoiceRepository.purchaseElecInvoiceListCnt(hospitalId, purchaseQueryDto)
         var purchaseElecInvoiceTotal =
             purchaseElecInvoiceRepository.purchaseElecInvoiceTotal(hospitalId, purchaseQueryDto)
@@ -91,9 +91,10 @@ class PurchaseElecInvoiceService(
     fun getPurchaseElecInvoiceList(
         hospitalId: String,
         purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean
     ): List<PurchaseElecInvoiceDto> {
 
-        var elecInvoiceList = purchaseElecInvoiceRepository.purchaseElecInvoiceList(hospitalId, purchaseQueryDto)
+        var elecInvoiceList = purchaseElecInvoiceRepository.purchaseElecInvoiceList(hospitalId, purchaseQueryDto, isExcel)
             .map { purchaseElecInvoice ->
                 PurchaseElecInvoiceDto(
                     id = purchaseElecInvoice.id,

@@ -1,44 +1,51 @@
 package net.dv.tax.dto.purchase
+import jakarta.persistence.Column
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 
-data class PurchaseCreditCardListDto (
+data class PurchaseCashReceiptListDto (
     
     //list 데이터
-    var listPurchaseCreditCard: List<PurchaseCreditCardDto>,
+    var listPurchaseCashReceipt: List<PurchaseCashReceiptDto>,
 
     //합계 정보
-    var purchaseCreditCardTotal: PurchaseCreditCardTotal,
+    var purchaseCashReceiptTotal: PurchaseCashReceiptTotal,
 
     //총게시물 수
     var totalCount: Long? = null
 )
 
 //합계 항목
-data class PurchaseCreditCardTotal(
+data class PurchaseCashReceiptTotal(
 
     //공제
     val totalSupplyPrice: Long? = 0,
     val totalTaxAmount: Long? = 0,
+    val totalServiceCharge: Long? = 0,
     val totalAmount: Long? = 0,
 
     //불공제
     val totalNonSupplyPrice: Long? = 0,
     val totalNonTaxAmount: Long? = 0,
+    val totalNonServiceCharge: Long? = 0,
     val totalNonAmount: Long? = 0,
 )
 
-data class PurchaseCreditCardTotalSearch(
+data class PurchaseCashReceiptTotalSearch(
     val totalSupplyPrice: Long? = 0,
     val totalTaxAmount: Long? = 0,
+    val totalServiceCharge: Long? = 0,
     val totalAmount: Long? = 0,
 )
 
-data class PurchaseCreditCardDto (
+data class PurchaseCashReceiptDto (
 
-    val id: Int? = null,
 
-    @Comment("병원아이디")
+    val id: Long? = null,
+
     var hospitalId: String? = null,
 
     @Comment("업로드 파일 ID")
@@ -47,7 +54,7 @@ data class PurchaseCreditCardDto (
     @Comment("일자")
     var billingDate: String? = null,
 
-    @Comment("코드")
+    @Comment("회계코드")
     var accountCode: String? = null,
 
     @Comment("거래처")
@@ -60,33 +67,33 @@ data class PurchaseCreditCardDto (
     var itemName: String? = null,
 
     @Comment("공급가액")
-    var supplyPrice: Long? = null,
+    var supplyPrice: Long? = 0,
 
     @Comment("세액")
     var taxAmount: Long? = 0,
 
-    @Comment("비과세")
-    var nonTaxAmount: Long? = 0,
+    @Comment("봉사료")
+    var serviceCharge: Long? = 0,
 
     @Comment("합계")
     var totalAmount: Long? = 0,
 
     @Comment("국세청(공제여부)")
-    var isDeduction: Boolean? = false,
+    var isDeduction: Boolean? = null,
 
-    @Comment("국세청(공제여부)이름")
+    @Comment("국세청(공제여부)명")
     var deductionName: String? = null,
 
     @Comment("추천유형(불공제)")
-    var isRecommendDeduction: Boolean? = false,
+    var isRecommendDeduction: Boolean? = null,
 
     @Comment("추천유형(불공제)명")
     var recommendDeductionName: String? = null,
 
-    @Comment("전표유형1")
+    @Comment("전표유형 1")
     var statementType1: String? = null,
 
-    @Comment("전표유형2")
+    @Comment("전표유형 2")
     var statementType2: String? = null,
 
     @Comment("차변계정")
@@ -98,15 +105,13 @@ data class PurchaseCreditCardDto (
     @Comment("분개전송")
     var separateSend: String? = null,
 
+    @Comment("부서")
+    var department: String? = null,
+
     @Comment("전표상태")
     var statementStatus: String? = null,
 
     @Comment("작성자")
     var writer: String? = null,
 
-    @Comment("삭제")
-    var isDelete: Boolean? = false,
-
-    @Comment("등록일(업로드일시")
-    val createdAt: LocalDateTime? = null,
 )
