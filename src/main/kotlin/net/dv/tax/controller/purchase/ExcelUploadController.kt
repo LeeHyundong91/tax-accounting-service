@@ -31,7 +31,6 @@ class ExcelUploadController(
         val writer = "tester"
         log.error { categoryName }
 
-
         return accountingDataService.saveOriginData(
             hospitalId,
             writer,

@@ -76,6 +76,9 @@ dependencies {
     implementation("org.dhatim:fastexcel:0.14.3")
     implementation("org.dhatim:fastexcel-reader:0.14.1")
 
+    /*JSON*/
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
+
 
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")
 //    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")

@@ -3,8 +3,11 @@ package net.dv.tax.domain.purchase
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "purchase_elec_invoice")
@@ -22,6 +25,9 @@ data class PurchaseElecInvoiceEntity(
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
+
+    @Comment("업로드 파일 ID")
+    var dataFileId: Long? = null,
 
     @Comment("발급 일자")
     @Column(name = "ISSUE_DATE")
@@ -98,4 +104,14 @@ data class PurchaseElecInvoiceEntity(
     @Comment("작성자")
     @Column(name = "WRITER")
     var writer: String? = null,
+
+    @Comment("전자세금계산서 : true / 전자계산서 : false")
+    @Column(name = "IS_TAX")
+    val tax: Boolean? = false,
+
+    @Comment("등록일(업로드일시")
+    @CreatedDate
+    @Column(name = "CREATED_AT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 )

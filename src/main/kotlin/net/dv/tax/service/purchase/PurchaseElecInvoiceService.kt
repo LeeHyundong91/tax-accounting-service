@@ -39,13 +39,14 @@ class PurchaseElecInvoiceService(
 
         rows.forEach {
 
-            val issuDate = LocalDate.parse(it.getCell(1)?.rawValue)
+            val issueDate = LocalDate.parse(it.getCell(1)?.rawValue)
             val sendDate = LocalDate.parse(it.getCell(2)?.rawValue)
 
             val useInForPurchaseElecInvoiceEntity =
                 PurchaseElecInvoiceEntity(
                     hospitalId = requiredDto.hospitalId,
-                    issueDate = issuDate,
+                    dataFileId = requiredDto.fileDataId,
+                    issueDate = issueDate,
                     sendDate = sendDate,
                     accountCode = it.getCell(3)?.rawValue,
                     franchiseeName = it.getCell(4)?.rawValue,
@@ -64,6 +65,7 @@ class PurchaseElecInvoiceService(
                     billingType = it.getCell(16)?.rawValue,
                     issueType = it.getCell(16)?.rawValue,
                     writer = requiredDto.writer,
+                    tax = requiredDto.isTax
                 )
 
             elecInvoiceList.add(useInForPurchaseElecInvoiceEntity)
@@ -72,45 +74,51 @@ class PurchaseElecInvoiceService(
         saveElecInvoiceList(elecInvoiceList)
     }
 
-    fun getPurchaseElecInvoice(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseElecInvoiceListDto{
+    fun getPurchaseElecInvoice(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseElecInvoiceListDto {
 
-        var elecInvoiceList = getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto)
+        var elecInvoiceList = getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto, false)
         var totalCount = purchaseElecInvoiceRepository.purchaseElecInvoiceListCnt(hospitalId, purchaseQueryDto)
-        var purchaseElecInvoiceTotal = purchaseElecInvoiceRepository.purchaseElecInvoiceTotal(hospitalId, purchaseQueryDto)
+        var purchaseElecInvoiceTotal =
+            purchaseElecInvoiceRepository.purchaseElecInvoiceTotal(hospitalId, purchaseQueryDto)
 
         return PurchaseElecInvoiceListDto(
             listPurchaseElecInvoice = elecInvoiceList,
-            totalCount=totalCount,
+            totalCount = totalCount,
             purchaseElecInvoiceTotal = purchaseElecInvoiceTotal
         )
     }
 
-    fun getPurchaseElecInvoiceList(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): List<PurchaseElecInvoiceDto>{
+    fun getPurchaseElecInvoiceList(
+        hospitalId: String,
+        purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean
+    ): List<PurchaseElecInvoiceDto> {
 
-        var elecInvoiceList = purchaseElecInvoiceRepository.purchaseElecInvoiceList(hospitalId, purchaseQueryDto).map{ purchaseElecInvoice ->
-            PurchaseElecInvoiceDto(
-                id = purchaseElecInvoice.id,
-                issueDate = purchaseElecInvoice.issueDate,
-                sendDate = purchaseElecInvoice.sendDate,
-                accountCode = purchaseElecInvoice.accountCode,
-                franchiseeName = purchaseElecInvoice.franchiseeName,
-                itemName = purchaseElecInvoice.itemName,
-                supplyPrice = purchaseElecInvoice.supplyPrice,
-                taxAmount = purchaseElecInvoice.taxAmount,
-                totalAmount = purchaseElecInvoice.totalAmount,
-                isDeduction = purchaseElecInvoice.isDeduction,
-                debtorAccount = purchaseElecInvoice.debtorAccount,
-                creditAccount = purchaseElecInvoice.creditAccount,
-                separateSend = purchaseElecInvoice.separateSend,
-                statementStatus = purchaseElecInvoice.statementStatus,
-                taskType = purchaseElecInvoice.taskType,
-                approvalNo = purchaseElecInvoice.approvalNo,
-                invoiceType = purchaseElecInvoice.invoiceType,
-                billingType = purchaseElecInvoice.billingType,
-                issueType = purchaseElecInvoice.issueType,
-                writer = purchaseElecInvoice.writer,
-            )
-        }
+        var elecInvoiceList = purchaseElecInvoiceRepository.purchaseElecInvoiceList(hospitalId, purchaseQueryDto, isExcel)
+            .map { purchaseElecInvoice ->
+                PurchaseElecInvoiceDto(
+                    id = purchaseElecInvoice.id,
+                    issueDate = purchaseElecInvoice.issueDate,
+                    sendDate = purchaseElecInvoice.sendDate,
+                    accountCode = purchaseElecInvoice.accountCode,
+                    franchiseeName = purchaseElecInvoice.franchiseeName,
+                    itemName = purchaseElecInvoice.itemName,
+                    supplyPrice = purchaseElecInvoice.supplyPrice,
+                    taxAmount = purchaseElecInvoice.taxAmount,
+                    totalAmount = purchaseElecInvoice.totalAmount,
+                    isDeduction = purchaseElecInvoice.isDeduction,
+                    debtorAccount = purchaseElecInvoice.debtorAccount,
+                    creditAccount = purchaseElecInvoice.creditAccount,
+                    separateSend = purchaseElecInvoice.separateSend,
+                    statementStatus = purchaseElecInvoice.statementStatus,
+                    taskType = purchaseElecInvoice.taskType,
+                    approvalNo = purchaseElecInvoice.approvalNo,
+                    invoiceType = purchaseElecInvoice.invoiceType,
+                    billingType = purchaseElecInvoice.billingType,
+                    issueType = purchaseElecInvoice.issueType,
+                    writer = purchaseElecInvoice.writer,
+                )
+            }
 
         return elecInvoiceList
 

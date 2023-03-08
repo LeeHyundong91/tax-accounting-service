@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.GenericGenerator
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.LocalDate
 
 import java.time.LocalDateTime
 import java.util.*
@@ -99,11 +100,7 @@ class EmployeeRequestEntity(
 
     @Comment("직무")
     @Column(name = "JOB")
-    var job: Long? = null,
-
-    @Comment("직무상세")
-    @Column(name = "JOB_DETAIL")
-    var jobDetail: Long? = null,
+    var job: String? = null,
 
     @Comment("경력연차")
     @Column(name = "CAREER_NUMBER")
@@ -166,15 +163,15 @@ class EmployeeEntity(
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT_TYPE")
-    var employmentType: String,
+    var employmentType: String? = null,
 
     @Comment("세전/세후")
     @Column(name = "ANNUAL_TYPE")
-    var annualType: String,
+    var annualType: String? = null,
 
     @Comment("연봉")
     @Column(name = "ANNUAL_INCOME")
-    var annualIncome: String,
+    var annualIncome: String? = null,
 
     @Comment("직위")
     @Column(name = "POSITION")
@@ -182,7 +179,7 @@ class EmployeeEntity(
 
     @Comment("입사일")
     @Column(name = "JOIN_AT")
-    var joinAt: LocalDateTime,
+    var joinAt: LocalDate,
 
     @Comment("이메일")
     @Column(name = "EMAIL")
@@ -218,11 +215,7 @@ class EmployeeEntity(
 
     @Comment("직무")
     @Column(name = "JOB")
-    var job: Long? = null,
-
-    @Comment("직무상세")
-    @Column(name = "JOB_DETAIL")
-    var jobDetail: Long? = null,
+    var job: String? = null,
 
     @Comment("경력연차")
     @Column(name = "CAREER_NUMBER")
@@ -248,6 +241,9 @@ class EmployeeEntity(
     @Column(name = "UPDATED_AT")
     var updatedAt: LocalDateTime? = null,
 
+    @Comment("엑셀 업로드시 등록된 파이 ㄹ경로")
+    @Column(name = "FILE_PATH")
+    var filePath: String? = null
     )
 
 @Entity
@@ -282,15 +278,15 @@ class EmployeeHistoryEntity(
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT_TYPE")
-    var employmentType: String,
+    var employmentType: String? = null,
 
     @Comment("세전/세후")
     @Column(name = "ANNUAL_TYPE")
-    var annualType: String,
+    var annualType: String? = null,
 
     @Comment("연봉")
     @Column(name = "ANNUAL_INCOME")
-    var annualIncome: String,
+    var annualIncome: String? = null,
 
     @Comment("직위")
     @Column(name = "POSITION")
@@ -298,7 +294,7 @@ class EmployeeHistoryEntity(
 
     @Comment("입사일")
     @Column(name = "JOIN_AT")
-    var joinAt: LocalDateTime,
+    var joinAt: LocalDate,
 
     @Comment("이메일")
     @Column(name = "EMAIL")
@@ -334,11 +330,7 @@ class EmployeeHistoryEntity(
 
     @Comment("직무")
     @Column(name = "JOB")
-    var job: Long? = null,
-
-    @Comment("직무상세")
-    @Column(name = "JOB_DETAIL")
-    var jobDetail: Long? = null,
+    var job: String? = null,
 
     @Comment("경력연차")
     @Column(name = "CAREER_NUMBER")
@@ -440,7 +432,7 @@ class EmployeeSalaryMngEntity(
 
     @Comment("직원수")
     @Column(name = "EMPLOYEE_CNT")
-    var employeeCnt: String? = null,
+    var employeeCnt: Long? = null,
 
     @Comment("등록일")
     @Column(name = "CREATED_AT")

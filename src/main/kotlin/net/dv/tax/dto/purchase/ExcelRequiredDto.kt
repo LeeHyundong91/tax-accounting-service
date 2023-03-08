@@ -8,6 +8,8 @@ data class ExcelRequiredDto (
 
     val year: String,
 
-    val fileDataId: Long
+    val fileDataId: Long,
+
+    var isTax: Boolean = false
 
 )

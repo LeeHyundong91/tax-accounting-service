@@ -1,18 +1,23 @@
 package net.dv.tax.service.employee
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import net.dv.tax.domain.employee.*
 import net.dv.tax.dto.employee.*
 
 import net.dv.tax.enum.employee.*
 import net.dv.tax.repository.employee.*
 import net.dv.tax.utils.Encrypt
+import org.dhatim.fastexcel.reader.Row
 
 import org.springframework.http.HttpStatus
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
 
 
 @Service
@@ -57,7 +62,6 @@ class EmployeeService(
                 mobilePhoneNumber = employeeRequest.mobilePhoneNumber,
                 office = employeeRequest.office,
                 job = employeeRequest.job,
-                jobDetail = employeeRequest.jobDetail,
                 careerNumber = employeeRequest.careerNumber,
                 dependentCnt = employeeRequest.dependentCnt,
                 address = employeeRequest.address,
@@ -87,7 +91,7 @@ class EmployeeService(
                 employment = getEmployeementName(it.employmentType),
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,
-                position = getPositionName(it.position ?: ""),
+                position = it.position ?: "",
                 joinAt = it.joinAt.toString(),
                 email = it.email ?: "",
                 jobClass = getJobClassName(it.jobClass),
@@ -157,7 +161,6 @@ class EmployeeService(
             mobilePhoneNumber = employeeRequest.mobilePhoneNumber,
             office = employeeRequest.office,
             job = employeeRequest.job,
-            jobDetail = employeeRequest.jobDetail,
             careerNumber = employeeRequest.careerNumber,
             dependentCnt = employeeRequest.dependentCnt,
             address = employeeRequest.address,
@@ -203,7 +206,7 @@ class EmployeeService(
 
         employeeDto?.also { employee ->
 
-            val joinAt = LocalDateTime.parse(employee.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            val joinAt = LocalDate.parse(employee.joinAt, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             var resignationAt: String? = null
             employee.resignationAt?.also {
                 if( it.length > 0 ) resignationAt = it
@@ -228,7 +231,6 @@ class EmployeeService(
                 mobilePhoneNumber = employee.mobilePhoneNumber,
                 office = employee.office,
                 job = employee.job,
-                jobDetail = employee.jobDetail,
                 careerNumber = employee.careerNumber,
                 dependentCnt = employee.dependentCnt,
                 address = employee.address,
@@ -263,8 +265,8 @@ class EmployeeService(
             //변경 내용으로 덮기,
             employeeEntity?.also { employee ->
 
-                val joinAt = LocalDateTime.parse(
-                    employeeDto.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                val joinAt = LocalDate.parse(
+                    employeeDto.joinAt , DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
                 employee.encryptResidentNumber = encrypt.encodeToBase64(employeeDto.residentNumber.toString())
 
@@ -290,7 +292,6 @@ class EmployeeService(
                 employee.mobilePhoneNumber = employeeDto.mobilePhoneNumber
                 employee.office = employeeDto.office
                 employee.job = employeeDto.job
-                employee.jobDetail = employeeDto.jobDetail
                 employee.careerNumber = employeeDto.careerNumber
                 employee.dependentCnt = employeeDto.dependentCnt
                 employee.address = employeeDto.address
@@ -383,7 +384,6 @@ class EmployeeService(
                     mobilePhoneNumber = employeeEntity.mobilePhoneNumber,
                     office = employeeEntity.office,
                     job = employeeEntity.job,
-                    jobDetail = employeeEntity.jobDetail,
                     careerNumber = employeeEntity.careerNumber,
                     dependentCnt = employeeEntity.dependentCnt,
                     address = employeeEntity.address,
@@ -405,11 +405,11 @@ class EmployeeService(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
                 name = it.name!!,
-                employmentName = getEmployeementName(it.employmentType),
+                employmentName = getEmployeementName(it.employmentType?:""),
                 employmentType = it.employmentType,
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,
-                position = getPositionName(it.position ?: ""),
+                position = it.position ?: "",
                 joinAt = it.joinAt.toString(),
                 email = it.email ?: "",
                 jobClass = getJobClassName(it.jobClass),
@@ -448,7 +448,6 @@ class EmployeeService(
                     mobilePhoneNumber = employeeEntity.mobilePhoneNumber,
                     office = employeeEntity.office,
                     job = employeeEntity.job,
-                    jobDetail = employeeEntity.jobDetail,
                     careerNumber = employeeEntity.careerNumber,
                     dependentCnt = employeeEntity.dependentCnt,
                     address = employeeEntity.address,
@@ -521,7 +520,7 @@ class EmployeeService(
                 hospitalId = it.hospitalId,
                 hospitalName = it.hospitalName,
                 paymentsAt = it.paymentsAt,
-                employeeCnt = it.employeeCnt,
+                employeeCnt = it.employeeCnt.toString(),
                 createdAt = it.createdAt,
                 payrollCreatedAt = it.payrollCreatedAt,
                 apprState = getApprovalName(it.apprState!!) ,
@@ -565,7 +564,7 @@ class EmployeeService(
     fun updateSalaryMngAppr(salaryMngId: String, apprCode: String): Int{
 
         val employeeSalaryMng = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get()
-        employeeSalaryMng.apprState = apprCode;
+        employeeSalaryMng.apprState = apprCode
 
         employeeSalaryMngRepository.save(employeeSalaryMng)
 
@@ -575,7 +574,7 @@ class EmployeeService(
     fun updateSalaryMngFixed(salaryMngId: String, fixedCode: String): Int{
 
         val employeeSalaryMng = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get()
-        employeeSalaryMng.fixedState = fixedCode;
+        employeeSalaryMng.fixedState = fixedCode
 
         employeeSalaryMngRepository.save(employeeSalaryMng)
 
@@ -588,7 +587,7 @@ class EmployeeService(
             hospitalId = employeeSalary.hospitalId,
             hospitalName = employeeSalary.hospitalName,
             paymentsAt = employeeSalary.paymentsAt,
-            employeeCnt = employeeSalary.employeeSalaryList!!.size.toString(),
+            employeeCnt = employeeSalary.employeeSalaryList!!.size.toLong(),
             createdAt = LocalDateTime.now()
         )
 
@@ -624,4 +623,152 @@ class EmployeeService(
     }
 
 
+    //excel 파일로 직원을 일괄 등록 한다.
+    @Transactional
+    fun registerEmployeeExcelRequest(hospitalId: String, hospitalName: String, filePath: String, excelRows: MutableList<Row>): Int{
+
+        val dataList = mutableListOf<EmployeeEntity>()
+
+        /*Remove Title*/
+        excelRows.removeFirst()
+        excelRows.removeFirst()
+        excelRows.removeFirst()
+        excelRows.removeFirst()
+        excelRows.removeFirst()
+
+        excelRows.forEach { row ->
+
+            val defaultName = row.getCell(1).rawValue
+
+            //이름이 있는지 없는지에 따라서 진행 한다.
+            if(!defaultName.isNullOrEmpty()) {
+
+                val joinAtStr = row.getCell(8)?.rawValue
+                val joinAt = LocalDate.parse(joinAtStr , DateTimeFormatter.ofPattern("yyyyMMdd"))
+
+                val data = EmployeeEntity(
+                    hospitalId = hospitalId,
+                    hospitalName = hospitalName,
+                    encryptResidentNumber = encrypt.encodeToBase64(row.getCell(3).rawValue),
+                    residentNumber = row.getCell(3).rawValue,
+                    jobClass = JobClass.JobClass_W.jobClassCode,
+                    name = defaultName,
+                    joinAt = joinAt,
+                    mobilePhoneNumber = row.getCell(12).rawValue,
+                    email = row.getCell(13).rawValue,
+                    address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue,
+                    filePath = filePath
+                )
+
+                dataList.add(data)
+            }
+        }
+
+        employeeRepository.saveAll(dataList)
+
+        return HttpStatus.OK.value()
+    }
+
+    //excel 파일로 월급여를 등록 한다.
+    @Transactional
+    fun insertSalaryExcel(hospitalId: String, hospitalName: String, filePath: String, excelRows: MutableList<Row>): Int{
+
+        val dataList = mutableListOf<EmployeeSalaryEntity>()
+
+        //상세내역
+        val detailSalaryIdxList = mutableListOf<Int>()
+        val detailSalaryNameList = mutableListOf<String>()
+
+        //상세내역 범위
+        val basicSalary = "기본급"
+        val totalSalary = "지급액계"
+
+        //필수값 지정
+        val fixedList = mutableListOf<String>("기본급", "지급액계", "국민연금", "건강보험", "고용보험", "장기요양보험료", "소득세", "지방소득세", "소득세 정산", "차인지급액")
+        var fixedIdxList = mutableListOf<Int>()
+
+        var isDetailIdx = false;
+
+        /*Remove 합계*/
+        excelRows.removeLast()
+
+        //관리 페이지 등록
+        var employeeSalaryMngEntity = EmployeeSalaryMngEntity(
+            hospitalId = hospitalId,
+            hospitalName = hospitalName,
+            employeeCnt = (excelRows.size - 2).toLong(),
+            createdAt = LocalDateTime.now(),
+        )
+
+        var salaryMng = employeeSalaryMngRepository.save(employeeSalaryMngEntity)
+
+        //월급여 등록
+        excelRows.forEachIndexed { idx, row ->
+            
+            //기준데이터 만들기
+            if( idx == 0 ||  idx == 1) {
+                row.forEachIndexed { rIdx, cell ->
+
+                    //상세 금액으로 처리 되야 하는 부분
+                    if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(totalSalary) ) isDetailIdx = false
+
+                    if ( !cell.rawValue.isNullOrEmpty() && isDetailIdx )  {
+                        detailSalaryIdxList.add( rIdx )
+                        detailSalaryNameList.add(cell.rawValue)
+                    }
+
+                    if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(basicSalary) ) isDetailIdx = true
+
+                    //필수값 셋팅
+                    fixedList.forEach { fixValue ->
+                        if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(fixValue) ) {
+                            fixedIdxList.add(rIdx)
+                        }
+                    }
+                }
+
+           }else {
+                val detailMap = mutableMapOf<String, String>()
+
+                var nameIdx = 0
+                row.forEachIndexed { rIdx, cell ->
+                    detailSalaryIdxList.forEach{ dIdx ->
+                        if( rIdx == dIdx ) {
+                            detailMap[detailSalaryNameList.get(nameIdx)] = cell.rawValue
+                            nameIdx++
+                        }
+                    }
+                }
+
+                val detailJsonStr = Json.encodeToString(detailMap)
+
+                val residentNumber = row.getCell(2).rawValue
+
+                val employee = employeeRepository.findByHospitalIdAndResidentNumber(hospitalId, residentNumber)
+
+                val employeeSalaryEntity = EmployeeSalaryEntity (
+                    hospitalId = hospitalId,
+                    basicSalary = row.getCell(fixedIdxList.get(0)).rawValue.toLong(),
+                    totalSalary = row.getCell(fixedIdxList.get(1)).rawValue.toLong(),
+                    detailSalary = detailJsonStr,
+                    nationalPension =row.getCell(fixedIdxList.get(2)).rawValue.toLong(),
+                    healthInsurance = row.getCell(fixedIdxList.get(3)).rawValue.toLong(),
+                    unemployementInsurance = row.getCell(fixedIdxList.get(4)).rawValue.toLong(),
+                    careInsurance = row.getCell(fixedIdxList.get(5)).rawValue.toLong(),
+                    incomeTax =  row.getCell(fixedIdxList.get(6)).rawValue.toLong(),
+                    localIncomeTax = row.getCell(fixedIdxList.get(7)).rawValue.toLong(),
+                    incomeTaxYearEnd = row.getCell(fixedIdxList.get(8)).rawValue.toLong(),
+                    actualPayment = row.getCell(fixedIdxList.get(9)).rawValue.toLong(),
+                    employee = employee,
+                    employeeSalaryMng = salaryMng
+                )
+
+                dataList.add( employeeSalaryEntity)
+           }
+        }
+
+        employeeSalaryRepository.saveAll(dataList)
+
+        return HttpStatus.OK.value()
+    }
 }

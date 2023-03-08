@@ -8,6 +8,7 @@ import net.dv.tax.repository.common.AccountingDataRepository
 import net.dv.tax.service.purchase.PurchaseCashReceiptService
 import net.dv.tax.service.purchase.PurchaseCreditCardService
 import net.dv.tax.service.purchase.PurchaseElecInvoiceService
+import net.dv.tax.service.purchase.PurchasePassbookService
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.http.HttpStatus
@@ -24,7 +25,8 @@ class AccountingDataService(
 
     private val purchaseCreditCardService: PurchaseCreditCardService,
     private val purchaseCashReceiptService: PurchaseCashReceiptService,
-    private val purchaseElecInvoiceService: PurchaseElecInvoiceService
+    private val purchaseElecInvoiceService: PurchaseElecInvoiceService,
+    private val purchasePassbookService: PurchasePassbookService,
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -85,7 +87,7 @@ class AccountingDataService(
                 writer = it.writer!!,
                 hospitalId = it.hospitalId!!,
                 year = it.uploadFileName?.trimStart()?.substring(0, 4)!!,
-                it.id!!
+                fileDataId = it.id!!
             )
 
             it.isApply = true
@@ -94,13 +96,21 @@ class AccountingDataService(
             val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(it.uploadFilePath!!))
 
             when (MenuCategoryCode.valueOf(it.dataCategory!!)) {
-                MenuCategoryCode.CREDIT_CARD -> log.error { purchaseCreditCardService.excelToEntitySave(excelDto, rows) }
+                MenuCategoryCode.CREDIT_CARD -> purchaseCreditCardService.excelToEntitySave(excelDto, rows)
                 MenuCategoryCode.CASH_RECEIPT -> purchaseCashReceiptService.excelToEntitySave(excelDto, rows)
-                MenuCategoryCode.ELEC_INVOICE -> log.error { purchaseElecInvoiceService.excelToEntitySave(excelDto, rows) }
+                MenuCategoryCode.ELEC_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(excelDto, rows)
+                MenuCategoryCode.PASSBOOK -> purchasePassbookService.excelToEntitySave(excelDto, rows)
+                MenuCategoryCode.ELEC_TAX_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(
+                    excelDto
+                        .also { dto ->
+                            dto.isTax = true
+                        }, rows
+                )
+
                 else -> null
             }
 
-//            accountingDataRepository.save(it)
+            accountingDataRepository.save(it)
         }
         return ResponseEntity.ok(HttpStatus.OK)
     }
