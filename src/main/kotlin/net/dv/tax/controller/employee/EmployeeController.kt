@@ -3,6 +3,9 @@ package net.dv.tax.controller.employee
 import net.dv.tax.TaxAccountingApplication
 import net.dv.tax.dto.employee.*
 import net.dv.tax.service.employee.EmployeeService
+import net.dv.tax.utils.AwsS3Service
+import net.dv.tax.utils.ExcelComponent
+import org.hibernate.boot.model.naming.IllegalIdentifierException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,12 +14,17 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
+import java.io.File
+import java.io.FileOutputStream
+import java.util.*
 
 @RestController
 @RequestMapping("/${TaxAccountingApplication.VERSION}/employee")
 class EmployeeController(
     private val employeeService: EmployeeService,
-
+    private val excelComponent: ExcelComponent,
+    private val awsS3Service: AwsS3Service
     ) {
 
     //직원 요청 등록
@@ -121,4 +129,38 @@ class EmployeeController(
     fun insertSalary(@RequestBody data: EmployeeSalary): ResponseEntity<Int> {
         return ResponseEntity.ok(employeeService.insertSalary( data))
     }
+
+
+    //직원일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
+    @PostMapping("request/insert/{hospitalId}/excel")
+    fun registerEmployeeExcelRequest(@PathVariable hospitalId: String, hospitalName: String,  excelFile: MultipartFile): ResponseEntity<Int> {
+
+        val reportType = "employeeRegister"
+        //파일을 s3에 업로드 한다.
+        val returnMap = awsS3Service.upload(reportType, excelFile)
+        val filePath = returnMap["filePath"]?: throw IllegalIdentifierException("filepath is empty")
+        val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(filePath))
+
+        //업로드 된 파일 기준 등록 한다.
+        var res = employeeService.registerEmployeeExcelRequest(hospitalId, hospitalName, filePath, rows)
+
+        return ResponseEntity.ok(res)
+    }
+
+    //직원일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
+    @PostMapping("salary/insert/{hospitalId}/excel")
+    fun rinsertSalaryExcel(@PathVariable hospitalId: String, hospitalName: String, excelFile: MultipartFile): ResponseEntity<Int> {
+
+        val reportType = "employeeRegister"
+        //파일을 s3에 업로드 한다.
+        val returnMap = awsS3Service.upload(reportType, excelFile)
+        val filePath = returnMap["filePath"]?: throw IllegalIdentifierException("filepath is empty")
+        val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(filePath))
+
+        //업로드 된 파일 기준 등록 한다.
+        var res = employeeService.insertSalaryExcel(hospitalId, hospitalName, filePath, rows)
+
+        return ResponseEntity.ok(res)
+    }
+
 }
