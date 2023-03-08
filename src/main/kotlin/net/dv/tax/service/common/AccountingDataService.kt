@@ -110,7 +110,7 @@ class AccountingDataService(
                 else -> null
             }
 
-//            accountingDataRepository.save(it)
+            accountingDataRepository.save(it)
         }
         return ResponseEntity.ok(HttpStatus.OK)
     }
