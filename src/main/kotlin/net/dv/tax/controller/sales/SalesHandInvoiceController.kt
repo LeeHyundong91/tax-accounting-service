@@ -12,7 +12,7 @@ class SalesHandInvoiceController(private val salesHandInvoiceService: SalesHandI
 
 
     @PutMapping("/save/{hospitalId}")
-    fun saveList(dataList: List<SalesHandInvoiceEntity>, @PathVariable hospitalId: String): ResponseEntity<HttpStatus> {
+    fun saveList(@RequestBody dataList: List<SalesHandInvoiceEntity>, @PathVariable hospitalId: String): ResponseEntity<HttpStatus> {
         return salesHandInvoiceService.saveData(dataList, hospitalId)
     }
 
