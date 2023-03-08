@@ -87,7 +87,7 @@ class AccountingDataService(
                 writer = it.writer!!,
                 hospitalId = it.hospitalId!!,
                 year = it.uploadFileName?.trimStart()?.substring(0, 4)!!,
-                it.id!!
+                fileDataId = it.id!!
             )
 
             it.isApply = true
