@@ -15,7 +15,10 @@ enum class MenuCategoryCode(
     CASH_RECEIPT("cash-receipt", "현금영수증매출목록", "현금영수증매입목록"),
     ELEC_INVOICE("elec-invoice", "전자계산서매출목록", "전자계산서매입목록"),
     ELEC_TAX_INVOICE("elec-tax-invoice", "전자세금계산서매출목록", "전자세금계산서매입목록"),
-    HAND_INVOICE("hand-invoice", "수기세금계산서매출목록", "");
+    HAND_INVOICE("hand-invoice", "수기세금계산서매출목록", ""),
+    PASSBOOK("passbook","통장매입관리",""),
+    HANDWRITTEN("handwritten", "수기매입대상관리","");
+
     companion object {
         fun convert(value: String): String {
             var codeName: String? = null

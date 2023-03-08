@@ -3,51 +3,51 @@ package net.dv.tax.domain.purchase
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
+import org.jetbrains.annotations.NotNull
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
-@Table(name = "purchase_passbook")
-@Comment("통장매입관리")
+@Entity
+@Table(name = "purchase_handwritten")
+@Comment("수기대상매입관리")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
-@Entity
-data class PurchasePassbookEntity(
+data class PurchaseHandwrittenEntity(
 
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    var id: Long? = null,
 
-    @Comment("병원아이디")
-    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
-    @Comment("업로드 파일 ID")
     var dataFileId: Long? = null,
 
-    @Comment("거래일")
-    val transactionDate: String? = null,
+    @Comment("발급일자")
+    val issueDate: String?,
 
-    @Comment("적요")
-    val summary: String? = null,
+    @Comment("품목")
+    val itemName: String?,
 
-    @Comment("입금액")
-    val depositAmount: Long? = null,
+    @Column(name = "SUPPLY_PRICE")
+    @Comment("공급가액")
+    var supplyPrice: Long? = 0,
 
-    @Comment("출금액")
-    val withdrawnAmount: Long? = null,
+    @Comment("세액")
+    val taxAmount: Long? = 0,
 
-    @Comment("잔액")
-    val balance: Long? = null,
-
-    @Comment("등록일(업로드일시")
+    @NotNull
     @CreatedDate
-    @Column(name = "CREATED_AT")
+    @Column(updatable = false, name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
+    val writer: String? = null,
+
+    @Column(name = "IS_DELETE")
+    val delete: Boolean = false,
 
     )
