@@ -106,7 +106,7 @@ eks:deploy:
     - chmod +x ./kubectl
     - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
   script:
-    - aws s3 cp s3://dr.village.deployment/dv.service/dv-tax-accounting.yml .
+    - aws s3 cp s3://dr.village.net/deployment/dv.service/dv-tax-accounting.yml .
     - envsubst < dv-tax-accounting.yml | kubectl --namespace ${NAMESPACE} apply -f -
   only:
     - /^dev.*$/
