@@ -47,7 +47,7 @@ data class EmployeeRequestDto(
 
     var office: String? = null,
 
-    var job: Long? = null,
+    var job: String? = null,
 
     var jobDetail: Long? = null,
 
