@@ -38,13 +38,17 @@ class EmployeeRequestEntity(
     @Column(name = "HOSPITAL_NAME")
     var hospitalName: String,
 
+    @Comment("사원번호")
+    @Column(name = "EMPLOYEE_CODE")
+    var employeeCode: String? = null,
+
     @Comment("이름")
     @Column(name = "NAME")
-    var name: String,
+    var name: String? = null,
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
-    @Column(name = "EMPLOYMENT_TYPE")
-    var employmentType: String,
+    @Column(name = "EMPLOYMENT")
+    var employment: String,
 
     @Comment("세전/세후")
     @Column(name = "ANNUAL_TYPE")
@@ -60,7 +64,7 @@ class EmployeeRequestEntity(
 
     @Comment("입사일")
     @Column(name = "JOIN_AT")
-    var joinAt: LocalDateTime,
+    var joinAt: LocalDate,
 
     @Comment("이메일")
     @Column(name = "EMAIL")
@@ -126,6 +130,14 @@ class EmployeeRequestEntity(
     @Column(name = "UPDATED_AT")
     var updatedAt: LocalDateTime? = null,
 
+    @Comment("작성자 ID")
+    @Column(name = "WRITER_ID")
+    var writerId: String? = null,
+
+    @Comment("작성자 명")
+    @Column(name = "WRITER_NAME")
+    var writerName: String? = null,
+
 )
 
 @Entity
@@ -157,13 +169,17 @@ class EmployeeEntity(
     @Column(name = "HOSPITAL_NAME")
     var hospitalName: String,
 
+    @Comment("사원번호")
+    @Column(name = "EMPLOYEE_CODE")
+    var employeeCode: String? = null,
+
     @Comment("이름")
     @Column(name = "NAME")
     var name: String? = null,
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
-    @Column(name = "EMPLOYMENT_TYPE")
-    var employmentType: String? = null,
+    @Column(name = "EMPLOYMENT")
+    var employment: String? = null,
 
     @Comment("세전/세후")
     @Column(name = "ANNUAL_TYPE")
@@ -243,7 +259,20 @@ class EmployeeEntity(
 
     @Comment("엑셀 업로드시 등록된 파이 ㄹ경로")
     @Column(name = "FILE_PATH")
-    var filePath: String? = null
+    var filePath: String? = null,
+
+    @Comment("작성자 ID")
+    @Column(name = "WRITER_ID")
+    var writerId: String? = null,
+
+    @Comment("작성자 명")
+    @Column(name = "WRITER_NAME")
+    var writerName: String? = null,
+
+    @Comment("세율")
+    @Column(name = "TAX_RATE")
+    var taxRate: String? = null
+
     )
 
 @Entity
@@ -272,13 +301,17 @@ class EmployeeHistoryEntity(
     @Column(name = "HOSPITAL_NAME")
     var hospitalName: String,
 
+    @Comment("사원번호")
+    @Column(name = "EMPLOYEE_CODE")
+    var employeeCode: String? = null,
+
     @Comment("이름")
     @Column(name = "NAME")
     var name: String,
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
-    @Column(name = "EMPLOYMENT_TYPE")
-    var employmentType: String? = null,
+    @Column(name = "EMPLOYMENT")
+    var employment: String? = null,
 
     @Comment("세전/세후")
     @Column(name = "ANNUAL_TYPE")
@@ -362,7 +395,20 @@ class EmployeeHistoryEntity(
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employee: EmployeeEntity? = null
+    val employee: EmployeeEntity? = null,
+
+    @Comment("작성자 ID")
+    @Column(name = "WRITER_ID")
+    var writerId: String? = null,
+
+    @Comment("작성자 명")
+    @Column(name = "WRITER_NAME")
+    var writerName: String? = null,
+
+    @Comment("세율")
+    @Column(name = "TAX_RATE")
+    var taxRate: String? = null
+
 )
 
 @Entity
@@ -466,6 +512,14 @@ class EmployeeSalaryEntity(
     @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
+    @Comment("사원번호")
+    @Column(name = "EMPLOYEE_CODE")
+    var employeeCode: String? = null,
+
+    @Comment("이름")
+    @Column(name = "NAME")
+    var name: String? = null,
+
     @Comment("기본 급여")
     @Column(name = "BASIC_SALARY")
     var basicSalary: Long? = null,
@@ -521,12 +575,6 @@ class EmployeeSalaryEntity(
     @Comment("등록일")
     @Column(name = "CREATED_AT")
     var createdAt: LocalDateTime? = LocalDateTime.now(),
-
-    @Comment("사용자 아아디")
-    @ManyToOne
-    @JoinColumn(name = "EMPLOYEE_ID")
-    val employee: EmployeeEntity? = null,
-
 
     @Comment("관리 아아디")
     @ManyToOne
