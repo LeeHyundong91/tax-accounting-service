@@ -13,7 +13,9 @@ data class EmployeeQueryDto (
 
     val offset: Long? = 0,
 
-    val size: Long? = 30
+    val size: Long? = 30,
+
+    val jobClass: String? = null,
 
 )
 

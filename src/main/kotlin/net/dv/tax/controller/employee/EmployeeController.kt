@@ -132,8 +132,8 @@ class EmployeeController(
 
 
     //직원일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
-    @PostMapping("request/insert/{hospitalId}/excel")
-    fun registerEmployeeExcelRequest(@PathVariable hospitalId: String, hospitalName: String,  excelFile: MultipartFile): ResponseEntity<Int> {
+    @PostMapping("request/insert/{hospitalId}/{hospitalName}/excel")
+    fun registerEmployeeExcelRequest(@PathVariable hospitalId: String, @PathVariable hospitalName: String,  excelFile: MultipartFile): ResponseEntity<Int> {
 
         val reportType = "employeeRegister"
         //파일을 s3에 업로드 한다.
@@ -148,8 +148,8 @@ class EmployeeController(
     }
 
     //직원일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
-    @PostMapping("salary/insert/{hospitalId}/excel")
-    fun rinsertSalaryExcel(@PathVariable hospitalId: String, hospitalName: String, excelFile: MultipartFile): ResponseEntity<Int> {
+    @PostMapping("salary/insert/{hospitalId}/{hospitalName}/excel")
+    fun rinsertSalaryExcel(@PathVariable hospitalId: String, @PathVariable hospitalName: String, excelFile: MultipartFile): ResponseEntity<Int> {
 
         val reportType = "employeeRegister"
         //파일을 s3에 업로드 한다.

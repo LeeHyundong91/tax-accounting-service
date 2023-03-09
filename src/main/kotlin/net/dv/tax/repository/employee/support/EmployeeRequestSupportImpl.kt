@@ -54,20 +54,20 @@ class EmployeeRequestSupportImpl(
         builder.and(employeeRequestEntity.requestState.notEqualsIgnoreCase(RequestState.RequestState_D.requestStateCode))
 
         //이름
-        employeeQueryDto.name?.also {
-            if( it.length > 0 ) builder.and(employeeRequestEntity.name.contains(it))
+        if( !employeeQueryDto.name.isNullOrEmpty()) {
+            builder.and(employeeRequestEntity.name.contains(employeeQueryDto.name))
         }
 
         //주민번호
-        employeeQueryDto.regidentNumber?.also {
-            if( it.length > 0 ) builder.and(employeeRequestEntity.residentNumber.contains(it))
+        if( !employeeQueryDto.regidentNumber.isNullOrEmpty()) {
+            builder.and(employeeRequestEntity.residentNumber.contains(employeeQueryDto.regidentNumber))
         }
 
         //시작일
         employeeQueryDto.from?.also {
             if( it.length > 0 ) {
                 val fromDateTime = LocalDateTime.parse(it + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(QEmployeeSalaryMngEntity.employeeSalaryMngEntity.createdAt.after(fromDateTime.minusDays(1)));
+                builder.and(employeeRequestEntity.createdAt.after(fromDateTime.minusDays(1)));
             }
         }
 
@@ -75,8 +75,13 @@ class EmployeeRequestSupportImpl(
         employeeQueryDto.to?.also {
             if( it.length > 0 ) {
                 val toDateTime = LocalDateTime.parse(it + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(QEmployeeSalaryMngEntity.employeeSalaryMngEntity.createdAt.before(toDateTime.plusDays(1)));
+                builder.and(employeeRequestEntity.createdAt.before(toDateTime.plusDays(1)));
             }
+        }
+        
+        // 재직구분
+        if ( !employeeQueryDto.jobClass.isNullOrEmpty() ){
+            builder.and(employeeRequestEntity.jobClass.eq(employeeQueryDto.jobClass))
         }
 
 

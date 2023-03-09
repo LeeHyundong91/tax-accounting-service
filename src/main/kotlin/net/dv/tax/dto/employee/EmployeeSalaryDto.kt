@@ -28,6 +28,10 @@ data class EmployeeSalaryDto (
 
     var hospitalName: String? = null,
 
+    var employeeCode: String? = null,
+
+    var name: String? = null,
+
     var basicSalary: Long? = null,
 
     var totalSalary: Long  ? = null,

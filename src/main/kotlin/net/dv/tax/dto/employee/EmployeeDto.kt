@@ -12,11 +12,11 @@ data class EmployeeDto(
 
     var hospitalName: String? = null ,
 
-    var name: String,
+    var employeeCode: String? = null,
 
-    var employmentName: String? = null,
+    var name: String? = null,
 
-    var employmentType: String? = null,
+    var employment: String? = null,
 
     var annualType: String? = null,
 
@@ -32,7 +32,7 @@ data class EmployeeDto(
 
     var reason: String? = null,
 
-    var createdAt: String? = null,
+    var createdAt: LocalDateTime? = null,
 
     var resignationAt: String? = null,
 
@@ -54,8 +54,14 @@ data class EmployeeDto(
 
     var attachFileYn: String? = "N",
 
-    var updatedAt: String? = null,
+    var updatedAt: LocalDateTime? = null,
 
-    var fileList: List<EmployeeAttachFileDto>? = null
+    var fileList: List<EmployeeAttachFileDto>? = null,
+
+    var writerId: String? = null,
+
+    var writerName: String? = null,
+
+    var taxRate: String? = null
 
     )
