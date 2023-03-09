@@ -24,6 +24,7 @@ interface EmployeeRepository: JpaRepository<EmployeeEntity?, Int>,
         hospitalId: String,
         employeeCode: String
     ): List<EmployeeEntity>
+
 }
 
 interface EmployeeAttachFileRepository: JpaRepository<EmployeeAttachFileEntity?, Int>

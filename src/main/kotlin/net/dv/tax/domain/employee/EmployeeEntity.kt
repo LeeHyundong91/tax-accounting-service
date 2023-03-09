@@ -570,7 +570,7 @@ class EmployeeSalaryEntity(
 
     @Comment("지급일")
     @Column(name = "PAYMENTS_AT")
-    var paymentsAt: LocalDateTime? = null,
+    var paymentsAt: String? = null,
 
     @Comment("등록일")
     @Column(name = "CREATED_AT")

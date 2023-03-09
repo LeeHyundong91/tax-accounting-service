@@ -157,7 +157,7 @@ class EmployeeController(
         val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(filePath))
 
         //업로드 된 파일 기준 등록 한다.
-        var res = employeeService.insertSalaryExcel(hospitalId, hospitalName, filePath, rows)
+        var res = employeeService.insertSalaryExcel(hospitalId, hospitalName, filePath, rows, excelFile.originalFilename.toString().substringBefore("."))
 
         return ResponseEntity.ok(res)
     }

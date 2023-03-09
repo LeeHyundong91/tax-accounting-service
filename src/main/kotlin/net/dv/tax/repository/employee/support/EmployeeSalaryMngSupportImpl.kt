@@ -67,4 +67,14 @@ class EmployeeSalaryMngSupportImpl(
         return builder
     }
 
+    override fun getSalaryMngDeleteList(hospitalId: String, paymentAt: String): List<EmployeeSalaryMngEntity> {
+        return query
+            .select(employeeSalaryMngEntity)
+            .from(employeeSalaryMngEntity)
+            .where(employeeSalaryMngEntity.hospitalId.eq(hospitalId))
+            .where(employeeSalaryMngEntity.paymentsAt.startsWith(paymentAt))
+            .fetch()
+
+    }
+
 }
