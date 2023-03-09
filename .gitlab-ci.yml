@@ -46,10 +46,14 @@ ecr:deploy:
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
     - VERSION="$(TZ="Asia/Seoul" date "+%m.%d")"
-    - DEPLOY_IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:${VERSION}"
+    - IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:${VERSION}"
     - docker tag ${APP_NAME}:latest ${DEPLOY_IMAGE}
-    - docker push ${DEPLOY_IMAGE}
+    - docker push ${IMAGE}
     - echo VERSION="${VERSION}" | tee .env
+    - echo ${IMAGE} | tee image_name
+  after_script:
+    - docker rmi $(cat image_name)
+    - docker rmi ${APP_NAME}:latest
   artifacts:
     reports:
       dotenv: .env
@@ -106,7 +110,7 @@ eks:deploy:
     - chmod +x ./kubectl
     - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
   script:
-    - aws s3 cp s3://dr.village.deployment/dv.service/dv-tax-accounting.yml .
+    - aws s3 cp s3://dr.village.net/deployment/dv.service/dv-tax-accounting.yml .
     - envsubst < dv-tax-accounting.yml | kubectl --namespace ${NAMESPACE} apply -f -
   only:
     - /^dev.*$/
