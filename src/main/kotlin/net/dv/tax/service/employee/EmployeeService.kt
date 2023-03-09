@@ -237,7 +237,8 @@ class EmployeeService(
                 dependentCnt = employee.dependentCnt,
                 address = employee.address,
                 attachFileYn = employee.attachFileYn,
-                apprAt = LocalDateTime.now()
+                apprAt = LocalDateTime.now(),
+                taxRate = employee.taxRate
             )
             employeeRepository.save(saveEmployeeEntity)
 
@@ -299,12 +300,12 @@ class EmployeeService(
                 employee.address = employeeDto.address
                 employee.apprAt = LocalDateTime.now()
                 employee.attachFileYn = employeeDto.attachFileYn
+                employee.taxRate = employeeDto.taxRate
 
                 employeeDto.resignationAt?.also {
                     if( employeeDto.resignationAt!!.length > 0 ) {
                         employee.resignationAt = employeeDto.resignationAt
                     }
-
                 }
 
                 //저장
@@ -658,28 +659,33 @@ class EmployeeService(
                 val joinAtStr = row.getCell(9)?.rawValue
                 val joinAt = LocalDate.parse(joinAtStr , DateTimeFormatter.ofPattern("yyyyMMdd"))
 
-                val data = EmployeeEntity(
-                    hospitalId = hospitalId,
-                    hospitalName = hospitalName,
-                    employeeCode = row.getCell(1).rawValue,
-                    name = defaultName,
-                    encryptResidentNumber = encrypt.encodeToBase64(row.getCell(4).rawValue),
-                    residentNumber = row.getCell(4).rawValue,
-                    jobClass = JobClass.JobClass_W.jobClassCode,
-                    joinAt = joinAt,
-                    mobilePhoneNumber = row.getCell(12).rawValue,
-                    email = row.getCell(13).rawValue,
-                    address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue,
-                    filePath = filePath,
-                    office = row.getCell(8).rawValue,
-                    position = row.getCell(6).rawValue
-                )
+                // 중복 체크 한다.
 
-                dataList.add(data)
+                val checkList = employeeRepository.findByHospitalIdAndEmployeeCode(hospitalId, row.getCell(1).rawValue )
+
+                if( checkList.isNullOrEmpty() ){
+                    val data = EmployeeEntity(
+                        hospitalId = hospitalId,
+                        hospitalName = hospitalName,
+                        employeeCode = row.getCell(1).rawValue,
+                        name = defaultName,
+                        encryptResidentNumber = encrypt.encodeToBase64(row.getCell(4).rawValue),
+                        residentNumber = row.getCell(4).rawValue,
+                        jobClass = JobClass.JobClass_W.jobClassCode,
+                        joinAt = joinAt,
+                        mobilePhoneNumber = row.getCell(12).rawValue,
+                        email = row.getCell(13).rawValue,
+                        address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue,
+                        filePath = filePath,
+                        office = row.getCell(8).rawValue,
+                        position = row.getCell(6).rawValue
+                    )
+                    dataList.add(data)
+                }
             }
         }
 
-        employeeRepository.saveAll(dataList)
+        if ( dataList.size > 0 ) employeeRepository.saveAll(dataList)
 
         return HttpStatus.OK.value()
     }
