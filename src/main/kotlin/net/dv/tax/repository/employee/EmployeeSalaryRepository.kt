@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface EmployeeSalaryRepository : JpaRepository<EmployeeSalaryEntity?, Int>,
     EmployeeSalarySupport {
-    fun findByHospitalIdAndEmployee(
+    fun findByHospitalIdAndEmployeeCode(
         hospitalId: String,
-        employee: EmployeeEntity
+        employeeCode: String
     ): List<EmployeeSalaryEntity>
 
     fun findByEmployeeSalaryMng(

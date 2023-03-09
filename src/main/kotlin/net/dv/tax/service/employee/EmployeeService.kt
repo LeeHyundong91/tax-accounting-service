@@ -31,13 +31,12 @@ class EmployeeService(
     private val encrypt:Encrypt,
     ) {
 
-
     //직원 요청 사항을 등록 한다.
     fun registerEmployeeRequest(employeeRequestDto: EmployeeRequestDto): Int{
 
         employeeRequestDto?.also { employeeRequest ->
 
-            val joinAt = LocalDateTime.parse(employeeRequest.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            val joinAt = LocalDate.parse(employeeRequest.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             var resignationAt: String? = null
             employeeRequest.resignationAt?.also {
                 if( it.length > 0 ) resignationAt = it
@@ -48,8 +47,9 @@ class EmployeeService(
                 residentNumber = employeeRequest.residentNumber,
                 hospitalId = employeeRequest.hospitalId!!,
                 hospitalName = employeeRequest.hospitalName!!,
+                employeeCode = employeeRequest.employeeCode,
                 name = employeeRequest.name,
-                employmentType = employeeRequest.employmentType!!,
+                employment = employeeRequest.employment!!,
                 annualType = employeeRequest.annualType,
                 annualIncome = employeeRequest.annualIncome,
                 position = employeeRequest.position,
@@ -88,7 +88,7 @@ class EmployeeService(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
                 name = it.name,
-                employment = getEmployeementName(it.employmentType),
+                employment = it.employment,
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,
                 position = it.position ?: "",
@@ -147,8 +147,9 @@ class EmployeeService(
             residentNumber = employeeRequest.residentNumber,
             hospitalId = employeeRequest.hospitalId,
             hospitalName = employeeRequest.hospitalName,
+            employeeCode = employeeRequest.employeeCode,
             name = employeeRequest.name,
-            employmentType = employeeRequest.employmentType,
+            employment = employeeRequest.employment,
             annualType = employeeRequest.annualType,
             annualIncome = employeeRequest.annualIncome,
             position = employeeRequest.position,
@@ -217,8 +218,9 @@ class EmployeeService(
                 residentNumber = employee.residentNumber,
                 hospitalId = employee.hospitalId!!,
                 hospitalName = employee.hospitalName!!,
+                employeeCode = employee.employeeCode,
                 name = employee.name,
-                employmentType = employee.employmentType,
+                employment = employee.employment,
                 annualType = employee.annualType,
                 annualIncome = employee.annualIncome,
                 position = employee.position,
@@ -280,7 +282,7 @@ class EmployeeService(
                     employee.name = employeeDto.name
                 }
 
-                employee.employmentType = employeeDto.employmentType
+                employee.employment = employeeDto.employment
                 employee.annualType = employeeDto.annualType
                 employee.annualIncome = employeeDto.annualIncome
                 employee.position = employeeDto.position
@@ -370,8 +372,9 @@ class EmployeeService(
                     residentNumber = employeeEntity.residentNumber,
                     hospitalId = employeeEntity.hospitalId,
                     hospitalName = employeeEntity.hospitalName,
+                    employeeCode = employeeEntity.employeeCode,
                     name = employeeEntity.name!!,
-                    employmentType = employeeEntity.employmentType,
+                    employment = employeeEntity.employment,
                     annualType = employeeEntity.annualType,
                     annualIncome = employeeEntity.annualIncome,
                     position = employeeEntity.position,
@@ -405,15 +408,16 @@ class EmployeeService(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
                 name = it.name!!,
-                employmentName = getEmployeementName(it.employmentType?:""),
-                employmentType = it.employmentType,
+                employment = it.employment,
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,
                 position = it.position ?: "",
                 joinAt = it.joinAt.toString(),
                 email = it.email ?: "",
                 jobClass = getJobClassName(it.jobClass),
-                reason = it.reason ?: ""
+                reason = it.reason ?: "",
+                mobilePhoneNumber = it.mobilePhoneNumber,
+                resignationAt = it.resignationAt
             )
         }
 
@@ -434,8 +438,9 @@ class EmployeeService(
                     residentNumber = employeeEntity.residentNumber,
                     hospitalId = employeeEntity.hospitalId,
                     hospitalName = employeeEntity.hospitalName,
+                    employeeCode = employeeEntity.employeeCode,
                     name = employeeEntity.name!!,
-                    employmentType = employeeEntity.employmentType,
+                    employment = employeeEntity.employment,
                     annualType = employeeEntity.annualType,
                     annualIncome = employeeEntity.annualIncome,
                     position = employeeEntity.position,
@@ -453,7 +458,12 @@ class EmployeeService(
                     address = employeeEntity.address,
                     apprAt = employeeEntity.apprAt,
                     attachFileYn = employeeEntity.attachFileYn,
-                    id = employeeEntity.id!!
+                    id = employeeEntity.id!!,
+                    writerId = employeeEntity.writerId,
+                    writerName = employeeEntity.writerName,
+                    taxRate = employeeEntity.taxRate,
+                    createdAt = employeeEntity.createdAt,
+                    updatedAt = employeeEntity.updatedAt
                 )
             }
         }
@@ -468,7 +478,8 @@ class EmployeeService(
                 fileSize = fileEntity.fileSize,
                 fileExt = fileEntity.fileExt,
                 createdAt = fileEntity.createdAt,
-                employeeId = employeeId.toLong()
+                employeeId = employeeId.toLong(),
+                useYn = fileEntity.useYn
             )
         }
 
@@ -488,10 +499,12 @@ class EmployeeService(
 
         employee?.also{}?: throw Exception("사용자가 없습니다.")
 
-        return employeeSalaryRepository.findByHospitalIdAndEmployee(hospitalId, employee).map {
+        return employeeSalaryRepository.findByHospitalIdAndEmployeeCode(hospitalId, employee.employeeCode!!).map {
             EmployeeSalaryDto(
                 id = it.id!!,
                 hospitalId = it.hospitalId,
+                employeeCode = it.employeeCode,
+                name = it.name,
                 basicSalary =  it.basicSalary,
                 totalSalary = it.totalSalary,
                 detailSalary = it.detailSalary,
@@ -506,7 +519,6 @@ class EmployeeService(
                 actualPayment = it.actualPayment,
                 paymentsAt = it.paymentsAt,
                 createdAt = it.createdAt,
-                employeeId = it.employee!!.id,
             )
         }
     }
@@ -542,6 +554,8 @@ class EmployeeService(
             EmployeeSalaryDto(
                 id = it.id!!,
                 hospitalId = it.hospitalId,
+                employeeCode = it.employeeCode,
+                name = it.name,
                 basicSalary =  it.basicSalary,
                 totalSalary = it.totalSalary,
                 detailSalary = it.detailSalary,
@@ -556,7 +570,6 @@ class EmployeeService(
                 actualPayment = it.actualPayment,
                 paymentsAt = it.paymentsAt,
                 createdAt = it.createdAt,
-                employeeId = it.employee!!.id,
             )
         }
     }
@@ -598,10 +611,10 @@ class EmployeeService(
 
         employeeSalary.employeeSalaryList.forEach{
 
-            val employee = employeeRepository.findById(it.employeeId!!.toInt()).get()
-
             val employeeSalaryEntity = EmployeeSalaryEntity (
                 hospitalId = it.hospitalId,
+                employeeCode = it.employeeCode,
+                name = it.name,
                 basicSalary = it.basicSalary,
                 totalSalary = it.totalSalary,
                 detailSalary = it.detailSalary,
@@ -615,7 +628,6 @@ class EmployeeService(
                 localIncomeTaxYearEnd = it.localIncomeTaxYearEnd,
                 actualPayment = it.actualPayment,
                 paymentsAt = paymentsAt,
-                employee = employee
             )
             employeeSalaryRepository.save(employeeSalaryEntity)
         }
@@ -638,26 +650,29 @@ class EmployeeService(
 
         excelRows.forEach { row ->
 
-            val defaultName = row.getCell(1).rawValue
+            val defaultName = row.getCell(2).rawValue
 
             //이름이 있는지 없는지에 따라서 진행 한다.
             if(!defaultName.isNullOrEmpty()) {
 
-                val joinAtStr = row.getCell(8)?.rawValue
+                val joinAtStr = row.getCell(9)?.rawValue
                 val joinAt = LocalDate.parse(joinAtStr , DateTimeFormatter.ofPattern("yyyyMMdd"))
 
                 val data = EmployeeEntity(
                     hospitalId = hospitalId,
                     hospitalName = hospitalName,
-                    encryptResidentNumber = encrypt.encodeToBase64(row.getCell(3).rawValue),
-                    residentNumber = row.getCell(3).rawValue,
-                    jobClass = JobClass.JobClass_W.jobClassCode,
+                    employeeCode = row.getCell(1).rawValue,
                     name = defaultName,
+                    encryptResidentNumber = encrypt.encodeToBase64(row.getCell(4).rawValue),
+                    residentNumber = row.getCell(4).rawValue,
+                    jobClass = JobClass.JobClass_W.jobClassCode,
                     joinAt = joinAt,
                     mobilePhoneNumber = row.getCell(12).rawValue,
                     email = row.getCell(13).rawValue,
                     address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue,
-                    filePath = filePath
+                    filePath = filePath,
+                    office = row.getCell(8).rawValue,
+                    position = row.getCell(6).rawValue
                 )
 
                 dataList.add(data)
@@ -748,6 +763,8 @@ class EmployeeService(
 
                 val employeeSalaryEntity = EmployeeSalaryEntity (
                     hospitalId = hospitalId,
+                    employeeCode = row.getCell(0).rawValue,
+                    name = row.getCell(1).rawValue,
                     basicSalary = row.getCell(fixedIdxList.get(0)).rawValue.toLong(),
                     totalSalary = row.getCell(fixedIdxList.get(1)).rawValue.toLong(),
                     detailSalary = detailJsonStr,
@@ -759,7 +776,7 @@ class EmployeeService(
                     localIncomeTax = row.getCell(fixedIdxList.get(7)).rawValue.toLong(),
                     incomeTaxYearEnd = row.getCell(fixedIdxList.get(8)).rawValue.toLong(),
                     actualPayment = row.getCell(fixedIdxList.get(9)).rawValue.toLong(),
-                    employee = employee,
+
                     employeeSalaryMng = salaryMng
                 )
 

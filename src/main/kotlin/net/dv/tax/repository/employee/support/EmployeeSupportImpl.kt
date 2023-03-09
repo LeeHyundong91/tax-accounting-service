@@ -6,6 +6,7 @@ import net.dv.tax.domain.employee.EmployeeAttachFileEntity
 import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.employee.QEmployeeEntity.employeeEntity
 import net.dv.tax.domain.employee.QEmployeeAttachFileEntity.employeeAttachFileEntity
+import net.dv.tax.domain.employee.QEmployeeRequestEntity
 import net.dv.tax.dto.employee.EmployeeQueryDto
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository
@@ -83,6 +84,11 @@ class EmployeeSupportImpl(
                 val toDateTime = LocalDateTime.parse(it + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 builder.and(employeeEntity.createdAt.before(toDateTime.plusDays(1)));
             }
+        }
+
+        // 재직구분
+        if ( !employeeQueryDto.jobClass.isNullOrEmpty() ){
+            builder.and(employeeEntity.jobClass.eq(employeeQueryDto.jobClass))
         }
 
         return builder

@@ -13,11 +13,11 @@ data class EmployeeRequestDto(
 
     var hospitalName: String? = null,
 
-    var name: String,
+    var employeeCode: String? = null,
+
+    var name: String? = null,
 
     var employment: String? = null,
-
-    var employmentType: String? = null,
 
     var annualType: String,
 
@@ -62,5 +62,9 @@ data class EmployeeRequestDto(
     var attachFileYn: String? = "N",
 
     var updatedAt: String? = null,
+
+    var writerId: String? = null,
+
+    var writerName: String? = null,
 
     )
