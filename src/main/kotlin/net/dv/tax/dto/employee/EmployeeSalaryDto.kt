@@ -56,7 +56,7 @@ data class EmployeeSalaryDto (
 
     var actualPayment: Long? = null,
 
-    var paymentsAt: LocalDateTime? = null,
+    var paymentsAt: String? = null,
 
     var createdAt: LocalDateTime?  = null,
 
