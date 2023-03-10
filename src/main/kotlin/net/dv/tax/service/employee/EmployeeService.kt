@@ -276,7 +276,7 @@ class EmployeeService(
 
 
                 //퇴직일 경우 주민등록 번호 및 이름 공백 처리.
-                if( employeeDto.jobClass.equals(JobClass.JobClass_R)) {
+                if( employeeDto.jobClass.equals(JobClass.JobClass_R.jobClassCode)) {
                     employee.residentNumber = null
                     employee.name = null
                 } else {
@@ -368,14 +368,13 @@ class EmployeeService(
     //직원 등록, 변경시 이력 등록
     fun registerEmployeeHistory(employeeId: Long) {
         employeeRepository.findById(employeeId.toInt())?.map { employeeEntity ->
+
             employeeEntity?.also {
                 var saveEmployeeHistoryEntity = EmployeeHistoryEntity(
                     encryptResidentNumber = employeeEntity.encryptResidentNumber,
-                    residentNumber = employeeEntity.residentNumber,
                     hospitalId = employeeEntity.hospitalId,
                     hospitalName = employeeEntity.hospitalName,
                     employeeCode = employeeEntity.employeeCode,
-                    name = employeeEntity.name!!,
                     employment = employeeEntity.employment,
                     annualType = employeeEntity.annualType,
                     annualIncome = employeeEntity.annualIncome,
@@ -396,6 +395,13 @@ class EmployeeService(
                     attachFileYn = employeeEntity.attachFileYn,
                     employee = employeeEntity
                 )
+                //퇴직이 아니면 이름과 주민번호 등록
+                if( !employeeEntity.jobClass.equals(JobClass.JobClass_R.jobClassCode)) {
+                    saveEmployeeHistoryEntity.name = employeeEntity.name
+                    saveEmployeeHistoryEntity.residentNumber = employeeEntity.residentNumber
+                }
+
+
                 employeeHistoryRepository.save(saveEmployeeHistoryEntity);
             }
         }
@@ -409,7 +415,7 @@ class EmployeeService(
             EmployeeDto(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
-                name = it.name!!,
+                name = it.name,
                 employment = it.employment,
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,

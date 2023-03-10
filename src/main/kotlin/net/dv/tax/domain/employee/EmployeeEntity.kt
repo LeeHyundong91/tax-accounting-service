@@ -307,7 +307,7 @@ class EmployeeHistoryEntity(
 
     @Comment("이름")
     @Column(name = "NAME")
-    var name: String,
+    var name: String? = null,
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
