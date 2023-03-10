@@ -496,6 +496,10 @@ class EmployeeSalaryMngEntity(
     @Column(name = "FIXED_STATE")
     var fixedState: String? = null,
 
+    @Comment("등록파일경로")
+    @Column(name = "FILE_PATH")
+    var filePath: String? = null,
+
 )
 
 @Entity

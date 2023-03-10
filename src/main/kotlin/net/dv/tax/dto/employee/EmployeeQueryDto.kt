@@ -17,5 +17,9 @@ data class EmployeeQueryDto (
 
     val jobClass: String? = null,
 
+    val apprCode: String? = null,
+
+    val fixedCode: String? = null,
+
 )
 
