@@ -41,6 +41,7 @@ class EmployeeSupportImpl(
             .select(employeeEntity)
             .from(employeeEntity)
             .where(builder)
+            .orderBy(employeeEntity.createdAt.desc())
             .offset(realOffset)
             .limit(employeeQueryDto.size)
             .fetch()
@@ -52,6 +53,7 @@ class EmployeeSupportImpl(
             .from(employeeAttachFileEntity)
             .where(employeeAttachFileEntity.employee.id.eq(employeeId))
             .where(employeeAttachFileEntity.useYn.eq("Y"))
+            .orderBy(employeeAttachFileEntity.createdAt.desc())
             .fetch()
     }
 

@@ -19,6 +19,12 @@ interface EmployeeRepository: JpaRepository<EmployeeEntity?, Int>,
         residentNumber: String,
         jobClass: String
     ): EmployeeEntity?
+
+    fun findByHospitalIdAndEmployeeCode(
+        hospitalId: String,
+        employeeCode: String
+    ): List<EmployeeEntity>
+
 }
 
 interface EmployeeAttachFileRepository: JpaRepository<EmployeeAttachFileEntity?, Int>
