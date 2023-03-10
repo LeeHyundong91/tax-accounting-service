@@ -47,7 +47,7 @@ ecr:deploy:
   script:
     - VERSION="$(TZ="Asia/Seoul" date "+%m.%d")"
     - IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:${VERSION}"
-    - docker tag ${APP_NAME}:latest ${DEPLOY_IMAGE}
+    - docker tag ${APP_NAME}:latest ${IMAGE}
     - docker push ${IMAGE}
     - echo VERSION="${VERSION}" | tee .env
     - echo ${IMAGE} | tee image_name
