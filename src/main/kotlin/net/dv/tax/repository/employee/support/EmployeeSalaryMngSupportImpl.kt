@@ -50,18 +50,20 @@ class EmployeeSalaryMngSupportImpl(
         val builder = BooleanBuilder()
         builder.and(employeeSalaryMngEntity.hospitalId.eq(hospitalId))
 
-        employeeQueryDto.from?.also {
-            if( it.length > 0 ) {
-                val fromDateTime = LocalDateTime.parse(it + "-01-01 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeSalaryMngEntity.createdAt.after(fromDateTime))
-            }
+        if( !employeeQueryDto.year.isNullOrEmpty() ){
+            builder.and(employeeSalaryMngEntity.paymentsAt.startsWith(employeeQueryDto.year))
         }
 
-        employeeQueryDto.to?.also {
-            if( it.length > 0 ) {
-                val toDateTime = LocalDateTime.parse(it + "-12-31 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeSalaryMngEntity.createdAt.before(toDateTime))
-            }
+        if( !employeeQueryDto.sendDate.isNullOrEmpty() ){
+            
+            //전날 23:59:59 이후부터
+            val fromDateTime = LocalDateTime.parse(employeeQueryDto.sendDate + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            builder.and(employeeSalaryMngEntity.createdAt.after(fromDateTime.minusDays(1)))
+
+            //다음날 00:00:00 까지
+            val toDateTime = LocalDateTime.parse(employeeQueryDto.sendDate + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            builder.and(employeeSalaryMngEntity.createdAt.before(toDateTime.plusDays(1)))
+
         }
 
         return builder

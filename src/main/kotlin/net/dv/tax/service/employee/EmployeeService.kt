@@ -37,7 +37,6 @@ class EmployeeService(
 
         employeeRequestDto?.also { employeeRequest ->
 
-            val joinAt = LocalDate.parse(employeeRequest.joinAt + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             var resignationAt: String? = null
             employeeRequest.resignationAt?.also {
                 if( it.length > 0 ) resignationAt = it
@@ -54,7 +53,7 @@ class EmployeeService(
                 annualType = employeeRequest.annualType,
                 annualIncome = employeeRequest.annualIncome,
                 position = employeeRequest.position,
-                joinAt = joinAt,
+                joinAt = employeeRequest.joinAt,
                 email = employeeRequest.email,
                 jobClass = employeeRequest.jobClass,
                 reason = employeeRequest.reason,
@@ -93,7 +92,7 @@ class EmployeeService(
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,
                 position = it.position ?: "",
-                joinAt = it.joinAt.toString(),
+                joinAt = it.joinAt,
                 email = it.email ?: "",
                 jobClass = getJobClassName(it.jobClass),
                 reason = it.reason ?: "",
