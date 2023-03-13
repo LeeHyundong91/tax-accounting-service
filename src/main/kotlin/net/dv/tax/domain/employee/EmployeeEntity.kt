@@ -307,7 +307,7 @@ class EmployeeHistoryEntity(
 
     @Comment("이름")
     @Column(name = "NAME")
-    var name: String,
+    var name: String? = null,
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
@@ -495,6 +495,10 @@ class EmployeeSalaryMngEntity(
     @Comment("확정처리상태")
     @Column(name = "FIXED_STATE")
     var fixedState: String? = null,
+
+    @Comment("등록파일경로")
+    @Column(name = "FILE_PATH")
+    var filePath: String? = null,
 
 )
 

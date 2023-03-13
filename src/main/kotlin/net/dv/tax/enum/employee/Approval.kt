@@ -3,8 +3,8 @@ package net.dv.tax.enum.employee
 //노무직원급여관리 승인상태
 enum class Approval {
 
-    Approval_1("1", "-"),
-    Approval_2("2", "승인요청"),
+    Approval_1("1", "승인요청"),
+    Approval_2("2", "승인대기"),
     Approval_3("3", "변경요청"),
     Approval_4("4", "승인완료");
 

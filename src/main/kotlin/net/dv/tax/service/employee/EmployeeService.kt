@@ -9,6 +9,7 @@ import net.dv.tax.enum.employee.*
 import net.dv.tax.repository.employee.*
 import net.dv.tax.utils.Encrypt
 import org.dhatim.fastexcel.reader.Row
+import org.joda.time.IllegalInstantException
 
 import org.springframework.http.HttpStatus
 
@@ -275,7 +276,7 @@ class EmployeeService(
 
 
                 //퇴직일 경우 주민등록 번호 및 이름 공백 처리.
-                if( employeeDto.jobClass.equals(JobClass.JobClass_R)) {
+                if( employeeDto.jobClass.equals(JobClass.JobClass_R.jobClassCode)) {
                     employee.residentNumber = null
                     employee.name = null
                 } else {
@@ -367,14 +368,13 @@ class EmployeeService(
     //직원 등록, 변경시 이력 등록
     fun registerEmployeeHistory(employeeId: Long) {
         employeeRepository.findById(employeeId.toInt())?.map { employeeEntity ->
+
             employeeEntity?.also {
                 var saveEmployeeHistoryEntity = EmployeeHistoryEntity(
                     encryptResidentNumber = employeeEntity.encryptResidentNumber,
-                    residentNumber = employeeEntity.residentNumber,
                     hospitalId = employeeEntity.hospitalId,
                     hospitalName = employeeEntity.hospitalName,
                     employeeCode = employeeEntity.employeeCode,
-                    name = employeeEntity.name!!,
                     employment = employeeEntity.employment,
                     annualType = employeeEntity.annualType,
                     annualIncome = employeeEntity.annualIncome,
@@ -395,6 +395,13 @@ class EmployeeService(
                     attachFileYn = employeeEntity.attachFileYn,
                     employee = employeeEntity
                 )
+                //퇴직이 아니면 이름과 주민번호 등록
+                if( !employeeEntity.jobClass.equals(JobClass.JobClass_R.jobClassCode)) {
+                    saveEmployeeHistoryEntity.name = employeeEntity.name
+                    saveEmployeeHistoryEntity.residentNumber = employeeEntity.residentNumber
+                }
+
+
                 employeeHistoryRepository.save(saveEmployeeHistoryEntity);
             }
         }
@@ -408,7 +415,7 @@ class EmployeeService(
             EmployeeDto(
                 id = it.id!!,
                 residentNumber = it.residentNumber,
-                name = it.name!!,
+                name = it.name,
                 employment = it.employment,
                 annualType = it.annualType,
                 annualIncome = it.annualIncome,
@@ -536,8 +543,10 @@ class EmployeeService(
                 employeeCnt = it.employeeCnt.toString(),
                 createdAt = it.createdAt,
                 payrollCreatedAt = it.payrollCreatedAt,
-                apprState = getApprovalName(it.apprState!!) ,
-                fixedState = getFixedName(it.fixedState!!)
+                apprState = it.apprState,
+                apprStateName = getApprovalName(it.apprState?: "1") ,
+                fixedState = it.fixedState,
+                fixedStateName = getFixedName(it.fixedState?: "1")
             )
         }
 
@@ -547,11 +556,11 @@ class EmployeeService(
         )
     }
 
-    fun getSalaryMngDetailList(salaryMngId: String): List<EmployeeSalaryDto> {
+    fun getSalaryMngDetailList(salaryMngId: String): EmployeeSalaryReturnDto {
 
-        val salaryMngEntity = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get();
+        val salaryMngEntity = employeeSalaryMngRepository.findById(salaryMngId.toInt())
 
-        return employeeSalaryRepository.findByEmployeeSalaryMng(salaryMngEntity).map {
+        val salaryList = employeeSalaryRepository.findByEmployeeSalaryMng(salaryMngEntity.get()).map {
             EmployeeSalaryDto(
                 id = it.id!!,
                 hospitalId = it.hospitalId,
@@ -573,6 +582,19 @@ class EmployeeService(
                 createdAt = it.createdAt,
             )
         }
+
+        val salaryMngDto = EmployeeSalaryMngDto (
+                id = salaryMngEntity.get().id,
+                apprState = salaryMngEntity.get().apprState,
+                fixedState = salaryMngEntity.get().fixedState,
+                paymentsAt = salaryMngEntity.get().paymentsAt,
+            )
+
+
+        return EmployeeSalaryReturnDto(
+            employeeSalaryList = salaryList,
+            employeeSalaryMng = salaryMngDto
+        )
     }
 
     fun updateSalaryMngAppr(salaryMngId: String, apprCode: String): Int{
@@ -585,10 +607,16 @@ class EmployeeService(
         return HttpStatus.OK.value()
     }
 
+    @Transactional
     fun updateSalaryMngFixed(salaryMngId: String, fixedCode: String): Int{
 
         val employeeSalaryMng = employeeSalaryMngRepository.findById(salaryMngId.toInt()).get()
         employeeSalaryMng.fixedState = fixedCode
+
+        //메일 전송 등등등
+        if( fixedCode.equals(Fixed.Fixed_3.fixedCode)) {
+
+        }
 
         employeeSalaryMngRepository.save(employeeSalaryMng)
 
@@ -691,123 +719,157 @@ class EmployeeService(
     @Transactional
     fun insertSalaryExcel(hospitalId: String, hospitalName: String, filePath: String, excelRows: MutableList<Row>, paymentsAt: String): Int{
 
+
+        //등록 가능한지 체크
+        var isReg: Boolean = true;
+
+        //검토상태로 해야 하는지 체크
+        var isCheck: Boolean = false;
+
         //파일명으로 등록된 파일 중복 체크
         val deleteStr = paymentsAt.substring(0, 7)
 
         val salaryMngDeleteList = employeeSalaryMngRepository.getSalaryMngDeleteList(hospitalId, deleteStr)
-        val salaryDeleteList = employeeSalaryRepository.getSalaryDeleteList(hospitalId, deleteStr)
 
-        employeeSalaryRepository.deleteAll(salaryDeleteList)
-        employeeSalaryMngRepository.deleteAll(salaryMngDeleteList)
-
-
-        //등록할 데이터
-        val dataList = mutableListOf<EmployeeSalaryEntity>()
-
-        //상세내역
-        val detailSalaryIdxList = mutableListOf<Int>()
-        val detailSalaryNameList = mutableListOf<String>()
-
-        //상세내역 범위
-        val basicSalary = "기본급"
-        val totalSalary = "지급액계"
-
-        //필수값 지정
-        val fixedList = mutableListOf<String>("기본급", "지급액계", "국민연금", "건강보험", "고용보험", "장기요양보험료", "소득세", "지방소득세", "소득세 정산", "차인지급액")
-        var fixedIdxList = mutableListOf<Int>()
-
-        var isDetailIdx = false;
-
-        /*Remove 합계*/
-        excelRows.removeLast()
-
-        //관리 페이지 등록
-        var employeeSalaryMngEntity = EmployeeSalaryMngEntity(
-            hospitalId = hospitalId,
-            hospitalName = hospitalName,
-            employeeCnt = (excelRows.size - 2).toLong(),
-            createdAt = LocalDateTime.now(),
-            paymentsAt = paymentsAt
-        )
-
-        var salaryMng = employeeSalaryMngRepository.save(employeeSalaryMngEntity)
-
-
-        //기준데이터 만들기
-        excelRows.get(1).forEachIndexed { rIdx, cell ->
-
-            //상세 금액으로 처리 되야 하는 부분
-            if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(totalSalary) ) isDetailIdx = false
-
-            if ( !cell.rawValue.isNullOrEmpty() && isDetailIdx )  {
-                detailSalaryIdxList.add( rIdx )
-                detailSalaryNameList.add(cell.rawValue)
-            }
-
-            if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(basicSalary) ) isDetailIdx = true
-
-            //필수값 셋팅
-            fixedList.forEach { fixValue ->
-                if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(fixValue) ) {
-                    fixedIdxList.add(rIdx)
-                }
+        //확정 처리 상태인게 있을경우 에러 발생
+        salaryMngDeleteList.forEach{
+            if ( it.fixedState.equals(Fixed.Fixed_3.fixedCode) ) {
+                throw IllegalInstantException("이미 확정난 데이터 입니다.");
+                isReg = false
             }
         }
 
-        //지급금액이 0번째 로우 지만 제일 마지막이어서 뒤에 돌린다.
-        excelRows.get(0).forEachIndexed { rIdx, cell ->
-            //필수값 셋팅
-            fixedList.forEach { fixValue ->
-                if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(fixValue) ) {
-                    fixedIdxList.add(rIdx)
+        //이상없음
+        if( isReg ) {
+
+            val salaryDeleteList = employeeSalaryRepository.getSalaryDeleteList(hospitalId, deleteStr)
+
+            employeeSalaryRepository.deleteAll(salaryDeleteList)
+            employeeSalaryMngRepository.deleteAll(salaryMngDeleteList)
+
+
+            //등록할 데이터
+            val dataList = mutableListOf<EmployeeSalaryEntity>()
+
+            //상세내역
+            val detailSalaryIdxList = mutableListOf<Int>()
+            val detailSalaryNameList = mutableListOf<String>()
+
+            //상세내역 범위
+            val basicSalary = "기본급"
+            val totalSalary = "지급액계"
+
+            //필수값 지정
+            val fixedList = mutableListOf<String>("기본급", "지급액계", "국민연금", "건강보험", "고용보험", "장기요양보험료", "소득세", "지방소득세", "소득세 정산", "차인지급액")
+            var fixedIdxList = mutableListOf<Int>()
+
+            var isDetailIdx = false;
+
+            /*Remove 합계*/
+            excelRows.removeLast()
+
+            //기준데이터 만들기
+            excelRows.get(1).forEachIndexed { rIdx, cell ->
+
+                //상세 금액으로 처리 되야 하는 부분
+                if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(totalSalary) ) isDetailIdx = false
+
+                if ( !cell.rawValue.isNullOrEmpty() && isDetailIdx )  {
+                    detailSalaryIdxList.add( rIdx )
+                    detailSalaryNameList.add(cell.rawValue)
                 }
-            }
-        }
 
-        //기준데이터 생성후 삭제
-        excelRows.removeFirst()
-        excelRows.removeFirst()
+                if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(basicSalary) ) isDetailIdx = true
 
-        //월급여 등록
-        excelRows.forEachIndexed { idx, row ->
-            val detailMap = mutableMapOf<String, String>()
-
-            var nameIdx = 0
-            row.forEachIndexed { rIdx, cell ->
-                detailSalaryIdxList.forEach{ dIdx ->
-                    if( rIdx == dIdx ) {
-                        detailMap[detailSalaryNameList.get(nameIdx)] = cell.rawValue
-                        nameIdx++
+                //필수값 셋팅
+                fixedList.forEach { fixValue ->
+                    if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(fixValue) ) {
+                        fixedIdxList.add(rIdx)
                     }
                 }
             }
 
-            val detailJsonStr = Json.encodeToString(detailMap)
+            //지급금액이 0번째 로우 지만 제일 마지막이어서 뒤에 돌린다.
+            excelRows.get(0).forEachIndexed { rIdx, cell ->
+                //필수값 셋팅
+                fixedList.forEach { fixValue ->
+                    if ( !cell.rawValue.isNullOrEmpty() && cell.rawValue.equals(fixValue) ) {
+                        fixedIdxList.add(rIdx)
+                    }
+                }
+            }
 
-            val employeeSalaryEntity = EmployeeSalaryEntity (
+            //기준데이터 생성후 삭제
+            excelRows.removeFirst()
+            excelRows.removeFirst()
+
+            //관리 페이지 등록
+            var employeeSalaryMngEntity = EmployeeSalaryMngEntity(
                 hospitalId = hospitalId,
-                employeeCode = row.getCell(0).rawValue,
-                name = row.getCell(1).rawValue,
-                basicSalary = row.getCell(fixedIdxList.get(0)).rawValue.toLong(),
-                totalSalary = row.getCell(fixedIdxList.get(1)).rawValue.toLong(),
-                detailSalary = detailJsonStr,
-                nationalPension =row.getCell(fixedIdxList.get(2)).rawValue.toLong(),
-                healthInsurance = row.getCell(fixedIdxList.get(3)).rawValue.toLong(),
-                unemployementInsurance = row.getCell(fixedIdxList.get(4)).rawValue.toLong(),
-                careInsurance = row.getCell(fixedIdxList.get(5)).rawValue.toLong(),
-                incomeTax =  row.getCell(fixedIdxList.get(6)).rawValue.toLong(),
-                localIncomeTax = row.getCell(fixedIdxList.get(7)).rawValue.toLong(),
-                incomeTaxYearEnd = row.getCell(fixedIdxList.get(8)).rawValue.toLong(),
-                actualPayment = row.getCell(fixedIdxList.get(9)).rawValue.toLong(),
+                hospitalName = hospitalName,
+                employeeCnt = excelRows.size.toLong(),
+                createdAt = LocalDateTime.now(),
                 paymentsAt = paymentsAt,
-
-                employeeSalaryMng = salaryMng
+                apprState = Approval.Approval_1.approvalCode,
+                fixedState = Fixed.Fixed_1.fixedCode,
+                filePath = filePath
             )
 
-            dataList.add( employeeSalaryEntity)
-        }
+            var salaryMng = employeeSalaryMngRepository.save(employeeSalaryMngEntity)
 
-        employeeSalaryRepository.saveAll(dataList)
+            //월급여 등록
+            excelRows.forEachIndexed { idx, row ->
+                val detailMap = mutableMapOf<String, String>()
+
+                var nameIdx = 0
+                row.forEachIndexed { rIdx, cell ->
+                    detailSalaryIdxList.forEach{ dIdx ->
+                        if( rIdx == dIdx ) {
+                            detailMap[detailSalaryNameList.get(nameIdx)] = cell.rawValue
+                            nameIdx++
+                        }
+                    }
+                }
+
+                val detailJsonStr = Json.encodeToString(detailMap)
+
+                val employeeSalaryEntity = EmployeeSalaryEntity (
+                    hospitalId = hospitalId,
+                    employeeCode = row.getCell(0).rawValue,
+                    detailSalary = detailJsonStr,
+                    name = row.getCell(1).rawValue,
+                    paymentsAt = paymentsAt,
+                    employeeSalaryMng = salaryMng
+                )
+
+                if( !row.getCell(fixedIdxList.get(0)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.basicSalary = row.getCell(fixedIdxList.get(0)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(1)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.totalSalary = row.getCell(fixedIdxList.get(1)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(2)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.nationalPension =row.getCell(fixedIdxList.get(2)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(3)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.healthInsurance = row.getCell(fixedIdxList.get(3)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(4)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.unemployementInsurance = row.getCell(fixedIdxList.get(4)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(5)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.careInsurance = row.getCell(fixedIdxList.get(5)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(6)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.incomeTax =  row.getCell(fixedIdxList.get(6)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(7)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.localIncomeTax = row.getCell(fixedIdxList.get(7)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(8)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.incomeTaxYearEnd = row.getCell(fixedIdxList.get(8)).rawValue.toLong()
+                if( !row.getCell(fixedIdxList.get(9)).rawValue.isNullOrEmpty() )     employeeSalaryEntity.actualPayment = row.getCell(fixedIdxList.get(9)).rawValue.toLong()
+
+                dataList.add( employeeSalaryEntity)
+
+                //검토 해야 하는지 확인
+                row.forEachIndexed{ idx, cell ->
+                    if( idx > 5) {
+                        if ( cell.rawValue.isNullOrEmpty() ) isCheck = true
+                    }
+                }
+            }
+            employeeSalaryRepository.saveAll(dataList)
+
+            //문제가 있으면 검토상태로 수정한다.
+            if( isCheck ) {
+                salaryMng.fixedState = Fixed.Fixed_2.fixedCode
+                employeeSalaryMngRepository.save(salaryMng)
+            }
+        }
 
         return HttpStatus.OK.value()
     }
