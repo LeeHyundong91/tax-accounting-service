@@ -48,15 +48,15 @@ class EmployeeRequestEntity(
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
-    var employment: String,
+    var employment: String? = null,
 
     @Comment("세전/세후")
     @Column(name = "ANNUAL_TYPE")
-    var annualType: String,
+    var annualType: String? = null,
 
     @Comment("연봉")
     @Column(name = "ANNUAL_INCOME")
-    var annualIncome: String,
+    var annualIncome: String? = null,
 
     @Comment("직위")
     @Column(name = "POSITION")
@@ -64,7 +64,7 @@ class EmployeeRequestEntity(
 
     @Comment("입사일")
     @Column(name = "JOIN_AT")
-    var joinAt: LocalDate,
+    var joinAt: LocalDate? = null,
 
     @Comment("이메일")
     @Column(name = "EMAIL")
