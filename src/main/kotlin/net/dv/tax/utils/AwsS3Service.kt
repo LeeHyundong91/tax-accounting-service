@@ -21,10 +21,10 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
     /*TODO 버킷 추후 yml로 */
     companion object {
         private val log = LoggerFactory.getLogger(AwsS3Service::class.java)
-        const val BUCKET_PATH = "origin/"
+        const val BUCKET_PATH = "tax-accounting/"
     }
 
-    val bucket: String = "dr.village.tax.data"
+    val bucket: String = "dr.village.data"
     val tempKey: String = "origin/2023/01/25/credit-card_17:27_90e636c7d68247559ffe0b6dfd586533.xlsx"
 
 fun uploadOnS3(findName: String, file: File) {
