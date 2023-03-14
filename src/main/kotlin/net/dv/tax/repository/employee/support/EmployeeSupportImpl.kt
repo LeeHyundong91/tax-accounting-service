@@ -6,11 +6,10 @@ import net.dv.tax.domain.employee.EmployeeAttachFileEntity
 import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.employee.QEmployeeEntity.employeeEntity
 import net.dv.tax.domain.employee.QEmployeeAttachFileEntity.employeeAttachFileEntity
-import net.dv.tax.domain.employee.QEmployeeRequestEntity
 import net.dv.tax.dto.employee.EmployeeQueryDto
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Repository
@@ -41,6 +40,7 @@ class EmployeeSupportImpl(
             .select(employeeEntity)
             .from(employeeEntity)
             .where(builder)
+            .orderBy(employeeEntity.createdAt.desc())
             .offset(realOffset)
             .limit(employeeQueryDto.size)
             .fetch()
@@ -52,6 +52,7 @@ class EmployeeSupportImpl(
             .from(employeeAttachFileEntity)
             .where(employeeAttachFileEntity.employee.id.eq(employeeId))
             .where(employeeAttachFileEntity.useYn.eq("Y"))
+            .orderBy(employeeAttachFileEntity.createdAt.desc())
             .fetch()
     }
 
@@ -70,20 +71,15 @@ class EmployeeSupportImpl(
             builder.and(employeeEntity.residentNumber.contains(it))
         }
 
-        //시작일
-        employeeQueryDto.from?.also {
-            if( it.length > 0 ) {
-                val fromDateTime = LocalDateTime.parse(it + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeEntity.createdAt.after(fromDateTime.minusDays(1)));
-            }
+        //입사일
+        if( !employeeQueryDto.joinAt.isNullOrEmpty()) {
+            val joinAt = LocalDate.parse(employeeQueryDto.joinAt, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            builder.and(employeeEntity.joinAt.eq(joinAt))
         }
 
-        //종료일
-        employeeQueryDto.to?.also {
-            if( it.length > 0 ) {
-                val toDateTime = LocalDateTime.parse(it + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeEntity.createdAt.before(toDateTime.plusDays(1)));
-            }
+        //사원번호
+        if( !employeeQueryDto.employeeCode.isNullOrEmpty()) {
+            builder.and(employeeEntity.employeeCode.contains(employeeQueryDto.employeeCode))
         }
 
         // 재직구분

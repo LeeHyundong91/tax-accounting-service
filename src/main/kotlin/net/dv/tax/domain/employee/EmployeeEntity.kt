@@ -48,15 +48,15 @@ class EmployeeRequestEntity(
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
-    var employment: String,
+    var employment: String? = null,
 
     @Comment("세전/세후")
     @Column(name = "ANNUAL_TYPE")
-    var annualType: String,
+    var annualType: String? = null,
 
     @Comment("연봉")
     @Column(name = "ANNUAL_INCOME")
-    var annualIncome: String,
+    var annualIncome: String? = null,
 
     @Comment("직위")
     @Column(name = "POSITION")
@@ -64,7 +64,7 @@ class EmployeeRequestEntity(
 
     @Comment("입사일")
     @Column(name = "JOIN_AT")
-    var joinAt: LocalDate,
+    var joinAt: LocalDate? = null,
 
     @Comment("이메일")
     @Column(name = "EMAIL")
@@ -307,7 +307,7 @@ class EmployeeHistoryEntity(
 
     @Comment("이름")
     @Column(name = "NAME")
-    var name: String,
+    var name: String? = null,
 
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
@@ -496,6 +496,10 @@ class EmployeeSalaryMngEntity(
     @Column(name = "FIXED_STATE")
     var fixedState: String? = null,
 
+    @Comment("등록파일경로")
+    @Column(name = "FILE_PATH")
+    var filePath: String? = null,
+
 )
 
 @Entity
@@ -570,7 +574,7 @@ class EmployeeSalaryEntity(
 
     @Comment("지급일")
     @Column(name = "PAYMENTS_AT")
-    var paymentsAt: LocalDateTime? = null,
+    var paymentsAt: String? = null,
 
     @Comment("등록일")
     @Column(name = "CREATED_AT")

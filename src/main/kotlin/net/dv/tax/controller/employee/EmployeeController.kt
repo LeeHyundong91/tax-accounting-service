@@ -6,17 +6,16 @@ import net.dv.tax.service.employee.EmployeeService
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
 import org.hibernate.boot.model.naming.IllegalIdentifierException
+import org.springframework.core.io.FileSystemResource
+import org.springframework.http.ContentDisposition
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.io.FileOutputStream
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 @RestController
@@ -104,23 +103,23 @@ class EmployeeController(
         return ResponseEntity.ok(employeeService.getSalaryMngList(hospitalId, employeeQueryDto))
     }
 
-    //월별 급여 내역
-    @GetMapping("salary/mng/{salaryMngId}/list")
-    fun getSalaryMngDetailList(@PathVariable hospitalId: String, @PathVariable salaryMngId: String ): List<EmployeeSalaryDto> {
+    //급여대장 목록 상세 내역
+    @GetMapping("salary/mng/{salaryMngId}/detail/list")
+    fun getSalaryMngDetailList(@PathVariable salaryMngId: String ): EmployeeSalaryReturnDto {
         return employeeService.getSalaryMngDetailList( salaryMngId)
     }
 
     //승인요청 하기
     @PutMapping("salary/mng/{salaryMngId}/appr")
-    fun updateSalaryMngAppr(@PathVariable salaryMngId: String, apprCode: String ): ResponseEntity<Int> {
-        var res = employeeService.updateSalaryMngAppr(salaryMngId, apprCode)
+    fun updateSalaryMngAppr(@PathVariable salaryMngId: String, @RequestBody employeeQueryDto: EmployeeQueryDto ): ResponseEntity<Int> {
+        var res = employeeService.updateSalaryMngAppr(salaryMngId, employeeQueryDto.apprCode!!)
         return ResponseEntity.ok(res)
     }
 
     //확정 하기
     @PutMapping("salary/mng/{salaryMngId}/fixed")
-    fun updateSalaryMngFixed(@PathVariable salaryMngId: String, fixedCode: String ): ResponseEntity<Int> {
-        var res = employeeService.updateSalaryMngFixed(salaryMngId, fixedCode)
+    fun updateSalaryMngFixed(@PathVariable salaryMngId: String, @RequestBody employeeQueryDto: EmployeeQueryDto ): ResponseEntity<Int> {
+        var res = employeeService.updateSalaryMngFixed(salaryMngId, employeeQueryDto.fixedCode!!)
         return ResponseEntity.ok(res)
     }
 
@@ -147,20 +146,41 @@ class EmployeeController(
         return ResponseEntity.ok(res)
     }
 
-    //직원일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
+    //급여일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
     @PostMapping("salary/insert/{hospitalId}/{hospitalName}/excel")
     fun rinsertSalaryExcel(@PathVariable hospitalId: String, @PathVariable hospitalName: String, excelFile: MultipartFile): ResponseEntity<Int> {
 
-        val reportType = "employeeRegister"
+        val reportType = "employeeSalaryRegister"
         //파일을 s3에 업로드 한다.
         val returnMap = awsS3Service.upload(reportType, excelFile)
         val filePath = returnMap["filePath"]?: throw IllegalIdentifierException("filepath is empty")
         val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(filePath))
 
         //업로드 된 파일 기준 등록 한다.
-        var res = employeeService.insertSalaryExcel(hospitalId, hospitalName, filePath, rows)
+        var res = employeeService.insertSalaryExcel(hospitalId, hospitalName, filePath, rows, excelFile.originalFilename.toString().substringBefore("."))
 
         return ResponseEntity.ok(res)
+    }
+
+    @GetMapping("download/file")
+    fun employeeFileDownload( filePath: String, fileName: String): ResponseEntity<FileSystemResource> {
+
+        val file:File = awsS3Service.getFileFromBucket(filePath)
+        val resource = FileSystemResource(file)
+
+        // Set response headers
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_OCTET_STREAM
+        headers.contentLength = file.length()
+
+        val encodedFileName = URLEncoder.encode(fileName, "UTF-8").replace("+", "%20")
+        headers.setContentDisposition(ContentDisposition.builder("attachment")
+            .filename(encodedFileName)
+            .build())
+
+        return ResponseEntity.ok()
+            .headers(headers)
+            .body(resource)
     }
 
 }

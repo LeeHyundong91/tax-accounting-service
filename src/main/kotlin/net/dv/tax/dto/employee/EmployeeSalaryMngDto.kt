@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 data class EmployeeSalaryMngDto (
 
-    val id: Long,
+    val id: Long? = null,
 
     var hospitalId: String? = null,
 
@@ -22,7 +22,11 @@ data class EmployeeSalaryMngDto (
 
     var apprState: String? = null,
 
+    var apprStateName: String? = null,
+
     var fixedState: String? = null,
+
+    var fixedStateName: String? = null,
 
 )
 
