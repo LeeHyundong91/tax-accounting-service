@@ -27,9 +27,30 @@ gradle:build:
 
 docker:build:
   stage: build
+  before_script:
+    - docker system prune -f
   script:
-    - ls -al .
-    - docker build --build-arg ARCHIVE_FILE=service.jar -t ${APP_NAME}:latest .
+    - mkdir aws-config
+    - |
+      cat <<EOF | tee aws-config/config
+      [default]
+      region = ${AWS_DEFAULT_REGION}
+      output = json 
+      EOF
+    - |
+      cat <<EOF | tee aws-config/credentials
+      [default]
+      aws_access_key_id = ${AWS_ACCESS_KEY_ID} 
+      aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+      EOF
+    - mv Dockerfile Dockerfile.base
+    - |
+      cat <<EOF | tee Dockerfile.env
+      FROM ${APP_NAME}:base
+      ADD aws-config /root/.aws
+      EOF
+    - docker build --build-arg ARCHIVE_FILE=dist/service.jar -t ${APP_NAME}:base -f Dockerfile.base .
+    - docker build -t ${APP_NAME}:latest -f Dockerfile.env .
   needs: ["gradle:build"]
   only:
     - /^dev.*$/
@@ -54,6 +75,7 @@ ecr:deploy:
   after_script:
     - docker rmi $(cat image_name)
     - docker rmi ${APP_NAME}:latest
+    - docker rmi ${APP_NAME}:base
   artifacts:
     reports:
       dotenv: .env

@@ -669,9 +669,6 @@ class EmployeeService(
         /*Remove Title*/
         excelRows.removeFirst()
         excelRows.removeFirst()
-        excelRows.removeFirst()
-        excelRows.removeFirst()
-        excelRows.removeFirst()
 
         excelRows.forEach { row ->
 
