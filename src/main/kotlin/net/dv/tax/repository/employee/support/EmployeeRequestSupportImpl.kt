@@ -5,14 +5,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.employee.EmployeeRequestEntity
 import net.dv.tax.domain.employee.QEmployeeRequestEntity.employeeRequestEntity
-import net.dv.tax.domain.employee.QEmployeeSalaryMngEntity
 import net.dv.tax.dto.employee.EmployeeQueryDto
 import net.dv.tax.enum.employee.RequestState
-
-
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Repository
@@ -63,22 +60,17 @@ class EmployeeRequestSupportImpl(
             builder.and(employeeRequestEntity.residentNumber.contains(employeeQueryDto.regidentNumber))
         }
 
-        //시작일
-        employeeQueryDto.from?.also {
-            if( it.length > 0 ) {
-                val fromDateTime = LocalDateTime.parse(it + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeRequestEntity.createdAt.after(fromDateTime.minusDays(1)));
-            }
+        //입사일
+        if( !employeeQueryDto.joinAt.isNullOrEmpty()) {
+            val joinAt = LocalDate.parse(employeeQueryDto.joinAt, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            builder.and(employeeRequestEntity.joinAt.eq(joinAt))
         }
 
-        //종료일
-        employeeQueryDto.to?.also {
-            if( it.length > 0 ) {
-                val toDateTime = LocalDateTime.parse(it + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                builder.and(employeeRequestEntity.createdAt.before(toDateTime.plusDays(1)));
-            }
+        //사원번호
+        if( !employeeQueryDto.employeeCode.isNullOrEmpty()) {
+            builder.and(employeeRequestEntity.employeeCode.contains(employeeQueryDto.employeeCode))
         }
-        
+
         // 재직구분
         if ( !employeeQueryDto.jobClass.isNullOrEmpty() ){
             builder.and(employeeRequestEntity.jobClass.eq(employeeQueryDto.jobClass))

@@ -1,6 +1,7 @@
 package net.dv.tax.dto.employee
 
 import net.dv.tax.enum.employee.RequestState
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class EmployeeRequestDto(
@@ -19,19 +20,19 @@ data class EmployeeRequestDto(
 
     var employment: String? = null,
 
-    var annualType: String,
+    var annualType: String? = null,
 
-    var annualIncome: String,
+    var annualIncome: String? = null,
 
-    var position: String,
+    var position: String? = null,
 
-    var joinAt: String? = null,
+    var joinAt: LocalDate? = null,
 
-    var email: String,
+    var email: String? = null,
 
     var jobClass: String,
 
-    var reason: String,
+    var reason: String? = null,
 
     var createdAt: LocalDateTime? = LocalDateTime.now(),
 

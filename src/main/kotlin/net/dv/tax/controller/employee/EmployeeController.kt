@@ -103,23 +103,23 @@ class EmployeeController(
         return ResponseEntity.ok(employeeService.getSalaryMngList(hospitalId, employeeQueryDto))
     }
 
-    //월별 급여 내역
-    @GetMapping("salary/mng/{salaryMngId}/list")
-    fun getSalaryMngDetailList(@PathVariable hospitalId: String, @PathVariable salaryMngId: String ): List<EmployeeSalaryDto> {
+    //급여대장 목록 상세 내역
+    @GetMapping("salary/mng/{salaryMngId}/detail/list")
+    fun getSalaryMngDetailList(@PathVariable salaryMngId: String ): EmployeeSalaryReturnDto {
         return employeeService.getSalaryMngDetailList( salaryMngId)
     }
 
     //승인요청 하기
     @PutMapping("salary/mng/{salaryMngId}/appr")
-    fun updateSalaryMngAppr(@PathVariable salaryMngId: String, apprCode: String ): ResponseEntity<Int> {
-        var res = employeeService.updateSalaryMngAppr(salaryMngId, apprCode)
+    fun updateSalaryMngAppr(@PathVariable salaryMngId: String, @RequestBody employeeQueryDto: EmployeeQueryDto ): ResponseEntity<Int> {
+        var res = employeeService.updateSalaryMngAppr(salaryMngId, employeeQueryDto.apprCode!!)
         return ResponseEntity.ok(res)
     }
 
     //확정 하기
     @PutMapping("salary/mng/{salaryMngId}/fixed")
-    fun updateSalaryMngFixed(@PathVariable salaryMngId: String, fixedCode: String ): ResponseEntity<Int> {
-        var res = employeeService.updateSalaryMngFixed(salaryMngId, fixedCode)
+    fun updateSalaryMngFixed(@PathVariable salaryMngId: String, @RequestBody employeeQueryDto: EmployeeQueryDto ): ResponseEntity<Int> {
+        var res = employeeService.updateSalaryMngFixed(salaryMngId, employeeQueryDto.fixedCode!!)
         return ResponseEntity.ok(res)
     }
 
@@ -146,11 +146,11 @@ class EmployeeController(
         return ResponseEntity.ok(res)
     }
 
-    //직원일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
+    //급여일괄 등록( 엑셀 파일 특성상 신규 등록만 취급한다. )
     @PostMapping("salary/insert/{hospitalId}/{hospitalName}/excel")
     fun rinsertSalaryExcel(@PathVariable hospitalId: String, @PathVariable hospitalName: String, excelFile: MultipartFile): ResponseEntity<Int> {
 
-        val reportType = "employeeRegister"
+        val reportType = "employeeSalaryRegister"
         //파일을 s3에 업로드 한다.
         val returnMap = awsS3Service.upload(reportType, excelFile)
         val filePath = returnMap["filePath"]?: throw IllegalIdentifierException("filepath is empty")
