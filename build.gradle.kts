@@ -65,6 +65,7 @@ dependencies {
 
     /*AWS*/
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    implementation("com.amazonaws:aws-java-sdk-sts:1.12.368")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.386")
 
 
