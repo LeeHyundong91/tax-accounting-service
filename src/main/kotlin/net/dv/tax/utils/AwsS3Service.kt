@@ -82,7 +82,8 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
     }
 
     fun getFileFromBucket(filePath: String): File {
-        val transferManager = TransferManagerBuilder.standard().build()
+        val client = s3Client(createSession("tax-accounting-service"))
+        val transferManager = TransferManagerBuilder.standard().withS3Client(client).build()
         val file = File.createTempFile("s3-", null)
 
         try {
