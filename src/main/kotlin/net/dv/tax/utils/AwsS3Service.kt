@@ -82,12 +82,18 @@ class AwsS3Service(private val excelComponent: ExcelComponent) {
     }
 
     fun getFileFromBucket(filePath: String): File {
+        log.error("filePath :$filePath")
         val client = s3Client(createSession("tax-accounting-service"))
         val transferManager = TransferManagerBuilder.standard().withS3Client(client).build()
-        val file = File.createTempFile("s3-", null)
+
+        val ext = filePath.substringAfterLast(".")
+        val file = File.createTempFile("s3-", ".$ext")
 
         try {
             transferManager.download(GetObjectRequest(bucket, filePath), file).waitForCompletion()
+            log.error("extension : ${file.extension}")
+            log.error("fileSize: ${file.length()}")
+
         } catch (e: Exception) {
             file.delete()
             throw e
