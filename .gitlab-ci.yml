@@ -22,7 +22,7 @@ gradle:build:
     paths:
       - service.jar
   only:
-    - /^dev.*$/
+    - /^dev-.*$/
     - /^release-.*$/
 
 docker:build:
@@ -49,11 +49,11 @@ docker:build:
       FROM ${APP_NAME}:base
       ADD aws-config /root/.aws
       EOF
-    - docker build --build-arg ARCHIVE_FILE=dist/service.jar -t ${APP_NAME}:base -f Dockerfile.base .
+    - docker build --build-arg ARCHIVE_FILE=service.jar -t ${APP_NAME}:base -f Dockerfile.base .
     - docker build -t ${APP_NAME}:latest -f Dockerfile.env .
   needs: ["gradle:build"]
   only:
-    - /^dev.*$/
+    - /^dev-.*$/
     - /^release-.*$/
 
 ecr:deploy:
@@ -81,7 +81,7 @@ ecr:deploy:
       dotenv: .env
   needs: ["docker:build"]
   only:
-    - /^dev.*$/
+    - /^dev-.*$/
     - /^release-.*$/
 
 env:dev:
@@ -98,7 +98,7 @@ env:dev:
     reports:
       dotenv: deploy.env
   only:
-    - /^dev.*$/
+    - /^dev-.*$/
 
 env:rel:
   stage: deploy
@@ -135,5 +135,5 @@ eks:deploy:
     - aws s3 cp s3://dr.village.net/deployment/dv.service/dv-tax-accounting.yml .
     - envsubst < dv-tax-accounting.yml | kubectl --namespace ${NAMESPACE} apply -f -
   only:
-    - /^dev.*$/
+    - /^dev-.*$/
     - /^release-.*$/

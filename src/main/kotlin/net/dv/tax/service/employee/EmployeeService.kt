@@ -672,38 +672,41 @@ class EmployeeService(
 
         excelRows.forEach { row ->
 
-            val defaultName = row.getCell(2).rawValue
+            if( row.cellCount > 0 ) {
+                val defaultName = row.getCell(2).rawValue
 
-            //이름이 있는지 없는지에 따라서 진행 한다.
-            if(!defaultName.isNullOrEmpty()) {
+                //이름이 있는지 없는지에 따라서 진행 한다.
+                if(!defaultName.isNullOrEmpty()) {
 
-                val joinAtStr = row.getCell(9)?.rawValue
-                val joinAt = LocalDate.parse(joinAtStr , DateTimeFormatter.ofPattern("yyyyMMdd"))
+                    val joinAtStr = row.getCell(9)?.rawValue
+                    val joinAt = LocalDate.parse(joinAtStr , DateTimeFormatter.ofPattern("yyyyMMdd"))
 
-                // 중복 체크 한다.
+                    // 중복 체크 한다.
 
-                val checkList = employeeRepository.findByHospitalIdAndEmployeeCode(hospitalId, row.getCell(1).rawValue )
+                    val checkList = employeeRepository.findByHospitalIdAndEmployeeCode(hospitalId, row.getCell(1).rawValue )
 
-                if( checkList.isNullOrEmpty() ){
-                    val data = EmployeeEntity(
-                        hospitalId = hospitalId,
-                        hospitalName = hospitalName,
-                        employeeCode = row.getCell(1).rawValue,
-                        name = defaultName,
-                        encryptResidentNumber = encrypt.encodeToBase64(row.getCell(4).rawValue),
-                        residentNumber = row.getCell(4).rawValue,
-                        jobClass = JobClass.JobClass_W.jobClassCode,
-                        joinAt = joinAt,
-                        mobilePhoneNumber = row.getCell(12).rawValue,
-                        email = row.getCell(13).rawValue,
-                        address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue,
-                        filePath = filePath,
-                        office = row.getCell(8).rawValue,
-                        position = row.getCell(6).rawValue
-                    )
-                    dataList.add(data)
+                    if( checkList.isNullOrEmpty() ){
+                        val data = EmployeeEntity(
+                            hospitalId = hospitalId,
+                            hospitalName = hospitalName,
+                            employeeCode = row.getCell(1).rawValue,
+                            name = defaultName,
+                            encryptResidentNumber = encrypt.encodeToBase64(row.getCell(4).rawValue),
+                            residentNumber = row.getCell(4).rawValue,
+                            jobClass = JobClass.JobClass_W.jobClassCode,
+                            joinAt = joinAt,
+                            mobilePhoneNumber = row.getCell(12).rawValue,
+                            email = row.getCell(13).rawValue,
+                            address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue,
+                            filePath = filePath,
+                            office = row.getCell(8).rawValue,
+                            position = row.getCell(6).rawValue
+                        )
+                        dataList.add(data)
+                    }
                 }
             }
+
         }
 
         if ( dataList.size > 0 ) employeeRepository.saveAll(dataList)
