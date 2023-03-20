@@ -2,6 +2,7 @@ package net.dv.tax.utils
 
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
+import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.dhatim.fastexcel.Workbook
 import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
@@ -52,6 +53,12 @@ class ExcelComponent {
 
     fun readXlsx(file: File): MutableList<Row> {
 
+
+        if (file.extension == "xlsx") {
+
+        }
+
+
         try {
             var setValues: MutableList<Row>
 
@@ -62,14 +69,37 @@ class ExcelComponent {
                     .parallel()
                     .collect(Collectors.toList())
             }
-            log.error { setValues }
-
 
             return setValues
 
         } catch (e: Exception) {
             throw Exception()
         }
+
+    }
+
+
+    fun readXls(file: File) {
+
+        val oldWorkBook: org.apache.poi.ss.usermodel.Workbook = WorkbookFactory.create(file)
+
+//        val ins: InputStream = FileInputStream(file)
+
+//        val oldWorkbook: org.apache.poi.ss.usermodel.Workbook = HSSFWorkbook(file.inputStream())
+
+/*
+        var excellist: List<PurchaseCreditCardExcelDto> = LinkedList<PurchaseCreditCardExcelDto>()
+
+        val inputStream = file.inputStream()
+        inputStream.use { fis ->
+            val wb = oldWorkBook
+            excellist = Javaxcel.newInstance()
+                .reader(oldWorkBook, PurchaseCreditCardExcelDto::class.java)
+                .read()
+        }
+        log.error { excellist }
+*/
+
 
     }
 

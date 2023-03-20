@@ -50,7 +50,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     /* Spring Cloud */
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.0")
@@ -70,15 +70,15 @@ dependencies {
 
 
     /*XLS*/
-//    implementation("com.github.javaxcel:javaxcel-core:0.9.1")
-//    implementation("org.apache.poi:poi-ooxml:5.2.3")
+    implementation("com.github.javaxcel:javaxcel-core:0.9.1")
+    implementation("org.apache.poi:poi-ooxml:5.2.2")
 
     /*XLSX*/
-    implementation("org.dhatim:fastexcel:0.14.3")
-    implementation("org.dhatim:fastexcel-reader:0.14.1")
+    implementation("org.dhatim:fastexcel:0.15.2")
+    implementation("org.dhatim:fastexcel-reader:0.15.2")
 
     /*JSON*/
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
 
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")
