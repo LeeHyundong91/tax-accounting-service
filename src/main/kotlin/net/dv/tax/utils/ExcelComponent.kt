@@ -2,7 +2,10 @@ package net.dv.tax.utils
 
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.Workbook
 import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.dhatim.fastexcel.reader.Row
@@ -51,31 +54,64 @@ class ExcelComponent {
         wb.finish()
     }
 
-    fun readXlsx(file: File): MutableList<Row> {
+    fun readXlsx(inputFile: File): MutableList<Row> {
 
+        var innerFile = inputFile
 
-        if (file.extension == "xlsx") {
-
+        if (inputFile.extension == "xls") {
+            innerFile = convertXlsToXlsx(inputFile)
         }
-
 
         try {
             var setValues: MutableList<Row>
 
-            val inputStream = file.inputStream()
+            val inputStream = innerFile.inputStream()
             inputStream.use { fis ->
                 val wb = ReadableWorkbook(fis)
                 setValues = wb.firstSheet.openStream()
                     .parallel()
                     .collect(Collectors.toList())
             }
-
             return setValues
 
         } catch (e: Exception) {
             throw Exception()
         }
 
+    }
+
+    fun convertXlsToXlsx(xlsFile: File): File {
+        val xlsxFile = File("${xlsFile.parent}/${xlsFile.nameWithoutExtension}.xlsx")
+
+        // Read XLS file and write to XLSX file
+        val workbookXls = HSSFWorkbook(FileInputStream(xlsFile))
+        val workbookXlsx = XSSFWorkbook()
+
+        val sheetXls = workbookXls.getSheetAt(0)
+        val sheetXlsx = workbookXlsx.createSheet("Sheet1")
+
+        for (row in sheetXls) {
+            val newRow = sheetXlsx.createRow(row.rowNum)
+            for (cell in row) {
+                val newCell = newRow.createCell(cell.columnIndex)
+                when (cell.cellType) {
+                    CellType.STRING -> newCell.setCellValue(cell.stringCellValue)
+                    CellType.NUMERIC -> newCell.setCellValue(cell.numericCellValue)
+                    CellType.BOOLEAN -> newCell.setCellValue(cell.booleanCellValue)
+                    else -> {}
+                }
+            }
+        }
+
+        workbookXls.close()
+
+        // Write XLSX file
+        val fos = FileOutputStream(xlsxFile)
+        workbookXlsx.write(fos)
+        fos.close()
+        workbookXlsx.close()
+
+        return xlsxFile
     }
 
 
@@ -87,18 +123,18 @@ class ExcelComponent {
 
 //        val oldWorkbook: org.apache.poi.ss.usermodel.Workbook = HSSFWorkbook(file.inputStream())
 
-/*
-        var excellist: List<PurchaseCreditCardExcelDto> = LinkedList<PurchaseCreditCardExcelDto>()
+        /*
+                var excellist: List<PurchaseCreditCardExcelDto> = LinkedList<PurchaseCreditCardExcelDto>()
 
-        val inputStream = file.inputStream()
-        inputStream.use { fis ->
-            val wb = oldWorkBook
-            excellist = Javaxcel.newInstance()
-                .reader(oldWorkBook, PurchaseCreditCardExcelDto::class.java)
-                .read()
-        }
-        log.error { excellist }
-*/
+                val inputStream = file.inputStream()
+                inputStream.use { fis ->
+                    val wb = oldWorkBook
+                    excellist = Javaxcel.newInstance()
+                        .reader(oldWorkBook, PurchaseCreditCardExcelDto::class.java)
+                        .read()
+                }
+                log.error { excellist }
+        */
 
 
     }
