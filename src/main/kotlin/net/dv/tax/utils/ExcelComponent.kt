@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.dhatim.fastexcel.Workbook
 import org.dhatim.fastexcel.reader.ReadableWorkbook
@@ -112,31 +111,6 @@ class ExcelComponent {
         workbookXlsx.close()
 
         return xlsxFile
-    }
-
-
-    fun readXls(file: File) {
-
-        val oldWorkBook: org.apache.poi.ss.usermodel.Workbook = WorkbookFactory.create(file)
-
-//        val ins: InputStream = FileInputStream(file)
-
-//        val oldWorkbook: org.apache.poi.ss.usermodel.Workbook = HSSFWorkbook(file.inputStream())
-
-        /*
-                var excellist: List<PurchaseCreditCardExcelDto> = LinkedList<PurchaseCreditCardExcelDto>()
-
-                val inputStream = file.inputStream()
-                inputStream.use { fis ->
-                    val wb = oldWorkBook
-                    excellist = Javaxcel.newInstance()
-                        .reader(oldWorkBook, PurchaseCreditCardExcelDto::class.java)
-                        .read()
-                }
-                log.error { excellist }
-        */
-
-
     }
 
 

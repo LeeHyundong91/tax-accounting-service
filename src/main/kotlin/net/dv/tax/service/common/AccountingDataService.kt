@@ -36,14 +36,14 @@ class AccountingDataService(
     fun saveOriginData(
         hospitalId: String,
         writer: String,
-        dataCategory: MenuCategoryCode,
+        dataCategory: String,
         multipartFiles: List<MultipartFile>,
     ): ResponseEntity<HttpStatus> {
         multipartFiles.forEach {
 
             val accountingDataEntity = AccountingDataEntity()
 
-            var tempMap = awsS3Service.upload(dataCategory.name, it)
+            var tempMap = awsS3Service.upload(dataCategory, it)
 
             accountingDataEntity.also { data ->
                 data.hospitalId = hospitalId
@@ -61,10 +61,10 @@ class AccountingDataService(
         return ResponseEntity.ok(HttpStatus.OK)
     }
 
-    fun getOriginDataList(hospitalId: String, dataCategory: MenuCategoryCode): List<AccountingDataEntity> {
+    fun getOriginDataList(hospitalId: String, dataCategory: String): List<AccountingDataEntity> {
         return accountingDataRepository.findAllByHospitalIdAndDataCategoryAndIsDeleteFalse(
             hospitalId,
-            dataCategory.name
+            dataCategory
         )
     }
 

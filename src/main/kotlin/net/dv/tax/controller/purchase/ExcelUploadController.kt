@@ -34,7 +34,7 @@ class ExcelUploadController(
         return accountingDataService.saveOriginData(
             hospitalId,
             writer,
-            MenuCategoryCode.valueOf(MenuCategoryCode.convert(categoryName)),
+            MenuCategoryCode.values().find { it.code == categoryName }!!.name,
             contents
         )
     }
@@ -47,7 +47,7 @@ class ExcelUploadController(
     ): List<AccountingDataEntity> {
         return accountingDataService.getOriginDataList(
             hospitalId,
-            MenuCategoryCode.valueOf(MenuCategoryCode.convert(categoryName))
+            MenuCategoryCode.values().find { it.code == categoryName }!!.name
         )
     }
 
