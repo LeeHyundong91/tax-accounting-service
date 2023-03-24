@@ -6,6 +6,15 @@ import org.springframework.stereotype.Service
 @Service
 class IncomeStatementService(private val incomeStatementRepository: IncomeStatementRepository) {
 
+    fun dataList(hospitalId: String, dataPeriod: String) {
+
+        incomeStatementRepository.findAllByHospitalIdAndDataPeriodStartingWith(hospitalId, dataPeriod)
+
+    }
+
+    fun unionIncomeData() {
+
+    }
 
 
 }

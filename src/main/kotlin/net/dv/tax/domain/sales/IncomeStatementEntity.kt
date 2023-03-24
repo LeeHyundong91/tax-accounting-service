@@ -23,9 +23,7 @@ data class IncomeStatementEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    val year: String? = null,
-
-    val month: String? = null,
+    val dataPeriod: String? = null,
 
     val hospitalId: String? = null,
 
