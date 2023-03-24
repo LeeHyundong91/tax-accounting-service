@@ -67,15 +67,13 @@ ecr:deploy:
     - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_HOST}
   script:
     - VERSION="$(TZ="Asia/Seoul" date "+%m.%d")"
-    - IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}:${VERSION}"
-    - docker tag ${APP_NAME}:latest ${IMAGE}
-    - docker push ${IMAGE}
+    - IMAGE="${REPOSITORY_HOST}/dv-service.${APP_NAME}"
+    - docker tag ${APP_NAME}:latest ${IMAGE}:${VERSION}
+    - docker tag ${APP_NAME}:latest ${IMAGE}:latest
+    - docker push ${IMAGE} --all-tags
     - echo VERSION="${VERSION}" | tee .env
-    - echo ${IMAGE} | tee image_name
   after_script:
-    - docker rmi $(cat image_name)
-    - docker rmi ${APP_NAME}:latest
-    - docker rmi ${APP_NAME}:base
+    - docker rmi $(docker images --filter=reference="*/*.${APP_NAME}*" --filter=reference="*.${APP_NAME}*" -q) --force
   artifacts:
     reports:
       dotenv: .env
@@ -134,6 +132,7 @@ eks:deploy:
   script:
     - aws s3 cp s3://dr.village.net/deployment/dv.service/dv-tax-accounting.yml .
     - envsubst < dv-tax-accounting.yml | kubectl --namespace ${NAMESPACE} apply -f -
+    - kubectl -n ${NAMESPACE} rollout restart $(kubectl get deployments -n ${NAMESPACE} -o name --no-headers=true | grep ${APP_NAME})
   only:
     - /^dev-.*$/
     - /^release-.*$/
