@@ -38,6 +38,7 @@ class PurchaseElecInvoiceService(
         rows.removeLast()
 
         rows.forEach {
+            log.error { it }
 
             val issueDate = LocalDate.parse(it.getCell(1)?.rawValue)
             val sendDate = LocalDate.parse(it.getCell(2)?.rawValue)
@@ -51,9 +52,9 @@ class PurchaseElecInvoiceService(
                     accountCode = it.getCell(3)?.rawValue,
                     franchiseeName = it.getCell(4)?.rawValue,
                     itemName = it.getCell(5)?.rawValue,
-                    supplyPrice = it.getCell(6)?.rawValue?.toLong(),
-                    taxAmount = it.getCell(7)?.rawValue?.toLong(),
-                    totalAmount = it.getCell(8)?.rawValue?.toLong(),
+                    supplyPrice = it.getCell(6)?.rawValue?.toDouble()?.toLong(),
+                    taxAmount = it.getCell(7)?.rawValue?.toDouble()?.toLong(),
+                    totalAmount = it.getCell(8)?.rawValue?.toDouble()?.toLong(),
                     isDeduction = it.getCell(9)?.rawValue,
                     debtorAccount = it.getCell(10)?.rawValue,
                     creditAccount = it.getCell(11)?.rawValue,
