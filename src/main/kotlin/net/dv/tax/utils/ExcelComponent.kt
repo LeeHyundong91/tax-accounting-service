@@ -107,8 +107,8 @@ class ExcelComponent {
         // Write XLSX file
         val fos = FileOutputStream(xlsxFile)
         workbookXlsx.write(fos)
-        fos.close()
         workbookXlsx.close()
+        fos.close()
 
         return xlsxFile
     }

@@ -8,8 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "accounting_data")
-@Comment("매입 엑셀 업로드 데이터")
+@Table(name = "tax_and_employee_data")
+@Comment("세무 노무 파일 관리")
 @DynamicUpdate
 data class AccountingDataEntity(
 
@@ -20,14 +20,29 @@ data class AccountingDataEntity(
 
     var hospitalId: String? = null,
 
+    @Comment("한글 메뉴명")
+    var dataCategoryKor: String? = null,
+
+    @Comment("영문 메뉴명")
     var dataCategory: String? = null,
+
+    @Comment("기간 yyyy, yyyy-mm")
+    var dataPeriod: String? = null,
+
+    @Comment("세무, 노무")
+    var dataType: String? = null,
+
+    @Comment("병원명")
+    var companyName: String? = null,
 
     var isApply: Boolean? = false,
 
     var isDelete: Boolean? = false,
 
+    @Comment("S3 Path")
     var uploadFilePath: String? = null,
 
+    @Comment("파일 이름")
     var uploadFileName: String? = null,
 
     var writer: String? = null,
