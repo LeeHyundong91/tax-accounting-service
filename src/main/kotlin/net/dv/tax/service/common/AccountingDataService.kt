@@ -1,8 +1,10 @@
 package net.dv.tax.service.common
 
+import jakarta.persistence.EntityNotFoundException
 import mu.KotlinLogging
 import net.dv.tax.domain.common.AccountingDataEntity
 import net.dv.tax.dto.MenuCategoryCode
+import net.dv.tax.dto.ResponseFileUploadDto
 import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.repository.common.AccountingDataRepository
 import net.dv.tax.service.purchase.PurchaseCashReceiptService
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import java.text.Normalizer
 
 @Component
 class AccountingDataService(
@@ -31,35 +34,67 @@ class AccountingDataService(
 
     private val log = KotlinLogging.logger {}
 
-    @Throws
     @Transactional
     fun saveOriginData(
         hospitalId: String,
         writer: String,
-        dataCategory: String,
         multipartFiles: List<MultipartFile>,
-    ): ResponseEntity<HttpStatus> {
-        multipartFiles.forEach {
+    ): ResponseEntity<ResponseFileUploadDto> {
+        val responseFiles = mutableListOf<ResponseFileUploadDto>()
 
-            val accountingDataEntity = AccountingDataEntity()
+        for (file in multipartFiles) {
+            try {
 
-            var tempMap = awsS3Service.upload(dataCategory, it)
+                val partOfName = Normalizer.normalize(file.originalFilename, Normalizer.Form.NFC)!!.split("_", ".")
 
-            accountingDataEntity.also { data ->
-                data.hospitalId = hospitalId
-                data.dataCategory = tempMap["category"]!!
-                data.uploadFileName = tempMap["fileName"]!!
-                data.uploadFilePath = tempMap["filePath"]!!
-                data.writer = writer
+                log.info { partOfName }
+
+                if (partOfName.size > 4) {
+                    responseFiles.add(ResponseFileUploadDto("잘못된 형태의 파일명 입니다.", file.originalFilename))
+                    continue
+                }
+
+                val dataPeriod = partOfName[0].trim()
+
+                val dataCategoryKor = partOfName[1].trim()
+
+                val dataCategory = MenuCategoryCode.values().find { it.purchaseFileName == dataCategoryKor }?.name
+                    ?: throw RuntimeException("Invalid data category: $dataCategoryKor")
+
+                val companyName = partOfName[2]
+
+                val tempMap = awsS3Service.upload(dataCategory, file)
+                val accountingDataEntity = AccountingDataEntity(
+                    hospitalId = hospitalId,
+                    dataCategory = tempMap["category"]!!,
+                    dataCategoryKor = dataCategoryKor,
+                    companyName = companyName,
+                    dataPeriod = dataPeriod,
+                    uploadFileName = tempMap["fileName"]!!,
+                    uploadFilePath = tempMap["filePath"]!!,
+                    writer = writer,
+                    dataType = "세무",
+                )
+
+                log.error { accountingDataEntity }
+
+                accountingDataRepository.save(accountingDataEntity).apply {
+                    updateOriginData(id!!)
+                }
+
+            } catch (e: Exception) {
+                responseFiles.add(ResponseFileUploadDto("파일 처리 중 오류가 발생했습니다.", file.originalFilename))
+                log.error { e.message }
             }
-
-            log.error { accountingDataEntity }
-
-            accountingDataRepository.save(accountingDataEntity)
         }
 
-        return ResponseEntity.ok(HttpStatus.OK)
+        return if (responseFiles.isEmpty()) {
+            ResponseEntity.ok(ResponseFileUploadDto("업로드 성공"))
+        } else {
+            ResponseEntity.ok(ResponseFileUploadDto("일부 파일 업로드 실패", responseFiles))
+        }
     }
+
 
     fun getOriginDataList(hospitalId: String, dataCategory: String): List<AccountingDataEntity> {
         return accountingDataRepository.findAllByHospitalIdAndDataCategoryAndIsDeleteFalse(
@@ -78,42 +113,36 @@ class AccountingDataService(
         return ResponseEntity.ok(HttpStatus.OK)
     }
 
-    fun updateOriginData(id: Long, writer: String): ResponseEntity<HttpStatus> {
+    @Transactional(rollbackFor = [Exception::class], timeout = -1)
+    fun updateOriginData(id: Long) {
+        val data = accountingDataRepository.findById(id)
+            .orElseThrow { EntityNotFoundException("Accounting data with ID $id not found") }
+
+        val excelDto = ExcelRequiredDto(
+            writer = data!!.writer ?: error("Accounting data has no writer"),
+            hospitalId = data.hospitalId ?: error("Accounting data has no hospital ID"),
+            year = data.uploadFileName?.substring(0, 4) ?: error("Accounting data has no upload file name"),
+            fileDataId = id
+        )
 
 
-        accountingDataRepository.findById(id).get().also {
+        val rows =
+            awsS3Service.getFileFromBucket(data.uploadFilePath ?: error("Accounting data has no upload file path"))
+                .let { excelComponent.readXlsx(it) }
 
-            val excelDto = ExcelRequiredDto(
-                writer = it.writer!!,
-                hospitalId = it.hospitalId!!,
-                year = it.uploadFileName?.trimStart()?.substring(0, 4)!!,
-                fileDataId = it.id!!
+        when (MenuCategoryCode.valueOf(data.dataCategory!!)) {
+            MenuCategoryCode.CREDIT_CARD -> purchaseCreditCardService.excelToEntitySave(excelDto, rows)
+            MenuCategoryCode.CASH_RECEIPT -> purchaseCashReceiptService.excelToEntitySave(excelDto, rows)
+            MenuCategoryCode.ELEC_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(excelDto, rows)
+            MenuCategoryCode.PASSBOOK -> purchasePassbookService.excelToEntitySave(excelDto, rows)
+            MenuCategoryCode.ELEC_TAX_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(
+                excelDto.copy(isTax = true),
+                rows
             )
-
-            it.isApply = true
-            it.writer = writer
-
-            val rows = excelComponent.readXlsx(awsS3Service.getFileFromBucket(it.uploadFilePath!!))
-
-            when (MenuCategoryCode.valueOf(it.dataCategory!!)) {
-                MenuCategoryCode.CREDIT_CARD -> purchaseCreditCardService.excelToEntitySave(excelDto, rows)
-                MenuCategoryCode.CASH_RECEIPT -> purchaseCashReceiptService.excelToEntitySave(excelDto, rows)
-                MenuCategoryCode.ELEC_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(excelDto, rows)
-                MenuCategoryCode.PASSBOOK -> purchasePassbookService.excelToEntitySave(excelDto, rows)
-                MenuCategoryCode.ELEC_TAX_INVOICE -> purchaseElecInvoiceService.excelToEntitySave(
-                    excelDto
-                        .also { dto ->
-                            dto.isTax = true
-                        }, rows
-                )
-
-                else -> null
-            }
-
-            accountingDataRepository.save(it)
+            else -> {}
         }
-        return ResponseEntity.ok(HttpStatus.OK)
+        data.isApply = true
+        accountingDataRepository.save(data)
     }
-
 
 }
