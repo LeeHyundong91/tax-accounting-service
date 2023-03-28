@@ -2,6 +2,8 @@ package net.dv.tax.service.purchase
 
 import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
+import net.dv.tax.dto.MenuCategoryCode
+import net.dv.tax.dto.QueueDto
 import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.dto.purchase.PurchaseCreditCardDto
 import net.dv.tax.dto.purchase.PurchaseCreditCardListDto
@@ -9,6 +11,7 @@ import net.dv.tax.dto.purchase.PurchaseQueryDto
 import net.dv.tax.enum.purchase.getDeductionName
 import net.dv.tax.enum.purchase.getRecommendDeductionName
 import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
+import net.dv.tax.service.common.SendQueueService
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
 
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service
 @Service
 class PurchaseCreditCardService(
     private val purchaseCreditCardRepository: PurchaseCreditCardRepository,
+    private val sendQueueService: SendQueueService,
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -91,11 +95,10 @@ class PurchaseCreditCardService(
             dataList.add(data)
         }
 
-        log.error { dataList }
-
-        purchaseCreditCardRepository.saveAll(dataList)
+        sendQueueService.sandMessage(QueueDto(menu = MenuCategoryCode.CREDIT_CARD.name, creditCard = dataList))
     }
-    fun getPurchaseCreditCard( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCreditCardListDto{
+
+    fun getPurchaseCreditCard(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCreditCardListDto {
 
         var creditCardList = getPurchaseCreditCardList(hospitalId, purchaseQueryDto, false)
         var totalCount = purchaseCreditCardRepository.purchaseCreditCardListCnt(hospitalId, purchaseQueryDto)
@@ -110,7 +113,11 @@ class PurchaseCreditCardService(
     }
 
 
-    fun getPurchaseCreditCardList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseCreditCardDto>{
+    fun getPurchaseCreditCardList(
+        hospitalId: String,
+        purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean,
+    ): List<PurchaseCreditCardDto> {
 
         return purchaseCreditCardRepository.purchaseCreditCardList(hospitalId, purchaseQueryDto, isExcel)
             .map { purchaseCreditCard ->

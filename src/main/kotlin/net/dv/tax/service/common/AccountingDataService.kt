@@ -4,21 +4,26 @@ import jakarta.persistence.EntityNotFoundException
 import mu.KotlinLogging
 import net.dv.tax.domain.common.AccountingDataEntity
 import net.dv.tax.dto.MenuCategoryCode
+import net.dv.tax.dto.QueueDto
 import net.dv.tax.dto.ResponseFileUploadDto
 import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.repository.common.AccountingDataRepository
+import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
 import net.dv.tax.service.purchase.PurchaseCashReceiptService
 import net.dv.tax.service.purchase.PurchaseCreditCardService
 import net.dv.tax.service.purchase.PurchaseElecInvoiceService
 import net.dv.tax.service.purchase.PurchasePassbookService
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
+import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.text.Normalizer
+
 
 @Component
 class AccountingDataService(
@@ -26,7 +31,9 @@ class AccountingDataService(
     private val awsS3Service: AwsS3Service,
     private val excelComponent: ExcelComponent,
 
+
     private val purchaseCreditCardService: PurchaseCreditCardService,
+    private val purchaseCreditCardRepository: PurchaseCreditCardRepository,
     private val purchaseCashReceiptService: PurchaseCashReceiptService,
     private val purchaseElecInvoiceService: PurchaseElecInvoiceService,
     private val purchasePassbookService: PurchasePassbookService,
@@ -34,17 +41,28 @@ class AccountingDataService(
 
     private val log = KotlinLogging.logger {}
 
+
+    /*PROTO TYPE*/
+    @RabbitListener(queues = ["tax.excel.queue"])
+    fun getMessage(@Payload result: QueueDto) {
+        log.error { "fucking do this!!" }
+        purchaseCreditCardRepository.saveAll(result.creditCard!!)
+        log.error { "fucking do this!!!!!!!!!" }
+    }
+
     @Transactional
     fun saveOriginData(
         hospitalId: String,
         writer: String,
         multipartFiles: List<MultipartFile>,
     ): ResponseEntity<ResponseFileUploadDto> {
+
+
         val responseFiles = mutableListOf<ResponseFileUploadDto>()
 
         for (file in multipartFiles) {
             try {
-
+                /*Mac Korean break situation defence*/
                 val partOfName = Normalizer.normalize(file.originalFilename, Normalizer.Form.NFC)!!.split("_", ".")
 
                 log.info { partOfName }
@@ -139,10 +157,12 @@ class AccountingDataService(
                 excelDto.copy(isTax = true),
                 rows
             )
+
             else -> {}
         }
         data.isApply = true
         accountingDataRepository.save(data)
     }
+
 
 }

@@ -17,16 +17,14 @@ class FileUploadController(
 
     //파일 업로드
     @PostMapping("/tax/file/{hospitalId}")
-    fun taxFileUpload(files: List<MultipartFile>, @PathVariable hospitalId: String): ResponseEntity<ResponseFileUploadDto> {
+    fun taxFileUpload(
+        files: List<MultipartFile>,
+        @PathVariable hospitalId: String,
+    ): ResponseEntity<ResponseFileUploadDto> {
 
         val writer = "tester"
 
         return accountingDataService.saveOriginData(hospitalId, writer, files)
-    }
-
-
-    fun employeeFileUpload() {
-
     }
 
 }

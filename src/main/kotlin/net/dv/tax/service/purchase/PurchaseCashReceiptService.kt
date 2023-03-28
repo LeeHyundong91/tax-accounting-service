@@ -9,11 +9,15 @@ import net.dv.tax.dto.purchase.PurchaseQueryDto
 import net.dv.tax.enum.purchase.getDeductionName
 import net.dv.tax.enum.purchase.getRecommendDeductionName
 import net.dv.tax.repository.purchase.PurchaseCashReceiptRepository
+import net.dv.tax.service.common.SendQueueService
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
 
 @Service
-class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: PurchaseCashReceiptRepository) {
+class PurchaseCashReceiptService(
+    private val purchaseCashReceiptRepository: PurchaseCashReceiptRepository,
+    private val sendQueueService: SendQueueService,
+) {
 
     private val log = KotlinLogging.logger {}
 
@@ -78,13 +82,13 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
                 )
             dataList.add(data)
         }
-
         log.error { dataList }
+//        sendQueueService.sandMessage(SendQueueDto(MenuCategoryCode.CASH_RECEIPT.name, dataList))
 
-        purchaseCashReceiptRepository.saveAll(dataList)
+//        purchaseCashReceiptRepository.saveAll(dataList)
     }
 
-    fun getPurchaseCashReceipt( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
+    fun getPurchaseCashReceipt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
 
         var CashReceiptList = getPurchaseCashReceiptList(hospitalId, purchaseQueryDto, false)
         var totalCount = purchaseCashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, purchaseQueryDto)
@@ -98,7 +102,11 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
         )
     }
 
-    fun getPurchaseCashReceiptList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseCashReceiptDto>{
+    fun getPurchaseCashReceiptList(
+        hospitalId: String,
+        purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean,
+    ): List<PurchaseCashReceiptDto> {
         return purchaseCashReceiptRepository.purchaseCashReceiptList(hospitalId, purchaseQueryDto, isExcel)
             .map { purchaseCashReceipt ->
                 PurchaseCashReceiptDto(

@@ -14,6 +14,30 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        acknowledge-mode: auto # manual X auto O
+        retry:
+          enabled: true # 재시도
+          initial-interval: 3s # 최초 메시지 처리 실패 후 재시도까지의 인터벌
+          max-interval: 3s # 최대 재시도 인터벌
+          max-attempts: 3 # 최대 재시도 횟수
+    cache:
+      connection:
+        mode: connection
+    template:
+      reply-timeout: 30000
+      exchange: tax.data.exchange
+      routing-key: tax.data.route
+      retry:
+        enabled: true
+        max-attempts: 3
+        initial-interval: 10000
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
@@ -60,6 +84,13 @@ spring:
         base-path: /
         exposure:
           include: health,info
+
+dv:
+  rabbit:
+    exchange: tax.excel.exchange
+    queue: tax.excel.queue
+    route-key: tax.excel.route
+
 
 logging:
   level:

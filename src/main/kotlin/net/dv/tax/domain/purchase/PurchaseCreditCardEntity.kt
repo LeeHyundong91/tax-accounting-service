@@ -1,5 +1,6 @@
 package net.dv.tax.domain.purchase
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -88,6 +89,7 @@ data class PurchaseCreditCardEntity(
     @Comment("등록일(업로드일시")
     @CreatedDate
     @Column(name = "CREATED_AT")
+    @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )
