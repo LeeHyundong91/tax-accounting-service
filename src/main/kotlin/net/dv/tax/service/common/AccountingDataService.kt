@@ -45,9 +45,9 @@ class AccountingDataService(
     /*PROTO TYPE*/
     @RabbitListener(queues = ["tax.excel.queue"])
     fun getMessage(@Payload result: QueueDto) {
-        log.error { "fucking do this!!" }
+        log.error { "upload before !!" }
         purchaseCreditCardRepository.saveAll(result.creditCard!!)
-        log.error { "fucking do this!!!!!!!!!" }
+        log.error { "upload after !!" }
     }
 
     @Transactional
