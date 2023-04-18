@@ -1,12 +1,12 @@
 package net.dv.tax.domain.purchase
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.format.annotation.DateTimeFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -31,11 +31,11 @@ data class PurchaseElecInvoiceEntity(
 
     @Comment("발급 일자")
     @Column(name = "ISSUE_DATE")
-    var issueDate: LocalDate? = null,
+    var issueDate: String? = null,
 
     @Comment("전송 일자")
     @Column(name = "SEND_DATE")
-    var sendDate: LocalDate? = null,
+    var sendDate: String? = null,
 
     @Comment("코드")
     @Column(name = "ACCOUNT_CODE")
@@ -111,6 +111,7 @@ data class PurchaseElecInvoiceEntity(
 
     @Comment("등록일(업로드일시")
     @CreatedDate
+    @JsonIgnore
     @Column(name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),

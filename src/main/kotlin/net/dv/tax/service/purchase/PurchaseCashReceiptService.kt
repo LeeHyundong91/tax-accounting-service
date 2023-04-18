@@ -9,11 +9,15 @@ import net.dv.tax.dto.purchase.PurchaseQueryDto
 import net.dv.tax.enum.purchase.getDeductionName
 import net.dv.tax.enum.purchase.getRecommendDeductionName
 import net.dv.tax.repository.purchase.PurchaseCashReceiptRepository
+import net.dv.tax.service.common.SendQueueService
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
 
 @Service
-class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: PurchaseCashReceiptRepository) {
+class PurchaseCashReceiptService(
+    private val purchaseCashReceiptRepository: PurchaseCashReceiptRepository,
+    private val sendQueueService: SendQueueService,
+) {
 
     private val log = KotlinLogging.logger {}
 
@@ -61,10 +65,10 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
                     franchiseeName = it.getCell(2)?.rawValue,
                     corporationType = it.getCell(3)?.rawValue,
                     itemName = it.getCell(4)?.rawValue,
-                    supplyPrice = it.getCell(5)?.rawValue?.toLong(),
-                    taxAmount = it.getCell(6)?.rawValue?.toLong(),
-                    serviceCharge = it.getCell(7)?.rawValue?.toLong(),
-                    totalAmount = it.getCell(8)?.rawValue?.toLong(),
+                    supplyPrice = it.getCell(5)?.rawValue?.toDouble()?.toLong(),
+                    taxAmount = it.getCell(6)?.rawValue?.toDouble()?.toLong(),
+                    serviceCharge = it.getCell(7)?.rawValue?.toDouble()?.toLong(),
+                    totalAmount = it.getCell(8)?.rawValue?.toDouble()?.toLong(),
                     isDeduction = isDeduction,
                     isRecommendDeduction = isRecommendDeduction,
                     statementType1 = it.getCell(11)?.rawValue,
@@ -78,13 +82,13 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
                 )
             dataList.add(data)
         }
-
         log.error { dataList }
+//        sendQueueService.sandMessage(SendQueueDto(MenuCategoryCode.CASH_RECEIPT.name, dataList))
 
-        purchaseCashReceiptRepository.saveAll(dataList)
+//        purchaseCashReceiptRepository.saveAll(dataList)
     }
 
-    fun getPurchaseCashReceipt( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
+    fun getPurchaseCashReceipt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
 
         var CashReceiptList = getPurchaseCashReceiptList(hospitalId, purchaseQueryDto, false)
         var totalCount = purchaseCashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, purchaseQueryDto)
@@ -98,7 +102,11 @@ class PurchaseCashReceiptService(private val purchaseCashReceiptRepository: Purc
         )
     }
 
-    fun getPurchaseCashReceiptList( hospitalId: String, purchaseQueryDto: PurchaseQueryDto, isExcel: Boolean): List<PurchaseCashReceiptDto>{
+    fun getPurchaseCashReceiptList(
+        hospitalId: String,
+        purchaseQueryDto: PurchaseQueryDto,
+        isExcel: Boolean,
+    ): List<PurchaseCashReceiptDto> {
         return purchaseCashReceiptRepository.purchaseCashReceiptList(hospitalId, purchaseQueryDto, isExcel)
             .map { purchaseCashReceipt ->
                 PurchaseCashReceiptDto(

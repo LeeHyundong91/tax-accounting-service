@@ -1,7 +1,6 @@
 package net.dv.tax.dto.purchase
 
 import org.hibernate.annotations.Comment
-import java.time.LocalDate
 
 data class PurchaseElecInvoiceListDto (
     
@@ -30,10 +29,10 @@ data class PurchaseElecInvoiceDto (
     var hospitalId: String? = null,
 
     @Comment("발급 일자")
-    var issueDate: LocalDate? = null,
+    var issueDate: String? = null,
 
     @Comment("전송 일자")
-    var sendDate: LocalDate? = null,
+    var sendDate: String? = null,
 
     @Comment("코드")
     var accountCode: String? = null,
