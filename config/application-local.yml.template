@@ -1,0 +1,29 @@
+server:
+  port: 8080
+spring:
+  cloud:
+    config:
+      uri: https://config.dev.doctorvillage.net
+
+  datasource:
+    url: "jdbc:mariadb://dr-village-dev.cerct58sajf3.ap-northeast-2.rds.amazonaws.com:3306/user-account?autoReconnect=true&characterEncoding=UTF-8&tinyInt1isBit=false"
+    username: none
+    password: none
+
+  rabbitmq:
+    host: none
+    port: 5672
+    username: none
+    password: none
+
+  data:
+    mongodb:
+      host: adcd83c9a403641c79d4ab0164a963fb-1109699728.ap-northeast-2.elb.amazonaws.com
+      username: mongodb
+      password: mongodb
+      authentication-database: admin
+
+eureka:
+  client:
+    service-url:
+      defaultZone: none

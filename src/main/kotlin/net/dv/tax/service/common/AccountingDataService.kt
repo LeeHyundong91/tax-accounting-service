@@ -31,7 +31,7 @@ class AccountingDataService(
 
     private val log = KotlinLogging.logger {}
 
-    @Throws
+//    @Throws
     @Transactional
     fun saveOriginData(
         hospitalId: String,
@@ -43,7 +43,7 @@ class AccountingDataService(
 
             val accountingDataEntity = AccountingDataEntity()
 
-            var tempMap = awsS3Service.upload(dataCategory, it)
+            val tempMap = awsS3Service.upload(dataCategory, it)
 
             accountingDataEntity.also { data ->
                 data.hospitalId = hospitalId
@@ -106,8 +106,6 @@ class AccountingDataService(
                             dto.isTax = true
                         }, rows
                 )
-
-                else -> null
             }
 
             accountingDataRepository.save(it)
