@@ -9,16 +9,11 @@ plugins {
     kotlin("plugin.spring") version "1.7.21"
     kotlin("plugin.jpa") version "1.7.21"
     kotlin("plugin.serialization") version "1.5.0"
-
 }
+
 noArg {
     annotation("javax.persistence.Entity")
 }
-//allOpen {
-//    annotation("javax.persistence.Entity")
-//    annotation("javax.persistence.MappedSuperclass")
-//    annotation("javax.persistence.Embeddable")
-//}
 
 group = "net.dv"
 version = "1.0.0-SNAPSHOT"
@@ -27,23 +22,26 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 repositories {
     mavenCentral()
     maven { url = uri("https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates") }
+    maven { url = uri("https://repo.spring.io/milestone") }
 }
+
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
     }
 }
 
-
-
 extra["springCloudVersion"] = "2022.0.0"
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+    }
+}
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-
 
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -54,7 +52,11 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     /* Spring Cloud */
+    implementation("org.springframework.cloud:spring-cloud-starter-config")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
     /*Querydsl*/
     val queryDslVersion = dependencyManagement.importedProperties["querydsl.version"]
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
@@ -83,12 +85,6 @@ dependencies {
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-    }
 }
 
 tasks.withType<KotlinCompile> {
