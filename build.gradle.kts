@@ -42,18 +42,19 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
 
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     /* Spring Cloud */
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     /*Querydsl*/
     val queryDslVersion = dependencyManagement.importedProperties["querydsl.version"]
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
@@ -80,10 +81,6 @@ dependencies {
     /*JSON*/
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
-
-//    implementation("org.springframework.cloud:spring-cloud-starter-config")
-//    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-//    developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
 }
