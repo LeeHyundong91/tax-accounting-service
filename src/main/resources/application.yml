@@ -57,6 +57,12 @@ eureka:
     service-url:
       defaultZone: http://eureka-server/eureka/
 
+dv:
+  rabbit:
+    exchange: tax.excel.exchange
+    queue: tax.excel.queue
+    route-key: tax.excel.route
+
 logging:
   level:
 #    org.hibernate.SQL: trace
