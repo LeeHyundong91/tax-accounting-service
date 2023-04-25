@@ -61,6 +61,9 @@ data class SalesElecInvoiceEntity(
     @Comment("세액")
     var taxAmount: Long? = 0,
 
+    @Comment("전제 세금계산서 판별여부 true : 전자세금계산서 , false : 전자계산서")
+    val isTax: Boolean? = null,
+
     @Comment("합계금액")
     var totalAmount: Long? = 0,
 

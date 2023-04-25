@@ -9,11 +9,16 @@ plugins {
     kotlin("plugin.spring") version "1.7.21"
     kotlin("plugin.jpa") version "1.7.21"
     kotlin("plugin.serialization") version "1.5.0"
-}
 
+}
 noArg {
     annotation("javax.persistence.Entity")
 }
+//allOpen {
+//    annotation("javax.persistence.Entity")
+//    annotation("javax.persistence.MappedSuperclass")
+//    annotation("javax.persistence.Embeddable")
+//}
 
 group = "net.dv"
 version = "1.0.0-SNAPSHOT"

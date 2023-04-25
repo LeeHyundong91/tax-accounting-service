@@ -15,9 +15,9 @@ class CallDataController(
 
     @GetMapping("/get/data")
     fun getTaxDataFromReceiveService(): ResponseEntity<HttpStatus> {
-        taxDataLoadService.getBenefitsData()
+//        taxDataLoadService.getBenefitsData()
         taxDataLoadService.getCarInsuranceData()
-        taxDataLoadService.getMedicalExamData()
+//        taxDataLoadService.getMedicalExamData()
         taxDataLoadService.getEmployeeIndustryData()
         taxDataLoadService.getSalesCreditCardData()
         taxDataLoadService.getSalesCashReceiptData()

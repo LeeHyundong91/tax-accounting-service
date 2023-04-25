@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 @Suppress("JpaAttributeTypeInspection")
 @Entity
 @Table(name = "hospital_chart")
+@Comment("병원차트 매출목록")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class HospitalChartEntity(
@@ -18,7 +19,7 @@ data class HospitalChartEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    val id: Long? = null,
 
     @Comment("병원 아이디")
     var hospitalId: String? = null,

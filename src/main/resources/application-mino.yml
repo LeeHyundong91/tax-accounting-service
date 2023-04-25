@@ -41,7 +41,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://dr-village-dev.cerct58sajf3.ap-northeast-2.rds.amazonaws.com:3306/tax-accounting
+    url: jdbc:mariadb://dr-village-dev.cerct58sajf3.ap-northeast-2.rds.amazonaws.com:3306/tmp
     username: steward
     password: ekrxjdmlwlqtk!
 
@@ -60,7 +60,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         default_batch_fetch_size: 1000
