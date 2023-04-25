@@ -15,7 +15,7 @@ interface DataReceiveFeignService {
     fun getCarInsurance(): List<CarInsuranceEntity>
 
     @GetMapping("/medical-care")
-    fun getMedicalExam(): List<MedicalCareEntity>
+    fun getMedicalCare(): List<MedicalCareEntity>
 
     @GetMapping("/industry-insurance")
     fun getEmployeeIndustry(): List<EmployeeIndustryEntity>
@@ -33,9 +33,10 @@ interface DataReceiveFeignService {
     fun getElecInvoice(): List<SalesElecInvoiceEntity>
 
     @GetMapping("/health-care")
-    fun getHealthCare() : List<Any>
+    fun getHealthCare(): List<HealthCareEntity>
 
     @GetMapping("/sales-agent")
-    fun getSalesAgent() : List<SalesAgentEntity>
+    fun getSalesAgent(): List<SalesAgentEntity>
+
 
 }

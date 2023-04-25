@@ -14,21 +14,28 @@ class TaxDataLoadAndSaveService(
     private val salesCreditCardRepository: SalesCreditCardRepository,
     private val salesCashReceiptRepository: SalesCashReceiptRepository,
     private val salesElecInvoiceRepository: SalesElecInvoiceRepository,
+    private val medicalBenefitsRepository: MedicalBenefitsRepository,
+    private val medicalCareRepository: MedicalCareRepository,
+    private val healthCareRepository: HealthCareRepository,
 ) {
 
     private val log = KotlinLogging.logger {}
 
-//    fun getBenefitsData() {
-//        medicalBenefitsRepository.saveAll(dataReceiveFeignService.getMedicalBenefits())
-//    }
+    fun getMedicalBenefitsData() {
+        medicalBenefitsRepository.saveAll(dataReceiveFeignService.getMedicalBenefits())
+    }
+
+    fun getMedicalCareData() {
+        medicalCareRepository.saveAll(dataReceiveFeignService.getMedicalCare())
+    }
+
+    fun getHealthCareData() {
+        healthCareRepository.saveAll(dataReceiveFeignService.getHealthCare())
+    }
 
     fun getCarInsuranceData() {
         carInsuranceRepository.saveAll(dataReceiveFeignService.getCarInsurance())
     }
-
-//    fun getMedicalExamData() {
-//        medicalExamRepository.saveAll(dataReceiveFeignService.getMedicalExam())
-//    }
 
     fun getEmployeeIndustryData() {
         employeeIndustryRepository.saveAll(dataReceiveFeignService.getEmployeeIndustry())
@@ -47,21 +54,21 @@ class TaxDataLoadAndSaveService(
     }
 
 
-
     @Throws(Exception::class)
     @Scheduled(cron = "0 * * * * *")
     fun callScheduleModule() {
         try {
             log.info { "Tax Data Save In Progress ------------" }
-//            medicalBenefitsRepository.saveAll(dataReceiveFeignService.getMedicalBenefits())
-            carInsuranceRepository.saveAll(dataReceiveFeignService.getCarInsurance())
-//            medicalExamRepository.saveAll(dataReceiveFeignService.getMedicalExam())
-            employeeIndustryRepository.saveAll(dataReceiveFeignService.getEmployeeIndustry())
-            salesCreditCardRepository.saveAll(dataReceiveFeignService.getSalesCreditCard())
-            salesCashReceiptRepository.saveAll(dataReceiveFeignService.getCashReceipt())
-            salesElecInvoiceRepository.saveAll(dataReceiveFeignService.getElecTaxInvoice())
+            getMedicalBenefitsData()
+            getMedicalCareData()
+            getHealthCareData()
+            getCarInsuranceData()
+            getEmployeeIndustryData()
+            getSalesCreditCardData()
+            getSalesCashReceiptData()
+            getSalesElecTaxInvoiceData()
             log.info { "End Of Scheduled ------------" }
-        } catch (e: Exception){
+        } catch (e: Exception) {
         }
     }
 
