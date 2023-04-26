@@ -1,7 +1,11 @@
 package net.dv.tax.controller.sales
 
+import net.dv.tax.domain.sales.MedicalBenefitsEntity
 import net.dv.tax.dto.sales.MedicalBenefitsListDto
 import net.dv.tax.service.sales.MedicalBenefitsService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,4 +24,13 @@ class MedicalBenefitsController(private val medicalBenefitsService: MedicalBenef
         return medicalBenefitsService.medicalBenefitsList(hospitalId, year)
     }
 
+    @GetMapping("/{yearMonth}/{hospitalId}")
+    fun getMedicalBenefitsDetailList(
+        @PathVariable hospitalId: String,
+        @PathVariable yearMonth: String,
+        @PageableDefault(size = 30) page: Pageable,
+    ): Page<MedicalBenefitsEntity> {
+        return medicalBenefitsService.medicalBenefitsDetailList(hospitalId, yearMonth, page)
+
+    }
 }
