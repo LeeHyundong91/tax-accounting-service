@@ -3,72 +3,78 @@ package net.dv.tax.dto.sales
 import jakarta.persistence.Column
 import org.hibernate.annotations.Comment
 
-class MedicalBenefitsListDto {
+data class MedicalBenefitsListDto(
+    var medicalBenefitsList: List<MedicalBenefitsDto>,
 
-    var totalCount: Long? = 0
+    var listTotal: MedicalBenefitsDto
+)
+
+
+data class MedicalBenefitsDto(
+    var totalCount: Long? = 0,
 
     @Comment("진료년월 - retO")
-    val treatmentYearMonth: String? = null
+    var treatmentYearMonth: String? = null,
 
     @Comment("총진료비(지급결정[심사결정]) - retAM")
     @Column(name = "DECISION_AD_TOTAL_AMOUNT")
-    val decisionADTotalAmount: Long? = null
+    var decisionADTotalAmount: Long? = 0,
 
     @Comment("본인부담금(지급결정[심사결정]) - retAN")
     @Column(name = "DECISION_AD_OWN_CHARGE")
-    val decisionADOwnCharge: Long? = null
+    var decisionADOwnCharge: Long? = 0,
 
     @Comment("지급결정(공단부담금) - retAQ")
-    val corpPaymentDecision: Long? = null
+    var corpPaymentDecision: Long? = 0,
 
     @Comment("과표(원천징수세액) - retAR")
-    val withholdingTaxAmount: Long? = null
+    var withholdingTaxAmount: Long? = 0,
 
     @Comment("소득세(원천징수세액) - retAS")
-    val incomeTaxAmount: Long? = null
+    var incomeTaxAmount: Long? = 0,
 
     @Comment("주민세(원천징수세액) - retAT")
-    val residentTaxAmount: Long? = null
+    var residentTaxAmount: Long? = 0,
 
     @Comment("세액계(원천징수세액) - retAU")
-    val totalWithholdingTaxAmount: Long? = null
+    var totalWithholdingTaxAmount: Long? = 0,
 
     @Comment("본인부담환급금 - retAV")
-    val patientRefundAmount: Long? = null
+    var patientRefundAmount: Long? = 0,
 
     @Comment("가지급정산금 - retAW")
-    val advancePaymentAmount: Long? = null
+    var advancePaymentAmount: Long? = 0,
 
     @Comment("환수금 정산금(가) - retAX")
     @Column(name = "REFUND_AMOUNT_A")
-    val refundAmountA: Long? = null
+    var refundAmountA: Long? = 0,
 
     @Comment("환수금 정산금(나) - retAY")
     @Column(name = "REFUND_AMOUNT_B")
-    val refundAmountB: Long? = null
+    var refundAmountB: Long? = 0,
 
     @Comment("환수금정산금(다) - retAZ")
     @Column(name = "REFUND_AMOUNT_C")
-    val refundAmountC: Long? = null
+    var refundAmountC: Long? = 0,
 
     @Comment("검사료지급 - retBA")
-    val examPaymentFee: Long? = null
+    var examPaymentFee: Long? = 0,
 
     @Comment("공제처리 - retBB")
-    val deductionProcessing: Long? = null
+    var deductionProcessing: Long? = 0,
 
     @Comment("대불비용(중재원공제금) - retBC")
-    val replacementPayment: Long? = null
+    var replacementPayment: Long? = 0,
 
     @Comment("분담금(중재원공제금) - retBD")
-    val divideAmount: Long? = null
+    var divideAmount: Long? = 0,
 
     @Comment("절사금액 - retBE")
-    val roundingAmount: Long? = null
+    var roundingAmount: Long? = 0,
 
     @Comment("증감금액 - retBF")
-    val variationAmount: Long? = null
+    var variationAmount: Long? = 0,
 
     @Comment("실지급 retBG")
-    val actualPaymentAmount: Long? = null
-}
+    var actualPaymentAmount: Long? = 0,
+)

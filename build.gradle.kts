@@ -13,7 +13,9 @@ plugins {
 }
 noArg {
     annotation("javax.persistence.Entity")
+    invokeInitializers = true
 }
+
 //allOpen {
 //    annotation("javax.persistence.Entity")
 //    annotation("javax.persistence.MappedSuperclass")
@@ -55,6 +57,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+    implementation("org.jetbrains.kotlin:kotlin-noarg:1.8.10")
+
 
     /* Spring Cloud */
     implementation("org.springframework.cloud:spring-cloud-starter-config")
