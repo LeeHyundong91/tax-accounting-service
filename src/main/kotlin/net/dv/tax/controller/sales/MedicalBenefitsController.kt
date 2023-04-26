@@ -17,20 +17,20 @@ class MedicalBenefitsController(private val medicalBenefitsService: MedicalBenef
 
 
     @GetMapping("/list/{year}/{hospitalId}")
-    fun getMedicalBenefitsList(
+    fun getList(
         @PathVariable hospitalId: String,
         @PathVariable year: String,
     ): MedicalBenefitsListDto {
-        return medicalBenefitsService.medicalBenefitsList(hospitalId, year)
+        return medicalBenefitsService.getMedicalBenefitsList(hospitalId, year)
     }
 
     @GetMapping("/{yearMonth}/{hospitalId}")
-    fun getMedicalBenefitsDetailList(
+    fun getDetailList(
         @PathVariable hospitalId: String,
         @PathVariable yearMonth: String,
         @PageableDefault(size = 30) page: Pageable,
     ): Page<MedicalBenefitsEntity> {
-        return medicalBenefitsService.medicalBenefitsDetailList(hospitalId, yearMonth, page)
+        return medicalBenefitsService.getMedicalBenefitsDetail(hospitalId, yearMonth, page)
 
     }
 }
