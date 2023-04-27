@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service
 @Service
 class MedicalBenefitsService(private val medicalBenefitsRepository: MedicalBenefitsRepository) {
 
-    fun getMedicalBenefitsList(hospitalId: String, yearMonth: String): MedicalBenefitsListDto {
+    fun getList(hospitalId: String, yearMonth: String): MedicalBenefitsListDto {
         return MedicalBenefitsListDto(
             medicalBenefitsRepository.dataList(hospitalId, yearMonth),
             medicalBenefitsRepository.dataListTotal(hospitalId, yearMonth)
         )
     }
 
-    fun getMedicalBenefitsDetail(hospitalId: String, yearMonth: String, page: Pageable): Page<MedicalBenefitsEntity>{
+    fun getDetailList(hospitalId: String, yearMonth: String, page: Pageable): Page<MedicalBenefitsEntity>{
         return medicalBenefitsRepository.findAllByHospitalIdAndTreatmentYearMonth(hospitalId, yearMonth, page)
     }
 

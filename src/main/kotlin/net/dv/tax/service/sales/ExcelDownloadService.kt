@@ -52,7 +52,7 @@ class ExcelDownloadService(
 
         return when (categoryCode) {
 //            MenuCategoryCode.MEDICAL_BENEFITS -> benefits(hospitalId, year)
-            MenuCategoryCode.CAR_INSURANCE -> carInsurance(hospitalId, year)
+//            MenuCategoryCode.CAR_INSURANCE -> carInsurance(hospitalId, year)
             MenuCategoryCode.VACCINE -> vaccine(hospitalId)
 //            MenuCategoryCode.MEDICAL_EXAM -> medicalExam(hospitalId, year)
             MenuCategoryCode.EMPLOYEE_INDUSTRY -> employeeIndustry(hospitalId, year)
@@ -89,20 +89,20 @@ class ExcelDownloadService(
 //        return list
 //    }
 
-    private fun carInsurance(hospitalId: String, year: String): List<Map<String, Any>> {
-        val list: MutableList<Map<String, Any>> = LinkedList()
-
-        carInsuranceRepository.groupingList(hospitalId, year).forEach {
-            val tempMap: MutableMap<String, Any> = LinkedHashMap()
-            tempMap["기간"] = it.dataPeriod!!
-            tempMap["심사결정액"] = it.decisionAmount!!
-            tempMap["청구액"] = it.billingAmount!!
-
-            list.add(tempMap)
-        }
-
-        return list
-    }
+//    private fun carInsurance(hospitalId: String, year: String): List<Map<String, Any>> {
+//        val list: MutableList<Map<String, Any>> = LinkedList()
+//
+//        carInsuranceRepository.groupingList(hospitalId, year).forEach {
+//            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+//            tempMap["기간"] = it.dataPeriod!!
+//            tempMap["심사결정액"] = it.decisionAmount!!
+//            tempMap["청구액"] = it.billingAmount!!
+//
+//            list.add(tempMap)
+//        }
+//
+//        return list
+//    }
 
     private fun vaccine(hospitalId: String): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()

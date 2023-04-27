@@ -1,7 +1,11 @@
 package net.dv.tax.repository.sales.support
 
-import net.dv.tax.dto.sales.CarInsuranceListDto
+import net.dv.tax.dto.sales.CarInsuranceDto
 
 interface CarInsuranceSupport {
-    fun groupingList(hospitalId: String, dataPeriod: String): List<CarInsuranceListDto>
+
+    fun dataList(hospitalId: String, yearMonth: String) : List<CarInsuranceDto>
+
+    fun dataListTotal(hospitalId: String, yearMonth: String) : CarInsuranceDto
+
 }
