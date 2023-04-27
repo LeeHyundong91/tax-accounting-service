@@ -55,7 +55,7 @@ class ExcelDownloadService(
 //            MenuCategoryCode.CAR_INSURANCE -> carInsurance(hospitalId, year)
             MenuCategoryCode.VACCINE -> vaccine(hospitalId)
 //            MenuCategoryCode.MEDICAL_EXAM -> medicalExam(hospitalId, year)
-            MenuCategoryCode.EMPLOYEE_INDUSTRY -> employeeIndustry(hospitalId, year)
+//            MenuCategoryCode.EMPLOYEE_INDUSTRY -> employeeIndustry(hospitalId, year)
             MenuCategoryCode.HOSPITAL_CHART -> hospitalChart(hospitalId, year)
             MenuCategoryCode.CREDIT_CARD -> creditCard(hospitalId, year)
             MenuCategoryCode.CASH_RECEIPT -> cashReceipt(hospitalId, year)
@@ -137,23 +137,23 @@ class ExcelDownloadService(
 //        return list
 //    }
 
-    private fun employeeIndustry(hospitalId: String, year: String): List<Map<String, Any>> {
-        val list: MutableList<Map<String, Any>> = LinkedList()
-
-        employeeIndustryRepository.groupingList(hospitalId, year).forEach {
-            val tempMap: MutableMap<String, Any> = LinkedHashMap()
-            tempMap["기간"] = it.dataPeriod!!
-            tempMap["청구건수"] = it.billingCount
-            tempMap["청구금액"] = it.billingAmount
-            tempMap["지급금액"] = it.paymentAmount
-            tempMap["실지급금액"] = it.actualPayment
-            tempMap["소득세"] = it.incomeTax
-            tempMap["주민세"] = it.residenceTax
-
-            list.add(tempMap)
-        }
-        return list
-    }
+//    private fun employeeIndustry(hospitalId: String, year: String): List<Map<String, Any>> {
+//        val list: MutableList<Map<String, Any>> = LinkedList()
+//
+//        employeeIndustryRepository.dataList(hospitalId, year).forEach {
+//            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+//            tempMap["기간"] = it.dataPeriod!!
+//            tempMap["청구건수"] = it.billingCount
+//            tempMap["청구금액"] = it.billingAmount
+//            tempMap["지급금액"] = it.paymentAmount
+//            tempMap["실지급금액"] = it.actualPayment
+//            tempMap["소득세"] = it.incomeTax
+//            tempMap["주민세"] = it.residenceTax
+//
+//            list.add(tempMap)
+//        }
+//        return list
+//    }
 
     private fun hospitalChart(hospitalId: String, year: String): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()

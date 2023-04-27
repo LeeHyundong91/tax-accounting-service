@@ -1,7 +1,6 @@
 package net.dv.tax.domain.sales
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.jetbrains.annotations.NotNull
@@ -26,18 +25,16 @@ data class EmployeeIndustryEntity(
     @Comment("병원 아이디")
     var hospitalId: String,
 
-    @JsonProperty("industryInsId")
     var receiveDataId: Long,
 
     @Comment("진료년월")
-    @JsonProperty("medicalYearMonth")
-    val dataPeriod: String,
+    val treatmentYearMonth: String,
 
-    @Comment("지금일")
+    @Comment("지급년월일")
     val payday: String,
 
-    @Comment("청구번호")
-    val billingNo: Long,
+    @Comment("접수번호")
+    val receptionNo: Long,
 
     @Comment("급여종류")
     val salaryType: String,
