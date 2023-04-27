@@ -24,7 +24,7 @@ data class HealthCareEntity(
 
     val hospitalId: String? = null,
 
-    var dataReceiveId: Long ? = null,
+    var receiveDataId: Long ? = null,
 
     @Comment("사업년도 - businessYear")
     val businessYear: String? = null,
