@@ -56,7 +56,7 @@ class ExcelDownloadService(
             MenuCategoryCode.VACCINE -> vaccine(hospitalId)
 //            MenuCategoryCode.MEDICAL_EXAM -> medicalExam(hospitalId, year)
 //            MenuCategoryCode.EMPLOYEE_INDUSTRY -> employeeIndustry(hospitalId, year)
-            MenuCategoryCode.HOSPITAL_CHART -> hospitalChart(hospitalId, year)
+//            MenuCategoryCode.HOSPITAL_CHART -> hospitalChart(hospitalId, year)
             MenuCategoryCode.CREDIT_CARD -> creditCard(hospitalId, year)
             MenuCategoryCode.CASH_RECEIPT -> cashReceipt(hospitalId, year)
             MenuCategoryCode.ELEC_INVOICE -> elecInvoice(hospitalId, year)
@@ -155,24 +155,24 @@ class ExcelDownloadService(
 //        return list
 //    }
 
-    private fun hospitalChart(hospitalId: String, year: String): List<Map<String, Any>> {
-        val list: MutableList<Map<String, Any>> = LinkedList()
-
-        hospitalChartRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year.toInt())?.forEach {
-            val tempMap: MutableMap<String, Any> = LinkedHashMap()
-            tempMap["기간"] = it.year.toString() + " ." + it.month.toString()
-            tempMap["진료비"] = it.medicalExpenses!!
-            tempMap["급여총액"] = it.totalSalary!!
-            tempMap["청구액"] = it.billingAmount!!
-            tempMap["진료수납액"] = it.medicalReceipts!!
-            tempMap["본인부담 금액"] = it.ownExpense!!
-            tempMap["본인부담 비급여"] = it.nonPayment!!
-            tempMap["본인부담 금액 합계"] = it.ownExpenseAmount!!
-
-            list.add(tempMap)
-        }
-        return list
-    }
+//    private fun hospitalChart(hospitalId: String, year: String): List<Map<String, Any>> {
+//        val list: MutableList<Map<String, Any>> = LinkedList()
+//
+//        hospitalChartRepository.findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId, year.toInt())?.forEach {
+//            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+//            tempMap["기간"] = it.year.toString() + " ." + it.month.toString()
+//            tempMap["진료비"] = it.medicalExpenses!!
+//            tempMap["급여총액"] = it.totalSalary!!
+//            tempMap["청구액"] = it.billingAmount!!
+//            tempMap["진료수납액"] = it.medicalReceipts!!
+//            tempMap["본인부담 금액"] = it.ownExpense!!
+//            tempMap["본인부담 비급여"] = it.nonPayment!!
+//            tempMap["본인부담 금액 합계"] = it.ownExpenseAmount!!
+//
+//            list.add(tempMap)
+//        }
+//        return list
+//    }
 
     private fun creditCard(hospitalId: String, year: String): List<Map<String, Any>> {
         val list: MutableList<Map<String, Any>> = LinkedList()

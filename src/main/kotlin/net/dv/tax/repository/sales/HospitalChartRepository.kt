@@ -5,7 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface HospitalChartRepository : JpaRepository<HospitalChartEntity?, Int> {
 
-    fun findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId: String, year: Int): List<HospitalChartEntity>?
+    fun findAllByHospitalIdAndTreatmentYearMonthStartingWithOrderByTreatmentYearMonth(
+        hospitalId: String,
+        treatmentYearMonth: String,
+    ): List<HospitalChartEntity>
 
 
 }
