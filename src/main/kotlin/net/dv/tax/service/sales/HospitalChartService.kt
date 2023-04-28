@@ -16,15 +16,15 @@ class HospitalChartService(private val hospitalChartRepository: HospitalChartRep
 
     fun getList(hospitalId: String, year: String): HospitalChartListDto {
 
-        val chart =
+        val dataList =
             hospitalChartRepository.findAllByHospitalIdAndTreatmentYearMonthStartingWithOrderByTreatmentYearMonth(
                 hospitalId,
                 year
             )
 
         return HospitalChartListDto(
-            chart,
-            totalList(chart)
+            dataList,
+            totalList(dataList)
         )
     }
 
@@ -42,10 +42,10 @@ class HospitalChartService(private val hospitalChartRepository: HospitalChartRep
     }
 
 
-    fun hospitalChartSave(hospitalChartList: List<HospitalChartEntity>): ResponseEntity<Any> {
+    fun hospitalChartSave(hospitalChartList: List<HospitalChartEntity>): ResponseEntity<HttpStatus> {
         log.info { hospitalChartList }
         hospitalChartRepository.saveAll(hospitalChartList)
-        return ResponseEntity.ok(HttpStatus.OK.value())
+        return ResponseEntity.ok(HttpStatus.OK)
     }
 
 

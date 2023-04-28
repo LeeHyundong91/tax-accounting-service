@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface SalesOtherBenefitsRepository : JpaRepository<SalesOtherBenefitsEntity, Long> {
 
-    fun findAllByHospitalIdAndDataPeriod(hospitalId: String, dataPeriod: String): List<SalesOtherBenefitsEntity>
+    fun findAllByHospitalIdAndDataPeriodStartingWithOrderByDataPeriod(hospitalId: String, dataPeriod: String): List<SalesOtherBenefitsEntity>
 
 }

@@ -21,16 +21,16 @@ data class SalesOtherBenefitsEntity(
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    val id: Long?,
+    val id: Long? = null,
 
     @Comment("병원 아이디")
-    var hospitalId: String,
+    var hospitalId: String? = null,
 
     @Comment("기간 yyyy-MM")
-    var dataPeriod: String,
+    var dataPeriod: String? = null,
 
     @Comment("항목명")
-    var itemName: String,
+    var itemName: String? = null,
 
     @Comment("본인부담금")
     var ownCharge: Long? = 0,
@@ -40,6 +40,8 @@ data class SalesOtherBenefitsEntity(
 
     @Comment("합계")
     val totalAmount: Long? = 0,
+
+    var writer: String? = null,
 
     @NotNull
     @CreatedDate

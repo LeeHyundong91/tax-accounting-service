@@ -3,6 +3,7 @@ package net.dv.tax.controller.sales
 import net.dv.tax.domain.sales.HospitalChartEntity
 import net.dv.tax.dto.sales.HospitalChartListDto
 import net.dv.tax.service.sales.HospitalChartService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -16,7 +17,7 @@ class HospitalChartController(private val hospitalChartService: HospitalChartSer
     }
 
     @PostMapping("/save")
-    fun hospitalChartSave(@RequestBody hospitalChartList: List<HospitalChartEntity>): ResponseEntity<Any>{
+    fun hospitalChartSave(@RequestBody hospitalChartList: List<HospitalChartEntity>): ResponseEntity<HttpStatus>{
         return hospitalChartService.hospitalChartSave(hospitalChartList)
     }
 
