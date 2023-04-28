@@ -1,6 +1,5 @@
 package net.dv.tax.domain.sales
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -25,11 +24,8 @@ data class SalesVaccineEntity(
     @Comment("병원 아이디")
     var hospitalId: String? = null,
 
-    @Comment("년도")
-    val year: Int? = null,
-
-    @Comment("월")
-    val month: Int? = null,
+    @Comment("지급완료 년월")
+    val paymentMonthYear: String? = null,
 
     @Comment("지급완료 건수")
     var payCount: Long? = 0,
@@ -40,9 +36,6 @@ data class SalesVaccineEntity(
     @Comment("작성자")
     var writer: String? = null,
 
-    @JsonIgnore
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    val dataPeriod: String? = year.toString() + "-" + month.toString() + "-01",
 
     @CreatedDate
     @Column(name = "CREATED_AT")

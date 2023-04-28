@@ -2,6 +2,7 @@ package net.dv.tax.controller.sales
 
 import mu.KotlinLogging
 import net.dv.tax.domain.sales.SalesVaccineEntity
+import net.dv.tax.dto.sales.SalesVaccineListDto
 import net.dv.tax.service.sales.SalesVaccineService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -16,9 +17,9 @@ class SalesVaccineController(
 
 
     @GetMapping("/list/{year}/{hospitalId}")
-    fun vaccineList(@PathVariable year: Int, @PathVariable hospitalId: String): List<SalesVaccineEntity>? {
+    fun vaccineList(@PathVariable year: String, @PathVariable hospitalId: String): SalesVaccineListDto {
         log.error { "$year /$hospitalId" }
-        return salesVaccineService.vaccineYearList(hospitalId, year)
+        return salesVaccineService.getList(hospitalId, year)
     }
 
     @PostMapping("/save/{hospitalId}")

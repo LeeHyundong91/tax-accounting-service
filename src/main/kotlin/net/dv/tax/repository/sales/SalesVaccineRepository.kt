@@ -2,16 +2,15 @@ package net.dv.tax.repository.sales
 
 import net.dv.tax.domain.sales.SalesVaccineEntity
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
-interface SalesVaccineRepository : JpaRepository<SalesVaccineEntity, Int>,
-    JpaSpecificationExecutor<SalesVaccineEntity>{
+interface SalesVaccineRepository : JpaRepository<SalesVaccineEntity, Int> {
 
-        fun findAllByHospitalIdAndYearOrderByMonthAsc(hospitalId: String, year: Int): List<SalesVaccineEntity>?
+    fun findAllByHospitalIdAndPaymentMonthYearStartingWithOrderByPaymentMonthYear(
+        hospitalId: String,
+        year: String,
+    ): List<SalesVaccineEntity>
 
-        /*Excel*/
-        fun findAllByHospitalIdOrderByMonthAscYearAsc(hospitalId: String): List<SalesVaccineEntity>?
 
-    }
+}
 
 
