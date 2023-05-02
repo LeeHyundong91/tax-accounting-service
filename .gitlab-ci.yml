@@ -4,6 +4,7 @@ variables:
   CLOUD_CONFIG_SERVER: http://config-server
   CLOUD_EUREKA_SERVER: http://eureka-server/eureka/
   ROLE_NAME: role-service-deploy
+  MQ_HOST: rabbitmq
 
 stages:
   - build
