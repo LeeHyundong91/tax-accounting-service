@@ -1,14 +1,17 @@
 package net.dv.tax.repository.sales
 
 import net.dv.tax.domain.sales.SalesHandInvoiceEntity
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface SalesHandInvoiceRepository : JpaRepository<SalesHandInvoiceEntity?, Int>
+interface SalesHandInvoiceRepository : JpaRepository<SalesHandInvoiceEntity, Int>
      {
 
-    fun findAllByHospitalIdAndIssueDtStartingWithAndIsDeleteIsFalse(
+    fun findAllByHospitalIdAndIssueDateStartingWithAndIsDeleteIsFalseOrderByIssueDateDesc(
         hospitalId: String,
-        issueDt: String,
-    ): List<SalesHandInvoiceEntity?>?
+        issueDate: String,
+        page: Pageable
+    ): Page<SalesHandInvoiceEntity>
 
 }

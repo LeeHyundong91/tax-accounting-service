@@ -224,24 +224,24 @@ class ExcelDownloadService(
         }
         return list
     }
-
-    private fun handInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
-        val list: MutableList<Map<String, Any>> = LinkedList()
-
-        handInvoiceRepository.findAllByHospitalIdAndIssueDtStartingWithAndIsDeleteIsFalse(hospitalId, year)?.forEach {
-            val tempMap: MutableMap<String, Any> = LinkedHashMap()
-            tempMap["계산서종류"] = it?.billType!!
-            tempMap["발급일자"] = it.issueDt!!
-            tempMap["품목명"] = it.itemName!!
-            tempMap["공급가액"] = it.supplyPrice!!
-            tempMap["세액"] = it.taxAmount!!
-            tempMap["등록자"] = it.writer!!
-            tempMap["등록일"] = it.createdAt
-
-            list.add(tempMap)
-        }
-        return list
-    }
+//
+//    private fun handInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
+//        val list: MutableList<Map<String, Any>> = LinkedList()
+//
+//        handInvoiceRepository.findAllByHospitalIdAndIssueDtStartingWithAndIsDeleteIsFalse(hospitalId, year)?.forEach {
+//            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+//            tempMap["계산서종류"] = it?.billType!!
+//            tempMap["발급일자"] = it.issueDt!!
+//            tempMap["품목명"] = it.itemName!!
+//            tempMap["공급가액"] = it.supplyPrice!!
+//            tempMap["세액"] = it.taxAmount!!
+//            tempMap["등록자"] = it.writer!!
+//            tempMap["등록일"] = it.createdAt
+//
+//            list.add(tempMap)
+//        }
+//        return list
+//    }
 
 
 }

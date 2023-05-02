@@ -24,13 +24,13 @@ data class SalesHandInvoiceEntity(
     var id: Int? = null,
 
     @Comment("병원 아이디")
-    var hospitalId: String,
+    var hospitalId: String? = null,
 
-    @Comment("계산서종류")
-    var billType: String? = null,
+    @Comment("거래처 명")
+    var clientName : String? = null,
 
     @Comment("발급일자")
-    var issueDt: String? = null,
+    var issueDate: String? = null,
 
     @Comment("품목명")
     var itemName: String? = null,
@@ -40,6 +40,12 @@ data class SalesHandInvoiceEntity(
 
     @Comment("세액")
     var taxAmount: Long? = null,
+
+    @Comment("합계금액")
+    var totalAmount: Long? = null,
+
+    @Comment("계산서종류")
+    var billType: String? = null,
 
     @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

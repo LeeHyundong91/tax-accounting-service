@@ -1,7 +1,10 @@
 package net.dv.tax.controller.sales
 
 import net.dv.tax.domain.sales.SalesHandInvoiceEntity
+import net.dv.tax.dto.sales.SalesHandInvoiceListDto
 import net.dv.tax.service.sales.SalesHandInvoiceService
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,13 +15,22 @@ class SalesHandInvoiceController(private val salesHandInvoiceService: SalesHandI
 
 
     @PutMapping("/save/{hospitalId}")
-    fun saveList(@RequestBody dataList: List<SalesHandInvoiceEntity>, @PathVariable hospitalId: String): ResponseEntity<HttpStatus> {
+    fun saveList(
+        @RequestBody dataList: List<SalesHandInvoiceEntity>,
+        @PathVariable hospitalId: String,
+    ): ResponseEntity<HttpStatus> {
         return salesHandInvoiceService.saveData(dataList, hospitalId)
     }
 
-    @GetMapping("/list/{year}/{hospitalId}")
-    fun getList(@PathVariable year: String, @PathVariable hospitalId: String): List<SalesHandInvoiceEntity?>? {
-        return salesHandInvoiceService.getListData(hospitalId, year)
+
+    @GetMapping("/{yearMonth}/{hospitalId}")
+    fun getDetailList(
+        @PathVariable hospitalId: String,
+        @PathVariable yearMonth: String,
+        @PageableDefault(size = 30) page: Pageable,
+    ): SalesHandInvoiceListDto {
+        return salesHandInvoiceService.getList(hospitalId, yearMonth, page)
+
     }
 
 }
