@@ -30,8 +30,8 @@ ENTRYPOINT ["java", \
     "-Dspring.cloud.config.uri=${CLOUD_CONFIG_SERVER}", \
     "-Deureka.client.serviceUrl.defaultZone=${CLOUD_EUREKA_SERVER}", \
     "-Ddv.rds.host=${RDS_HOST}", \
-    "-Ddv.rds.port=${RDS_HOST}", \
-    "-Ddv.rds.username=${RDS_HOST}", \
+    "-Ddv.rds.port=${RDS_PORT}", \
+    "-Ddv.rds.username=${RDS_USERNAME}", \
     "-Ddv.rds.password=${RDS_PASSWORD}", \
     "-Dspring.rabbitmq.host=${MQ_HOST}", \
     "-Dspring.rabbitmq.port=${MQ_PORT}", \
