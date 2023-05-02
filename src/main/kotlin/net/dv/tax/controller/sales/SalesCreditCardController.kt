@@ -11,9 +11,18 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/sales/credit-card")
 class SalesCreditCardController(private val creditCardService: SalesCreditCardService) {
 
-    @GetMapping("list/{year}/{hospitalId}")
-    fun getCreditCardList(@PathVariable hospitalId: String, @PathVariable year: String): List<SalesCreditCardListDto> {
-        return creditCardService.getListData(hospitalId, year)
+
+    @GetMapping("/list/{year}/{hospitalId}")
+    fun getList(
+        @PathVariable hospitalId: String,
+        @PathVariable year: String,
+    ): SalesCreditCardListDto {
+        return creditCardService.getList(hospitalId, year)
     }
+
+//    @GetMapping("list/{year}/{hospitalId}")
+//    fun getCreditCardList(@PathVariable hospitalId: String, @PathVariable year: String): List<SalesCreditCardListDto> {
+//        return creditCardService.getListData(hospitalId, year)
+//    }
 
 }

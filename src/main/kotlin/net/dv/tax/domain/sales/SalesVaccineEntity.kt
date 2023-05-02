@@ -25,7 +25,7 @@ data class SalesVaccineEntity(
     var hospitalId: String? = null,
 
     @Comment("지급완료 년월")
-    val paymentMonthYear: String? = null,
+    val paymentYearMonth: String? = null,
 
     @Comment("지급완료 건수")
     var payCount: Long? = 0,

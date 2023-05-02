@@ -1,7 +1,10 @@
 package net.dv.tax.repository.sales.support
 
-import net.dv.tax.dto.sales.SalesCreditCardListDto
+import net.dv.tax.dto.sales.SalesCreditCardDto
 
 interface SalesCreditCardSupport {
-    fun groupingList(hospitalId: String, dataPeriod: String): List<SalesCreditCardListDto>
+    fun dataList(hospitalId: String, year: String): List<SalesCreditCardDto>
+
+    fun dataListTotal(hospitalId: String, year: String): SalesCreditCardDto
+
 }

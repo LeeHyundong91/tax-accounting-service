@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface SalesVaccineRepository : JpaRepository<SalesVaccineEntity, Int> {
 
-    fun findAllByHospitalIdAndPaymentMonthYearStartingWithOrderByPaymentMonthYear(
+    fun findAllByHospitalIdAndPaymentYearMonthStartingWithOrderByPaymentYearMonth(
         hospitalId: String,
         year: String,
     ): List<SalesVaccineEntity>

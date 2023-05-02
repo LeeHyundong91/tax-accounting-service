@@ -4,32 +4,50 @@ import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.domain.sales.QSalesCreditCardEntity.salesCreditCardEntity
 import net.dv.tax.domain.sales.SalesCreditCardEntity
-import net.dv.tax.dto.sales.SalesCreditCardListDto
+import net.dv.tax.dto.sales.SalesCreditCardDto
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 
 class SalesCreditCardSupportImpl(
     private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(SalesCreditCardEntity::class.java),
     SalesCreditCardSupport {
-    override fun groupingList(hospitalId: String, year: String): List<SalesCreditCardListDto> {
+    override fun dataList(hospitalId: String, year: String): List<SalesCreditCardDto> {
 
         return query.select(
             Projections.bean(
-                SalesCreditCardListDto::class.java,
+                SalesCreditCardDto::class.java,
                 salesCreditCardEntity.salesCount.sum().`as`("salesCount"),
                 salesCreditCardEntity.totalSales.sum().`as`("totalSales"),
                 salesCreditCardEntity.creditCardSalesAmount.sum().`as`("creditCardSalesAmount"),
-                salesCreditCardEntity.purchaseCardSalesAmount.sum().`as`("purchaseCardSalesAmount"),
+                salesCreditCardEntity.zeroPaySalesAmount.sum().`as`("zeroPaySalesAmount"),
                 salesCreditCardEntity.taxFreeAmount.sum().`as`("taxFreeAmount"),
-                salesCreditCardEntity.dataPeriod,
-                salesCreditCardEntity.cardCategory
+                salesCreditCardEntity.approvalYearMonth,
             )
         ).from(salesCreditCardEntity)
             .where(
                 salesCreditCardEntity.hospitalId.eq(hospitalId),
-                salesCreditCardEntity.dataPeriod.startsWith(year)
-            ).groupBy(salesCreditCardEntity.dataPeriod, salesCreditCardEntity.cardCategory)
+                salesCreditCardEntity.approvalYearMonth.startsWith(year)
+            ).groupBy(salesCreditCardEntity.approvalYearMonth)
             .fetch()
 
+    }
+
+    override fun dataListTotal(hospitalId: String, year: String): SalesCreditCardDto {
+        return query.select(
+            Projections.bean(
+                SalesCreditCardDto::class.java,
+                salesCreditCardEntity.salesCount.sum().`as`("salesCount"),
+                salesCreditCardEntity.totalSales.sum().`as`("totalSales"),
+                salesCreditCardEntity.creditCardSalesAmount.sum().`as`("creditCardSalesAmount"),
+                salesCreditCardEntity.zeroPaySalesAmount.sum().`as`("zeroPaySalesAmount"),
+                salesCreditCardEntity.taxFreeAmount.sum().`as`("taxFreeAmount"),
+                salesCreditCardEntity.approvalYearMonth.substring(0, 4).`as`("approvalYearMonth"),
+            )
+        ).from(salesCreditCardEntity)
+            .where(
+                salesCreditCardEntity.hospitalId.eq(hospitalId),
+                salesCreditCardEntity.approvalYearMonth.startsWith(year)
+            )
+            .fetchOne()!!
     }
 }

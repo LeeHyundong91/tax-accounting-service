@@ -18,7 +18,7 @@ class SalesVaccineService(
 
 
     fun getList(hospitalId: String, year: String): SalesVaccineListDto {
-        val dataList = vaccineSalesRepository.findAllByHospitalIdAndPaymentMonthYearStartingWithOrderByPaymentMonthYear(
+        val dataList = vaccineSalesRepository.findAllByHospitalIdAndPaymentYearMonthStartingWithOrderByPaymentYearMonth(
             hospitalId,
             year
         )
