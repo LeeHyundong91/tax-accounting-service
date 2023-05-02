@@ -16,7 +16,6 @@ class SalesVaccineService(
 
     private val log = KotlinLogging.logger {}
 
-
     fun getList(hospitalId: String, year: String): SalesVaccineListDto {
         val dataList = vaccineSalesRepository.findAllByHospitalIdAndPaymentYearMonthStartingWithOrderByPaymentYearMonth(
             hospitalId,
@@ -43,12 +42,6 @@ class SalesVaccineService(
         return ResponseEntity.ok(HttpStatus.OK.value())
     }
 
-
-//    @Comment("지급완료 건수")
-//    var payCount: Long? = 0,
-//
-//    @Comment("지급금액")
-//    var payAmount: Long? = 0,
 
 
 }

@@ -17,6 +17,7 @@ class TaxDataLoadAndSaveService(
     private val medicalBenefitsRepository: MedicalBenefitsRepository,
     private val medicalCareRepository: MedicalCareRepository,
     private val healthCareRepository: HealthCareRepository,
+    private val salesAgentRepository: SalesAgentRepository
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -53,6 +54,10 @@ class TaxDataLoadAndSaveService(
         salesElecInvoiceRepository.saveAll(dataReceiveFeignService.getElecTaxInvoice())
     }
 
+    fun getSalesAgentData(){
+        salesAgentRepository.saveAll(dataReceiveFeignService.getSalesAgent())
+    }
+
 
     @Throws(Exception::class)
     @Scheduled(cron = "0 * * * * *")
@@ -67,6 +72,7 @@ class TaxDataLoadAndSaveService(
             getSalesCreditCardData()
             getSalesCashReceiptData()
             getSalesElecTaxInvoiceData()
+            getSalesAgentData()
             log.info { "End Of Scheduled ------------" }
         } catch (e: Exception) {
         }

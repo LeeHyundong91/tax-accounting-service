@@ -1,7 +1,6 @@
 package net.dv.tax.domain.sales
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -25,13 +24,12 @@ data class SalesAgentEntity(
     @JsonIgnore
     val id: Long? = null,
 
-    @JsonProperty("salesAgentId")
     var receiveDataId: Long,
 
     var hospitalId: String? = null,
 
     @Comment("기간")
-    val dataPeriod: String? = null,
+    val approvalYearMonth: String? = null,
 
     @Comment("건수")
     val salesCount: Long? = null,

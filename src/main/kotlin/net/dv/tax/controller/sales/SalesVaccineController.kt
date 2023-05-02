@@ -23,15 +23,12 @@ class SalesVaccineController(
     }
 
     @PostMapping("/save/{hospitalId}")
-    fun vaccineSave(@PathVariable hospitalId: String, @RequestBody vaccineSalesInfo: List<SalesVaccineEntity>): ResponseEntity<Any>{
+    fun vaccineSave(
+        @PathVariable hospitalId: String,
+        @RequestBody vaccineSalesInfo: List<SalesVaccineEntity>,
+    ): ResponseEntity<Any> {
         return salesVaccineService.vaccineSave(hospitalId, vaccineSalesInfo)
     }
-
-//    @GetMapping("/download/{hospitalId}")
-//    fun vaccineYearListExcelDownload(@PathVariable hospitalId: String, response: HttpServletResponse){
-//        salesVaccineService.vaccineListMakeExcel(hospitalId, response)
-//    }
-
 
 
 }
