@@ -88,7 +88,6 @@ env:dev:
   script:
     - |
       cat <<EOF | tee deploy.env
-      PROFILE=dev
       VERSION=${VERSION}
       NAMESPACE=dv-platform-dev
       EOF
@@ -104,7 +103,6 @@ env:rel:
   script:
     - |
       cat <<EOF | tee deploy.env
-      PROFILE=dev
       VERSION=${VERSION}
       NAMESPACE=dv-platform-dev
       EOF

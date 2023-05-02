@@ -8,9 +8,9 @@ plugins {
     kotlin("kapt") version "1.7.10"
     kotlin("plugin.spring") version "1.7.21"
     kotlin("plugin.jpa") version "1.7.21"
-    kotlin("plugin.serialization") version "1.5.0"
-
+    kotlin("plugin.serialization") version "1.7.21"
 }
+
 noArg {
     annotation("javax.persistence.Entity")
     invokeInitializers = true
