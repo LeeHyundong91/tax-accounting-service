@@ -35,6 +35,6 @@ class CarInsuranceSupportImpl(private val query: JPAQueryFactory) : CustomQueryd
 
     override fun dataListTotal(hospitalId: String, yearMonth: String): CarInsuranceDto? {
         return baseQuery(hospitalId, yearMonth)
-            .fetchOne()!!
+            .fetchOne()
     }
 }

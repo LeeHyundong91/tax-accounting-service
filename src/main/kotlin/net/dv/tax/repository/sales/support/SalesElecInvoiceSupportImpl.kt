@@ -46,7 +46,7 @@ class SalesElecInvoiceSupportImpl(
             .fetch() as List<SalesElecInvoiceDto>
     }
 
-    override fun dataListTotal(hospitalId: String, writingDate: String): SalesElecInvoiceDto {
+    override fun dataListTotal(hospitalId: String, writingDate: String): SalesElecInvoiceDto? {
         return baseQuery(hospitalId, writingDate, false)
             .fetchOne() as SalesElecInvoiceDto
     }
@@ -57,7 +57,7 @@ class SalesElecInvoiceSupportImpl(
             .fetch() as List<SalesElecTaxInvoiceDto>
     }
 
-    override fun taxDataListTotal(hospitalId: String, writingDate: String): SalesElecTaxInvoiceDto {
+    override fun taxDataListTotal(hospitalId: String, writingDate: String): SalesElecTaxInvoiceDto? {
         return baseQuery(hospitalId, writingDate, true)
             .fetchOne() as SalesElecTaxInvoiceDto
     }
