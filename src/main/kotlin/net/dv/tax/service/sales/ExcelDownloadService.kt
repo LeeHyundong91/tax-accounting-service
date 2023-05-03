@@ -209,21 +209,21 @@ class ExcelDownloadService(
         return list
     }
 
-    private fun elecInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
-        val list: MutableList<Map<String, Any>> = LinkedList()
-
-        elecInvoiceRepository.groupingList(hospitalId, year).forEach {
-            val tempMap: MutableMap<String, Any> = LinkedHashMap()
-            tempMap["기간"] = it.dataPeriod!!
-            tempMap["건수"] = it.count!!
-            tempMap["합계"] = it.totalAmount!!
-            tempMap["공급가액"] = it.supplyPrice!!
-            tempMap["세액"] = it.taxAmount!!
-
-            list.add(tempMap)
-        }
-        return list
-    }
+//    private fun elecInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
+//        val list: MutableList<Map<String, Any>> = LinkedList()
+//
+//        elecInvoiceRepository.groupingList(hospitalId, year).forEach {
+//            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+//            tempMap["기간"] = it.dataPeriod!!
+//            tempMap["건수"] = it.count!!
+//            tempMap["합계"] = it.totalAmount!!
+//            tempMap["공급가액"] = it.supplyPrice!!
+//            tempMap["세액"] = it.taxAmount!!
+//
+//            list.add(tempMap)
+//        }
+//        return list
+//    }
 //
 //    private fun handInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
 //        val list: MutableList<Map<String, Any>> = LinkedList()

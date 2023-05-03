@@ -6,7 +6,7 @@ data class HealthCareListDto(
 
     var healthcareList: List<HealthCareDto>,
 
-    var listTotal: HealthCareDto,
+    var listTotal: HealthCareDto? = null,
 
     )
 

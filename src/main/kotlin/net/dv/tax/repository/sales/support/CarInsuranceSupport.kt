@@ -6,6 +6,6 @@ interface CarInsuranceSupport {
 
     fun dataList(hospitalId: String, yearMonth: String) : List<CarInsuranceDto>
 
-    fun dataListTotal(hospitalId: String, yearMonth: String) : CarInsuranceDto
+    fun dataListTotal(hospitalId: String, yearMonth: String) : CarInsuranceDto?
 
 }

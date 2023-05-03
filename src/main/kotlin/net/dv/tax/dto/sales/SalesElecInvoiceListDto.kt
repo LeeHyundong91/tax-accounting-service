@@ -2,20 +2,45 @@ package net.dv.tax.dto.sales
 
 import org.hibernate.annotations.Comment
 
-class SalesElecInvoiceListDto {
+data class SalesElecInvoiceListDto(
 
+    val salesElecInvoiceList: List<SalesElecInvoiceDto>,
+    val totalList: SalesElecInvoiceDto? = null,
 
-    var count: Long? = 0
+    )
 
-    @Comment("기간")
-    var dataPeriod: String? = null
+data class SalesElecInvoiceDto(
 
-    @Comment("공급가액")
-    var supplyPrice: Long? = 0
+    @Comment("작성일자")
+    var writingDate: String? = null,
 
-    @Comment("세액")
-    var taxAmount: Long? = 0
+    @Comment("건수")
+    var totalCount: Long? = 0,
 
-    @Comment("합계금액")
-    var totalAmount: Long? = 0
-}
+    @Comment("공급대가")
+    var supplyAmount: Long? = 0,
+
+    )
+
+data class SalesElecTaxInvoiceListDto(
+
+    val salesElecTaxInvoiceList: List<SalesElecTaxInvoiceDto>,
+    val totalList: SalesElecTaxInvoiceDto? = null,
+)
+
+data class SalesElecTaxInvoiceDto(
+    @Comment("작성일자")
+    var writingDate: String? = null,
+
+    @Comment("건수")
+    var totalCount: Long? = 0,
+
+    @Comment("합계급액 - totaAmtStr")
+    val totalAmount: Long? = null,
+
+    @Comment("공급가액 - sumSplCftStr")
+    val supplyAmount: Long? = null,
+
+    @Comment("세액 - sumTxamtStr")
+    val taxAmount: Long? = null,
+)

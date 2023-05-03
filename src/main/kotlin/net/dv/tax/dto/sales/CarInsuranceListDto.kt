@@ -7,7 +7,7 @@ data class CarInsuranceListDto(
 
     var carInsuranceList: List<CarInsuranceDto>,
 
-    var listTotal: CarInsuranceDto,
+    var listTotal: CarInsuranceDto? = null,
 
     )
 

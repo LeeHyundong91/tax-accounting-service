@@ -5,7 +5,7 @@ import org.hibernate.annotations.Comment
 
 data class MedicalCareListDto(
     var medicalBenefitsList: List<MedicalCareDto>,
-    var listTotal: MedicalCareDto,
+    var listTotal: MedicalCareDto? = null,
 )
 
 data class MedicalCareDto(
@@ -13,7 +13,7 @@ data class MedicalCareDto(
     @Comment("진료년월 - retO")
     var treatmentYearMonth: String? = null,
 
-    var totalCount: Long = 0,
+    var totalCount: Long? = 0,
 
     @Comment("소득세(원천징수액) - retV")
     var incomeTax: Long? = 0,

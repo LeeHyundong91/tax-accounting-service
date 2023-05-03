@@ -5,6 +5,6 @@ import net.dv.tax.dto.sales.SalesCreditCardDto
 interface SalesCreditCardSupport {
     fun dataList(hospitalId: String, year: String): List<SalesCreditCardDto>
 
-    fun dataListTotal(hospitalId: String, year: String): SalesCreditCardDto
+    fun dataListTotal(hospitalId: String, year: String): SalesCreditCardDto?
 
 }

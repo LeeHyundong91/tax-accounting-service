@@ -2,18 +2,43 @@ package net.dv.tax.service.sales
 
 import net.dv.tax.domain.sales.SalesElecInvoiceEntity
 import net.dv.tax.dto.sales.SalesElecInvoiceListDto
+import net.dv.tax.dto.sales.SalesElecTaxInvoiceListDto
 import net.dv.tax.repository.sales.SalesElecInvoiceRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 class SalesElecInvoiceService(private val salesElecInvoiceRepository: SalesElecInvoiceRepository) {
 
-    fun getListData(hospitalId: String, year: String): List<SalesElecInvoiceListDto> {
-        return salesElecInvoiceRepository.groupingList(hospitalId, year)
+    fun getList(hospitalId: String, year: String): SalesElecInvoiceListDto {
+        return SalesElecInvoiceListDto(
+            salesElecInvoiceRepository.dataList(hospitalId, year),
+            salesElecInvoiceRepository.dataListTotal(hospitalId, year)
+        )
     }
 
-    fun getDetailData(hospitalId: String, yearMonth: String): List<SalesElecInvoiceEntity> {
-        return salesElecInvoiceRepository.findAllByHospitalIdAndDataPeriodStartingWith(hospitalId, yearMonth)
+    fun getDetailList(hospitalId: String, yearMonth: String, page: Pageable): Page<SalesElecInvoiceEntity> {
+        return salesElecInvoiceRepository.findAllByHospitalIdAndTaxIsFalseAndWritingDateStartingWithOrderByWritingDateDesc(
+            hospitalId,
+            yearMonth,
+            page
+        )
+    }
+
+    fun getTaxList(hospitalId: String, year: String): SalesElecTaxInvoiceListDto {
+        return SalesElecTaxInvoiceListDto(
+            salesElecInvoiceRepository.taxDataList(hospitalId, year),
+            salesElecInvoiceRepository.taxDataListTotal(hospitalId, year)
+        )
+    }
+
+    fun getTaxDetailList(hospitalId: String, yearMonth: String, page: Pageable): Page<SalesElecInvoiceEntity> {
+        return salesElecInvoiceRepository.findAllByHospitalIdAndTaxIsTrueAndWritingDateStartingWithOrderByWritingDateDesc(
+            hospitalId,
+            yearMonth,
+            page
+        )
     }
 
 }

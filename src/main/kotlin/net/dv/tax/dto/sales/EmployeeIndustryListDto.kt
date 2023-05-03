@@ -7,7 +7,7 @@ data class EmployeeIndustryListDto(
 
     val employeeIndustryList: List<EmployeeIndustryDto>,
 
-    var totalList: EmployeeIndustryDto,
+    var totalList: EmployeeIndustryDto? = null,
 
     )
 

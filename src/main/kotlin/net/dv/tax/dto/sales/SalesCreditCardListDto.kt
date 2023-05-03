@@ -6,7 +6,7 @@ data class SalesCreditCardListDto(
 
     var salesCreditCardList: List<SalesCreditCardDto>,
 
-    var listTotal: SalesCreditCardDto,
+    var listTotal: SalesCreditCardDto? = null,
 
     )
 

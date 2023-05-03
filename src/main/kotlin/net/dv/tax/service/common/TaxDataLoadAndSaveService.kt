@@ -25,35 +25,30 @@ class TaxDataLoadAndSaveService(
     fun getMedicalBenefitsData() {
         medicalBenefitsRepository.saveAll(dataReceiveFeignService.getMedicalBenefits())
     }
-
     fun getMedicalCareData() {
         medicalCareRepository.saveAll(dataReceiveFeignService.getMedicalCare())
     }
-
     fun getHealthCareData() {
         healthCareRepository.saveAll(dataReceiveFeignService.getHealthCare())
     }
-
     fun getCarInsuranceData() {
         carInsuranceRepository.saveAll(dataReceiveFeignService.getCarInsurance())
     }
-
     fun getEmployeeIndustryData() {
         employeeIndustryRepository.saveAll(dataReceiveFeignService.getEmployeeIndustry())
     }
-
     fun getSalesCreditCardData() {
         salesCreditCardRepository.saveAll(dataReceiveFeignService.getSalesCreditCard())
     }
-
     fun getSalesCashReceiptData() {
         salesCashReceiptRepository.saveAll(dataReceiveFeignService.getCashReceipt())
     }
-
     fun getSalesElecTaxInvoiceData() {
         salesElecInvoiceRepository.saveAll(dataReceiveFeignService.getElecTaxInvoice())
     }
-
+    fun getSalesElecInvoiceData(){
+        salesElecInvoiceRepository.saveAll(dataReceiveFeignService.getElecInvoice())
+    }
     fun getSalesAgentData(){
         salesAgentRepository.saveAll(dataReceiveFeignService.getSalesAgent())
     }
@@ -72,6 +67,7 @@ class TaxDataLoadAndSaveService(
             getSalesCreditCardData()
             getSalesCashReceiptData()
             getSalesElecTaxInvoiceData()
+            getSalesElecInvoiceData()
             getSalesAgentData()
             log.info { "End Of Scheduled ------------" }
         } catch (e: Exception) {

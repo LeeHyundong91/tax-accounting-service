@@ -5,7 +5,7 @@ import org.hibernate.annotations.Comment
 
 data class MedicalBenefitsListDto(
     var medicalBenefitsList: List<MedicalBenefitsDto>,
-    var listTotal: MedicalBenefitsDto
+    var listTotal: MedicalBenefitsDto? = null,
 )
 
 

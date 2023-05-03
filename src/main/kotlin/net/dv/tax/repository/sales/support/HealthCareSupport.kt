@@ -6,6 +6,6 @@ interface HealthCareSupport {
 
     fun dataList(hospitalId: String, yearMonth: String) : List<HealthCareDto>
 
-    fun dataListTotal(hospitalId: String, yearMonth: String) : HealthCareDto
+    fun dataListTotal(hospitalId: String, yearMonth: String) : HealthCareDto?
 
 }
