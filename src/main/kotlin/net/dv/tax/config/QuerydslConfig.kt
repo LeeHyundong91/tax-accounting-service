@@ -1,4 +1,4 @@
-package net.dv.tax.utils
+package net.dv.tax.config
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager

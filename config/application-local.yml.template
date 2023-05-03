@@ -5,11 +5,6 @@ spring:
     config:
       uri: https://config.dev.doctorvillage.net
 
-  datasource:
-    url: "jdbc:mariadb://dr-village-dev.cerct58sajf3.ap-northeast-2.rds.amazonaws.com:3306/user-account?autoReconnect=true&characterEncoding=UTF-8&tinyInt1isBit=false"
-    username: none
-    password: none
-
   rabbitmq:
     host: none
     port: 5672
@@ -27,3 +22,10 @@ eureka:
   client:
     service-url:
       defaultZone: none
+
+dv:
+  rds:
+    host: dr-village-dev.cerct58sajf3.ap-northeast-2.rds.amazonaws.com
+    port: 3306
+    username: none
+    password: none
