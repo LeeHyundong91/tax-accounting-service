@@ -4,8 +4,8 @@ import net.dv.tax.domain.sales.*
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.GetMapping
 
-//@FeignClient("data-receive-service", path = "/send")
-@FeignClient("data-receive-service", path = "/send", url = "localhost:8090")
+@FeignClient("data-receive-service", path = "/send")
+//@FeignClient("data-receive-service", path = "/send", url = "localhost:8090")
 interface DataReceiveFeignService {
 
     @GetMapping("/medical-benefits")
