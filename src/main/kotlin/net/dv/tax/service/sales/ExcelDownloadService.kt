@@ -6,7 +6,6 @@ import net.dv.tax.dto.MenuCategoryCode
 import net.dv.tax.repository.sales.*
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ExcelDownloadService(
@@ -192,22 +191,22 @@ class ExcelDownloadService(
 //        return list
 //    }
 
-    private fun cashReceipt(hospitalId: String, year: String): List<Map<String, Any>> {
-        val list: MutableList<Map<String, Any>> = LinkedList()
-
-        salesCashReceiptRepository.groupingList(hospitalId, year).forEach {
-            val tempMap: MutableMap<String, Any> = LinkedHashMap()
-            tempMap["기간"] = it.dataPeriod!!
-            tempMap["건수"] = it.count!!
-            tempMap["합계"] = it.totalAmount!!
-            tempMap["공급가액"] = it.supplyPrice!!
-            tempMap["부가세"] = it.vat!!
-            tempMap["봉사료"] = it.serviceCharge!!
-
-            list.add(tempMap)
-        }
-        return list
-    }
+//    private fun cashReceipt(hospitalId: String, year: String): List<Map<String, Any>> {
+//        val list: MutableList<Map<String, Any>> = LinkedList()
+//
+//        salesCashReceiptRepository.groupingList(hospitalId, year).forEach {
+//            val tempMap: MutableMap<String, Any> = LinkedHashMap()
+//            tempMap["기간"] = it.dataPeriod!!
+//            tempMap["건수"] = it.count!!
+//            tempMap["합계"] = it.totalAmount!!
+//            tempMap["공급가액"] = it.supplyPrice!!
+//            tempMap["부가세"] = it.vat!!
+//            tempMap["봉사료"] = it.serviceCharge!!
+//
+//            list.add(tempMap)
+//        }
+//        return list
+//    }
 
 //    private fun elecInvoice(hospitalId: String, year: String): List<Map<String, Any>> {
 //        val list: MutableList<Map<String, Any>> = LinkedList()

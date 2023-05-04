@@ -1,7 +1,6 @@
 package net.dv.tax.domain.sales
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -27,33 +26,35 @@ data class SalesCashReceiptEntity(
     @Comment("병원 아이디")
     var hospitalId: String,
 
-    @JsonProperty("cashReceiptId")
     var receiveDataId: Long,
 
-    @Comment("매출일시")
-    @JsonProperty("salesDate")
-    var dataPeriod: String? = null,
+    @Comment("발행구분 - pblClCd")
+    val issueType: String? = null,
 
-    @Comment("승인번호")
-    var cashPaymentNo: String? = null,
+    @Comment("매출일시 - trsDtm")
+    val salesDate: String? = null,
 
-    @Comment("합계")
-    var totalAmount: Long? = null,
+    @Comment("공급가액 - splCft")
+    val supplyAmount: Long? = null,
 
-    @Comment("공급가액")
-    var supplyPrice: Long? = null,
+    @Comment("부가세 - vaTxamt")
+    val taxAmount: Long? = null,
 
-    @Comment("부가세")
-    var vat: Long? = null,
+    @Comment("봉사료 - tip")
+    val serviceFee: Long? = null,
 
-    @Comment("봉사료")
-    var serviceCharge: Long? = null,
+    @Comment("총금액 - totaTrsAmt")
+    val totalAmount: Long? = null,
 
-    @Comment("발행구분")
-    var issueMethod: String? = null,
+    @Comment("승인번호 - aprvNo")
+    val approvalNumber: String? = null,
 
-    @Comment("거래구분")
-    var dealType: String? = null,
+    @Comment("신분확인뒷4자리 - spstCnfrPartNo")
+    val verificationNumber: String? = null,
+
+    @Comment("거래구분 - trsClNm")
+    val transactionType: String? = null,
+
 
     @NotNull
     @CreatedDate
@@ -61,4 +62,6 @@ data class SalesCashReceiptEntity(
     @Column(updatable = false, name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
-)
+
+
+    )
