@@ -39,6 +39,9 @@ data class SalesOtherBenefitsEntity(
     @Comment("합계")
     val totalAmount: Long? = 0,
 
+    @Comment("삭제여부")
+    val isDelete: Boolean? = false,
+
     var writer: String? = null,
 
     @NotNull
