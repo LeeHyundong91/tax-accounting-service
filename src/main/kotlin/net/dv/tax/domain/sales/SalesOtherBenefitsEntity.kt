@@ -1,6 +1,5 @@
 package net.dv.tax.domain.sales
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
@@ -20,7 +19,6 @@ data class SalesOtherBenefitsEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     val id: Long? = null,
 
     @Comment("병원 아이디")
