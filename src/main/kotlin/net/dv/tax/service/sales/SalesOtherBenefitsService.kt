@@ -17,7 +17,7 @@ class SalesOtherBenefitsService(private val salesOtherBenefitsRepository: SalesO
 
     fun getList(hospitalId: String, dataPeriod: String): SalesOtherBenefitsListDto {
 
-        val dataList = salesOtherBenefitsRepository.findAllByHospitalIdAndDataPeriodAndIsDeleteFalseStartingWithOrderByDataPeriod(
+        val dataList = salesOtherBenefitsRepository.findAllByHospitalIdAndAndIsDeleteIsFalseAndDataPeriodStartingWithOrderByDataPeriod(
             hospitalId,
             dataPeriod
         )
