@@ -26,70 +26,70 @@ data class SalesPaymentMethodEntity(
     var resultYearMonth: String? = null,
 
     @Comment("신용카드 금액")
-    var creditCardAmount: Long? = null,
+    var creditCardAmount:  Long? = 0,
 
     @Comment("신용카드 비율")
-    var creditCardRatio: Float? = null,
+    var creditCardRatio: Float? = 0.0.toFloat(),
 
     @Comment("현금영수증 금액")
-    var cashReceiptAmount: Long? = null,
+    var cashReceiptAmount:  Long? = 0,
 
     @Comment("현금영수증 비율")
-    var cashReceiptRatio: Float? = null,
+    var cashReceiptRatio: Float? = 0.0.toFloat(),
 
     @Comment("판매대행 금액")
-    var salesAgentAmount: Long? = null,
+    var salesAgentAmount:  Long? = 0,
 
     @Comment("판매대행 비율")
-    var salesAgentRatio: Float? = null,
+    var salesAgentRatio: Float? = 0.0.toFloat(),
 
     @Comment("공단부담금 ")
-    var corpPayAmount: Long? = null,
+    var corpPayAmount:  Long? = 0,
 
     @Comment("공단부담 비율")
-    var corpPayRatio: Float? = null,
+    var corpPayRatio: Float? = 0.0.toFloat(),
 
     @Comment("보험사부담금")
-    var insPayAmount: Long? = null,
+    var insPayAmount:  Long? = 0,
 
     @Comment("보함사부담 비율")
-    var insPayRatio: Float? = null,
+    var insPayRatio: Float? = 0.0.toFloat(),
 
     @Comment("실제순현금액")
-    var actualCashAmount: Long? = null,
+    var actualCashAmount:  Long? = 0,
 
     @Comment("실제순현금비율")
-    var actualCashRatio: Float? = null,
+    var actualCashRatio: Float? = 0.0.toFloat(),
 
     @Comment("수정신고 금액")
-    var revisedAmount: Long? = null,
+    var revisedAmount:  Long? = 0,
 
     @Comment("수정신고 비율")
-    var revisedRatio: Float? = null,
+    var revisedRatio: Float? = 0.0.toFloat(),
 
     @Comment("소계액")
-    var smallSumAmount: Long? = null,
+    var smallSumAmount:  Long? = 0,
 
     @Comment("소계 비율")
-    var smallSumRatio: Float? = null,
+    var smallSumRatio: Float? = 0.0.toFloat(),
 
     @Comment("진료비 할인액")
-    var discountAmount: Long? = null,
+    var discountAmount:  Long? = 0,
 
     @Comment("진료비 할인 비율")
-    var discountRatio: Float? = null,
+    var discountRatio: Float? = 0.0.toFloat(),
 
     @Comment("미수금")
-    var receivableAmount: Long? = null,
+    var receivableAmount:  Long? = 0,
 
     @Comment("미수비율")
-    var receivableRatio: Float? = null,
+    var receivableRatio: Float? = 0.0.toFloat(),
 
     @Comment("합계 액")
-    var totalAmount: Long? = null,
+    var totalAmount:  Long? = 0,
 
     @Comment("합계 비율")
-    var totalRatio: Float? = null,
+    var totalRatio: Float? = 0.0.toFloat(),
 
     @NotNull
     @CreatedDate

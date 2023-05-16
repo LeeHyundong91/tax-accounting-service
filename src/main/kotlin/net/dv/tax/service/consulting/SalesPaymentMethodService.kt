@@ -28,24 +28,25 @@ class SalesPaymentMethodService(
     fun saveData(data: SalesPaymentMethodEntity): ResponseEntity<Any> {
 
         salesPaymentMethodRepository.findById(data.id!!).get().also {
-            log.error { "ORIGIN_DATA" }
-            log.error { it }
-            log.error { "END_OF_ORIGIN" }
             /**
              * 실제 받아야 할 데이터
              */
-            /*수정신고 금액*/
-            var revisedAmount = data.revisedAmount ?: 0
+            /*수정신고 금액 - 현금소계*/
+            val revisedAmount = data.revisedAmount ?: 0
             /*진료비 할인 금액*/
-            var discountAmount = data.discountAmount ?: 0
+            val discountAmount = data.discountAmount ?: 0
             /*미수금*/
-            var receivableAmount = data.receivableAmount ?: 0
+            val receivableAmount = data.receivableAmount ?: 0
+
+            /*수정신고 때문에 소계값도 바뀜 */
+            val smallSumAmount =
+                it.corpPayAmount!!.plus(it.insPayAmount!!).plus(it.actualCashAmount!!).plus(receivableAmount)
 
             /*백분율 계산을 위한 Total 데이터가 바뀌어서 또 합처야함 ㅅㅂ*/
-            var totalAmount =
-                it.totalAmount!!.plus(data.revisedAmount!!).plus(data.discountAmount!!).plus(data.receivableAmount!!)
-            /*수정신고 때문에 소계값도 바뀜 */
-            var smallSumAmount = it.smallSumAmount!!.plus(data.revisedAmount!!)
+            val totalAmount =
+                it.creditCardAmount!!.plus(it.cashReceiptAmount!!).plus(it.salesAgentAmount!!).plus(smallSumAmount)
+                    .plus(discountAmount).plus(receivableAmount)
+
 
 
             it.creditCardRatio = it.creditCardAmount!!.toFloat().div(totalAmount) * 100
@@ -69,8 +70,6 @@ class SalesPaymentMethodService(
 
             it.totalAmount = totalAmount
 
-            log.error { "LAST_DATA" }
-            log.error { it }
             salesPaymentMethodRepository.save(it)
         }
 
@@ -83,34 +82,34 @@ class SalesPaymentMethodService(
 
     fun makeData(hospitalId: String, year: String) {
 
-        var hospitalChart = hospitalChartService.getList(hospitalId, year).listTotal
+        val hospitalChart = hospitalChartService.getList(hospitalId, year).listTotal
 
-        var creditCardAmount = salesCreditCardRepository.monthlySumAmount(hospitalId, year) ?: 0
-        var cashReceiptAmount = salesCashReceiptRepository.monthlySumAmount(hospitalId, year) ?: 0
-        var salesAgentAmount = salesAgentRepository.monthlySumAmount(hospitalId, year) ?: 0
-        var medicalCareAgencyDues = medicalCareRepository.monthlySumAmount(hospitalId, year) ?: 0
-        var medicalBenefitAgencyDues = medicalBenefitsRepository.monthlySumAmount(hospitalId, year) ?: 0
-        var carInsuranceAmount = carInsuranceRepository.monthlySumAmount(hospitalId, year) ?: 0
+        val creditCardAmount = salesCreditCardRepository.monthlySumAmount(hospitalId, year) ?: 0
+        val cashReceiptAmount = salesCashReceiptRepository.monthlySumAmount(hospitalId, year) ?: 0
+        val salesAgentAmount = salesAgentRepository.monthlySumAmount(hospitalId, year) ?: 0
+        val medicalCareAgencyDues = medicalCareRepository.monthlySumAmount(hospitalId, year) ?: 0
+        val medicalBenefitAgencyDues = medicalBenefitsRepository.monthlySumAmount(hospitalId, year) ?: 0
+        val carInsuranceAmount = carInsuranceRepository.monthlySumAmount(hospitalId, year) ?: 0
 
         /**
          * for Calc
          */
         /*본인부담금*/
-        var ownExpense = hospitalChart?.ownExpense ?: 0
+        val ownExpense = hospitalChart?.ownExpense ?: 0
         /*비급여*/
-        var nonPayment = hospitalChart?.nonPayment ?: 0
+        val nonPayment = hospitalChart?.nonPayment ?: 0
         /*본인부담금 + 비급여*/
-        var actualCashFirstCondition = ownExpense.plus(nonPayment)
+        val actualCashFirstCondition = ownExpense.plus(nonPayment)
         /*카드 + 현금영수증*/
-        var actualCashSecondCondition = creditCardAmount.plus(cashReceiptAmount)
+        val actualCashSecondCondition = creditCardAmount.plus(cashReceiptAmount)
         /*실제순현금 = (본인부담금 + 비급여) - (카드 + 현금영수증)*/
-        var actualCash = actualCashFirstCondition.minus(actualCashSecondCondition)
+        val actualCash = actualCashFirstCondition.minus(actualCashSecondCondition)
         /*공단부담분 = 의료급여(기관부담금) + 요양급여(공단부담금)*/
-        var corpPayAmount = medicalCareAgencyDues.plus(medicalBenefitAgencyDues)
+        val corpPayAmount = medicalCareAgencyDues.plus(medicalBenefitAgencyDues)
         /*소계*/
-        var cashAmount = corpPayAmount.plus(carInsuranceAmount).plus(actualCash)
+        val cashAmount = corpPayAmount.plus(carInsuranceAmount).plus(actualCash)
 
-        var totalAmount = creditCardAmount.plus(cashReceiptAmount).plus(salesAgentAmount).plus(cashAmount)
+        val totalAmount = creditCardAmount.plus(cashReceiptAmount).plus(salesAgentAmount).plus(cashAmount)
 
 
         val data =
