@@ -21,22 +21,31 @@ data class HospitalChartEntity(
 
     var hospitalId: String? = null,
 
+    @Comment("진료년월")
     val treatmentYearMonth: String? = null,
 
-    var totalSalary: Int? = 0,
+    @Comment("급여총액")
+    var totalSalary: Long? = 0,
 
-    var billingAmount: Int? = 0,
+    @Comment("청구액")
+    var billingAmount: Long? = 0,
 
-    var medicalReceipts: Int? = 0,
+    @Comment("진료수납액")
+    var medicalReceipts: Long? = 0,
 
-    var ownExpense: Int? = 0,
+    @Comment("본인부담금")
+    var ownExpense: Long? = 0,
 
-    var nonPayment: Int? = 0,
+    @Comment("비급여")
+    var nonPayment: Long? = 0,
 
+    @Comment("기타")
     var etcAmount: Long = 0,
 
-    var ownExpenseAmount: Int? = 0,
+    @Comment("본인부담금 합계 - 본인부담금+비급여")
+    var ownExpenseAmount: Long? = 0,
 
+    @Comment("작성자")
     var writer: String? = null,
 
     val createdAt: LocalDateTime = LocalDateTime.now(),

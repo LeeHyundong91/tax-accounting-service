@@ -8,7 +8,9 @@ data class MedicalBenefitsListDto(
     var listTotal: MedicalBenefitsDto? = null,
 )
 
-
+/**
+ * 요양급여매출관리
+ */
 data class MedicalBenefitsDto(
     var totalCount: Long? = 0,
 

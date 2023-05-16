@@ -28,4 +28,15 @@ class SalesAgentSupportImpl(private val query: JPAQueryFactory) : CustomQuerydsl
             .fetch()
     }
 
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query.select(
+            salesAgentEntity.totalSales.sum()
+        ).from(salesAgentEntity)
+            .where(
+                salesAgentEntity.hospitalId.eq(hospitalId),
+                salesAgentEntity.approvalYearMonth.startsWith(yearMonth)
+            )
+            .fetchOne()
+    }
+
 }

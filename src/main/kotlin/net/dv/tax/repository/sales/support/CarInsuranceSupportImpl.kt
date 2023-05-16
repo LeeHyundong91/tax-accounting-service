@@ -11,7 +11,7 @@ import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 class CarInsuranceSupportImpl(private val query: JPAQueryFactory) : CustomQuerydslRepositorySupport(
     CarInsuranceEntity::class.java
 ), CarInsuranceSupport {
-    private fun baseQuery(hospitalId: String, yearMonth: String): JPAQuery<CarInsuranceDto>{
+    private fun baseQuery(hospitalId: String, yearMonth: String): JPAQuery<CarInsuranceDto> {
         return query.select(
             Projections.bean(
                 CarInsuranceDto::class.java,
@@ -27,6 +27,7 @@ class CarInsuranceSupportImpl(private val query: JPAQueryFactory) : CustomQueryd
                 carInsuranceEntity.treatmentYearMonth.startsWith(yearMonth)
             )
     }
+
     override fun dataList(hospitalId: String, yearMonth: String): List<CarInsuranceDto> {
         return baseQuery(hospitalId, yearMonth)
             .groupBy(carInsuranceEntity.treatmentYearMonth)
@@ -36,5 +37,18 @@ class CarInsuranceSupportImpl(private val query: JPAQueryFactory) : CustomQueryd
     override fun dataListTotal(hospitalId: String, yearMonth: String): CarInsuranceDto? {
         return baseQuery(hospitalId, yearMonth)
             .fetchOne()
+    }
+
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query.select(
+            carInsuranceEntity.decisionTotalAmount.sum()
+        )
+            .from(carInsuranceEntity)
+            .where(
+                carInsuranceEntity.hospitalId.eq(hospitalId),
+                carInsuranceEntity.treatmentYearMonth.startsWith(yearMonth)
+            )
+            .fetchOne()
+
     }
 }

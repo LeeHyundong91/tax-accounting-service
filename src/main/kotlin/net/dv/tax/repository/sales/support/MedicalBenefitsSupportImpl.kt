@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
 class MedicalBenefitsSupportImpl(
     private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(MedicalBenefitsEntity::class.java), MedicalBenefitsSupport {
-    private fun baseQuery(hospitalId: String, writingDate: String): JPAQuery<MedicalBenefitsDto> {
+    private fun baseQuery(hospitalId: String, yearMonth: String): JPAQuery<MedicalBenefitsDto> {
         return query.select(
             Projections.bean(
                 MedicalBenefitsDto::class.java,
@@ -40,19 +40,30 @@ class MedicalBenefitsSupportImpl(
             .from(medicalBenefitsEntity)
             .where(
                 medicalBenefitsEntity.hospitalId.eq(hospitalId),
-                medicalBenefitsEntity.treatmentYearMonth.startsWith(writingDate)
+                medicalBenefitsEntity.treatmentYearMonth.startsWith(yearMonth)
             )
     }
 
-    override fun dataList(hospitalId: String, treatmentYearMonth: String): List<MedicalBenefitsDto> {
+    override fun dataList(hospitalId: String, yearMonth: String): List<MedicalBenefitsDto> {
         /*`as`*/
-        return baseQuery(hospitalId, treatmentYearMonth)
+        return baseQuery(hospitalId, yearMonth)
             .groupBy(medicalBenefitsEntity.treatmentYearMonth)
             .fetch()
     }
 
-    override fun dataListTotal(hospitalId: String, treatmentYearMonth: String): MedicalBenefitsDto? {
-        return baseQuery(hospitalId, treatmentYearMonth)
+    override fun dataListTotal(hospitalId: String, yearMonth: String): MedicalBenefitsDto? {
+        return baseQuery(hospitalId, yearMonth)
+            .fetchOne()
+    }
+
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query.select(
+            medicalBenefitsEntity.corpPaymentDecision.sum()
+        ).from(medicalBenefitsEntity)
+            .where(
+                medicalBenefitsEntity.hospitalId.eq(hospitalId),
+                medicalBenefitsEntity.treatmentYearMonth.startsWith(yearMonth)
+            )
             .fetchOne()
     }
 

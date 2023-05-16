@@ -12,7 +12,7 @@ class SalesCreditCardSupportImpl(
     private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(SalesCreditCardEntity::class.java),
     SalesCreditCardSupport {
-    private fun baseQuery(hospitalId: String, year: String): JPAQuery<SalesCreditCardDto>{
+    private fun baseQuery(hospitalId: String, year: String): JPAQuery<SalesCreditCardDto> {
         return query.select(
             Projections.bean(
                 SalesCreditCardDto::class.java,
@@ -30,15 +30,28 @@ class SalesCreditCardSupportImpl(
             )
     }
 
-    override fun dataList(hospitalId: String, year: String): List<SalesCreditCardDto> {
-        return baseQuery(hospitalId, year)
+    override fun dataList(hospitalId: String, yearMonth: String): List<SalesCreditCardDto> {
+        return baseQuery(hospitalId, yearMonth)
             .groupBy(salesCreditCardEntity.approvalYearMonth)
             .fetch()
 
     }
 
-    override fun dataListTotal(hospitalId: String, year: String): SalesCreditCardDto? {
-        return baseQuery(hospitalId, year)
+    override fun dataListTotal(hospitalId: String, yearMonth: String): SalesCreditCardDto? {
+        return baseQuery(hospitalId, yearMonth)
             .fetchOne()
+    }
+
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query.select(
+            salesCreditCardEntity.totalSales.sum()
+        )
+            .from(salesCreditCardEntity)
+            .where(
+                salesCreditCardEntity.hospitalId.eq(hospitalId),
+                salesCreditCardEntity.approvalYearMonth.startsWith(yearMonth)
+            )
+            .fetchOne()
+
     }
 }

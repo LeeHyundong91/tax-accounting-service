@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
 class MedicalCareSupportImpl(
     private val query: JPAQueryFactory,
 ) : CustomQuerydslRepositorySupport(MedicalCareEntity::class.java), MedicalCareSupport {
-    private fun baseQuery(hospitalId: String, treatmentYearMonth: String): JPAQuery<MedicalCareDto> {
+    private fun baseQuery(hospitalId: String, yearMonth: String): JPAQuery<MedicalCareDto> {
         return query.select(
             Projections.bean(
                 MedicalCareDto::class.java,
@@ -51,18 +51,30 @@ class MedicalCareSupportImpl(
             .from(medicalCareEntity)
             .where(
                 medicalCareEntity.hospitalId.eq(hospitalId),
-                medicalCareEntity.treatmentYearMonth.startsWith(treatmentYearMonth)
+                medicalCareEntity.treatmentYearMonth.startsWith(yearMonth)
             )
     }
 
-    override fun dataList(hospitalId: String, treatmentYearMonth: String): List<MedicalCareDto> {
-        return baseQuery(hospitalId, treatmentYearMonth)
+    override fun dataList(hospitalId: String, yearMonth: String): List<MedicalCareDto> {
+        return baseQuery(hospitalId, yearMonth)
             .groupBy(medicalCareEntity.treatmentYearMonth)
             .fetch()
     }
 
-    override fun dataListTotal(hospitalId: String, treatmentYearMonth: String): MedicalCareDto? {
-        return baseQuery(hospitalId, treatmentYearMonth).fetchOne()
+    override fun dataListTotal(hospitalId: String, yearMonth: String): MedicalCareDto? {
+        return baseQuery(hospitalId, yearMonth).fetchOne()
+    }
+
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query.select(
+            medicalCareEntity.agencyDuesMB.sum()
+        )
+            .from(medicalCareEntity)
+            .where(
+                medicalCareEntity.hospitalId.eq(hospitalId),
+                medicalCareEntity.treatmentYearMonth.startsWith(yearMonth)
+            )
+            .fetchOne()
     }
 
 }

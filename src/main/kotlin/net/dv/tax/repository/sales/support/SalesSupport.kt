@@ -8,6 +8,9 @@ interface CarInsuranceSupport {
 
     fun dataListTotal(hospitalId: String, yearMonth: String) : CarInsuranceDto?
 
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
+
+
 }
 
 interface CashReceiptSupport {
@@ -15,6 +18,8 @@ interface CashReceiptSupport {
     fun dataList(hospitalId: String, yearMonth: String): List<SalesCashReceiptDto>
 
     fun dataListTotal(hospitalId: String, yearMonth: String): SalesCashReceiptDto?
+
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
 
 }
 
@@ -34,17 +39,21 @@ interface HealthCareSupport {
 
 interface MedicalBenefitsSupport {
 
-    fun dataList(hospitalId: String, treatmentYearMonth: String): List<MedicalBenefitsDto>
+    fun dataList(hospitalId: String, yearMonth: String): List<MedicalBenefitsDto>
 
-    fun dataListTotal(hospitalId: String, treatmentYearMonth: String) : MedicalBenefitsDto?
+    fun dataListTotal(hospitalId: String, yearMonth: String) : MedicalBenefitsDto?
+
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
 
 }
 
 interface MedicalCareSupport {
 
-    fun dataList(hospitalId: String, treatmentYearMonth: String): List<MedicalCareDto>
+    fun dataList(hospitalId: String, yearMonth: String): List<MedicalCareDto>
 
-    fun dataListTotal(hospitalId: String, treatmentYearMonth: String) : MedicalCareDto?
+    fun dataListTotal(hospitalId: String, yearMonth: String) : MedicalCareDto?
+
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
 
 }
 
@@ -52,24 +61,30 @@ interface SalesAgentSupport {
 
     fun dataList(hospitalId: String, yearMonth: String) : List<SalesAgentDto>
 
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
+
+
+
 }
 
 interface SalesElecInvoiceSupport {
 
-    fun dataList(hospitalId: String, writingDate: String): List<SalesElecInvoiceDto>
+    fun dataList(hospitalId: String, yearMonth: String): List<SalesElecInvoiceDto>
 
-    fun dataListTotal(hospitalId: String, writingDate: String): SalesElecInvoiceDto?
+    fun dataListTotal(hospitalId: String, yearMonth: String): SalesElecInvoiceDto?
 
-    fun taxDataList(hospitalId: String, writingDate: String): List<SalesElecTaxInvoiceDto>
+    fun taxDataList(hospitalId: String, yearMonth: String): List<SalesElecTaxInvoiceDto>
 
-    fun taxDataListTotal(hospitalId: String, writingDate: String): SalesElecTaxInvoiceDto?
-
+    fun taxDataListTotal(hospitalId: String, yearMonth: String): SalesElecTaxInvoiceDto?
 
 }
 
 interface SalesCreditCardSupport {
-    fun dataList(hospitalId: String, year: String): List<SalesCreditCardDto>
+    fun dataList(hospitalId: String, yearMonth: String): List<SalesCreditCardDto>
 
-    fun dataListTotal(hospitalId: String, year: String): SalesCreditCardDto?
+    fun dataListTotal(hospitalId: String, yearMonth: String): SalesCreditCardDto?
+
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
+
 
 }

@@ -13,7 +13,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class MedicalBenefitsEntity(
-
+    /**
+     * Medical expenses statement - MES
+     * 진료비 명세서
+     *
+     * Audit Decision - AD
+     * 심사결정
+     *
+     *
+     */
 
     @Id
     @Column(name = "ID", insertable = false, updatable = false)

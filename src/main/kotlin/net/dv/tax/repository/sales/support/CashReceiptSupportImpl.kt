@@ -24,6 +24,7 @@ class CashReceiptSupportImpl(private val query: JPAQueryFactory) :
         ).from(salesCashReceiptEntity)
             .where(
                 salesCashReceiptEntity.hospitalId.eq(hospitalId),
+                salesCashReceiptEntity.transactionType.eq("승인거래"),
                 salesCashReceiptEntity.salesDate.startsWith(yearMonth)
             )
     }
@@ -38,5 +39,16 @@ class CashReceiptSupportImpl(private val query: JPAQueryFactory) :
     override fun dataListTotal(hospitalId: String, yearMonth: String): SalesCashReceiptDto? {
         return baseQuery(hospitalId, yearMonth)
             .fetchOne()
+    }
+
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query.select(
+            salesCashReceiptEntity.totalAmount.sum()
+        ).from(salesCashReceiptEntity)
+            .where(
+                salesCashReceiptEntity.hospitalId.eq(hospitalId),
+                salesCashReceiptEntity.transactionType.eq("승인거래"),
+                salesCashReceiptEntity.salesDate.startsWith(yearMonth)
+            ).fetchOne()
     }
 }

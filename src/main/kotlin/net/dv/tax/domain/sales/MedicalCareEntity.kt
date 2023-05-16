@@ -15,6 +15,11 @@ import java.util.*
 @DynamicUpdate
 data class MedicalCareEntity(
 
+    /**
+     * Medical benefits - MB
+     * 의료급여
+     */
+
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
