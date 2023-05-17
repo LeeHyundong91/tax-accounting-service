@@ -13,17 +13,18 @@ class SalesCreditCardSupportImpl(
 ) : CustomQuerydslRepositorySupport(SalesCreditCardEntity::class.java),
     SalesCreditCardSupport {
     private fun baseQuery(hospitalId: String, year: String): JPAQuery<SalesCreditCardDto> {
-        return query.select(
-            Projections.bean(
-                SalesCreditCardDto::class.java,
-                salesCreditCardEntity.salesCount.sum().`as`("salesCount"),
-                salesCreditCardEntity.totalSales.sum().`as`("totalSales"),
-                salesCreditCardEntity.creditCardSalesAmount.sum().`as`("creditCardSalesAmount"),
-                salesCreditCardEntity.zeroPaySalesAmount.sum().`as`("zeroPaySalesAmount"),
-                salesCreditCardEntity.taxFreeAmount.sum().`as`("taxFreeAmount"),
-                salesCreditCardEntity.approvalYearMonth,
-            )
-        ).from(salesCreditCardEntity)
+        return query
+            .select(
+                Projections.bean(
+                    SalesCreditCardDto::class.java,
+                    salesCreditCardEntity.salesCount.sum().`as`("salesCount"),
+                    salesCreditCardEntity.totalSales.sum().`as`("totalSales"),
+                    salesCreditCardEntity.creditCardSalesAmount.sum().`as`("creditCardSalesAmount"),
+                    salesCreditCardEntity.zeroPaySalesAmount.sum().`as`("zeroPaySalesAmount"),
+                    salesCreditCardEntity.taxFreeAmount.sum().`as`("taxFreeAmount"),
+                    salesCreditCardEntity.approvalYearMonth,
+                )
+            ).from(salesCreditCardEntity)
             .where(
                 salesCreditCardEntity.hospitalId.eq(hospitalId),
                 salesCreditCardEntity.approvalYearMonth.startsWith(year)
@@ -43,9 +44,10 @@ class SalesCreditCardSupportImpl(
     }
 
     override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
-        return query.select(
-            salesCreditCardEntity.totalSales.sum()
-        )
+        return query
+            .select(
+                salesCreditCardEntity.totalSales.sum()
+            )
             .from(salesCreditCardEntity)
             .where(
                 salesCreditCardEntity.hospitalId.eq(hospitalId),

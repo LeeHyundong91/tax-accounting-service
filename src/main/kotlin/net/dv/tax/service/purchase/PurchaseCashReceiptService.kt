@@ -6,8 +6,8 @@ import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.dto.purchase.PurchaseCashReceiptDto
 import net.dv.tax.dto.purchase.PurchaseCashReceiptListDto
 import net.dv.tax.dto.purchase.PurchaseQueryDto
-import net.dv.tax.enum.purchase.getDeductionName
-import net.dv.tax.enum.purchase.getRecommendDeductionName
+import net.dv.tax.enums.purchase.getDeductionName
+import net.dv.tax.enums.purchase.getRecommendDeductionName
 import net.dv.tax.repository.purchase.PurchaseCashReceiptRepository
 import net.dv.tax.service.common.SendQueueService
 import org.dhatim.fastexcel.reader.Row

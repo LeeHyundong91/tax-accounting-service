@@ -8,8 +8,8 @@ import net.dv.tax.dto.purchase.ExcelRequiredDto
 import net.dv.tax.dto.purchase.PurchaseCreditCardDto
 import net.dv.tax.dto.purchase.PurchaseCreditCardListDto
 import net.dv.tax.dto.purchase.PurchaseQueryDto
-import net.dv.tax.enum.purchase.getDeductionName
-import net.dv.tax.enum.purchase.getRecommendDeductionName
+import net.dv.tax.enums.purchase.getDeductionName
+import net.dv.tax.enums.purchase.getRecommendDeductionName
 import net.dv.tax.repository.purchase.PurchaseCreditCardRepository
 import net.dv.tax.service.common.SendQueueService
 import org.dhatim.fastexcel.reader.Row

@@ -6,7 +6,7 @@ import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.employee.EmployeeRequestEntity
 import net.dv.tax.domain.employee.QEmployeeRequestEntity.employeeRequestEntity
 import net.dv.tax.dto.employee.EmployeeQueryDto
-import net.dv.tax.enum.employee.RequestState
+import net.dv.tax.enums.employee.RequestState
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 import java.time.LocalDate

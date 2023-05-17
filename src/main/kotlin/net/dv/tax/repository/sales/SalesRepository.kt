@@ -87,7 +87,7 @@ interface HospitalChartRepository : JpaRepository<HospitalChartEntity?, Int> {
 /**
  * 기타급여
  */
-interface SalesOtherBenefitsRepository : JpaRepository<SalesOtherBenefitsEntity, Long> {
+interface SalesOtherBenefitsRepository : JpaRepository<SalesOtherBenefitsEntity, Long>, SalesOtherBenefitsSupport {
     fun findAllByHospitalIdAndAndIsDeleteIsFalseAndDataPeriodStartingWithOrderByDataPeriod(
         hospitalId: String,
         dataPeriod: String,

@@ -12,7 +12,8 @@ class HealthCareSupportImpl(private val query: JPAQueryFactory) : CustomQuerydsl
     HealthCareEntity::class.java
 ), HealthCareSupport {
     private fun baseQuery(hospitalId: String, yearMonth: String): JPAQuery<HealthCareDto> {
-        return query.select(
+        return query
+            .select(
             Projections.bean(
                 HealthCareDto::class.java,
                 healthCareEntity.paidDate.substring(0, 7).`as`("paidDate"),
@@ -46,6 +47,19 @@ class HealthCareSupportImpl(private val query: JPAQueryFactory) : CustomQuerydsl
 
     override fun dataListTotal(hospitalId: String, yearMonth: String): HealthCareDto? {
         return baseQuery(hospitalId, yearMonth)
+            .fetchOne()
+    }
+
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query
+            .select(
+                healthCareEntity.paidAmount.sum()
+            )
+            .from(healthCareEntity)
+            .where(
+                healthCareEntity.hospitalId.eq(hospitalId),
+                healthCareEntity.paidDate.startsWith(yearMonth)
+            )
             .fetchOne()
     }
 }

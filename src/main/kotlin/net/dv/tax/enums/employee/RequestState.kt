@@ -1,4 +1,4 @@
-package net.dv.tax.enum.employee
+package net.dv.tax.enums.employee
 
 //연봉 세후, 세전
 enum class RequestState {

@@ -1,6 +1,6 @@
 package net.dv.tax.dto.employee
 
-import net.dv.tax.enum.employee.RequestState
+import net.dv.tax.enums.employee.RequestState
 import java.time.LocalDate
 import java.time.LocalDateTime
 

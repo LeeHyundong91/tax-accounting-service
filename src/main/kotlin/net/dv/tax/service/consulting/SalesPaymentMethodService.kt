@@ -87,8 +87,8 @@ class SalesPaymentMethodService(
         val creditCardAmount = salesCreditCardRepository.monthlySumAmount(hospitalId, year) ?: 0
         val cashReceiptAmount = salesCashReceiptRepository.monthlySumAmount(hospitalId, year) ?: 0
         val salesAgentAmount = salesAgentRepository.monthlySumAmount(hospitalId, year) ?: 0
-        val medicalCareAgencyDues = medicalCareRepository.monthlySumAmount(hospitalId, year) ?: 0
-        val medicalBenefitAgencyDues = medicalBenefitsRepository.monthlySumAmount(hospitalId, year) ?: 0
+        val medicalCareAgencyDues = medicalCareRepository.monthlyAgencySumAmount(hospitalId, year) ?: 0
+        val medicalBenefitAgencyDues = medicalBenefitsRepository.monthlyCorpSumAmount(hospitalId, year) ?: 0
         val carInsuranceAmount = carInsuranceRepository.monthlySumAmount(hospitalId, year) ?: 0
 
         /**

@@ -1,17 +1,15 @@
 package net.dv.tax.repository.purchase.suppoort
 
 import com.querydsl.core.BooleanBuilder
-
 import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.domain.employee.EmployeeEntity
-import net.dv.tax.dto.purchase.PurchaseQueryDto
 import net.dv.tax.domain.purchase.PurchaseCashReceiptEntity
 import net.dv.tax.domain.purchase.QPurchaseCashReceiptEntity.purchaseCashReceiptEntity
-import net.dv.tax.domain.purchase.QPurchaseCreditCardEntity
 import net.dv.tax.dto.purchase.PurchaseCashReceiptTotal
 import net.dv.tax.dto.purchase.PurchaseCashReceiptTotalSearch
-import net.dv.tax.enum.purchase.Deduction
+import net.dv.tax.dto.purchase.PurchaseQueryDto
+import net.dv.tax.enums.purchase.Deduction
 import net.dv.tax.service.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 

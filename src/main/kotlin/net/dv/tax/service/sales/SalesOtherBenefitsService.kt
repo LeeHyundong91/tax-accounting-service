@@ -33,7 +33,7 @@ class SalesOtherBenefitsService(private val salesOtherBenefitsRepository: SalesO
 
         return SalesOtherBenefitsEntity(
             ownCharge = dataList.sumOf { it.ownCharge ?: 0 },
-            agencyExpenses = dataList.sumOf { it.agencyExpenses ?: 0 },
+            agencyExpense = dataList.sumOf { it.agencyExpense ?: 0 },
             totalAmount = dataList.sumOf { it.totalAmount ?: 0 },
         )
     }

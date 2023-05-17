@@ -45,4 +45,15 @@ class EmployeeIndustrySupportImpl(
         //?: throw EntityNotFoundException("No EmployeeIndustryDto found for hospitalId $hospitalId and yearMonth $yearMonth")
     }
 
+    override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
+        return query.select(
+            employeeIndustryEntity.actualPayment.sum()
+        ).from(employeeIndustryEntity)
+            .where(
+                employeeIndustryEntity.hospitalId.eq(hospitalId),
+                employeeIndustryEntity.treatmentYearMonth.startsWith(yearMonth)
+            )
+            .fetchOne()
+    }
+
 }

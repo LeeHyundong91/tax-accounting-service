@@ -1,4 +1,4 @@
-package net.dv.tax.enum.purchase
+package net.dv.tax.enums.purchase
 
 //연봉 세후, 세전
 enum class RecommendDeduction {

@@ -1,4 +1,4 @@
-package net.dv.tax.enum.employee
+package net.dv.tax.enums.employee
 
 //노무직원급여관리 승인상태
 enum class Approval {

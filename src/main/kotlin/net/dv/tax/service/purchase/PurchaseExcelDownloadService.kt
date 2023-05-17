@@ -4,13 +4,11 @@ import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.dto.MenuCategoryCode
 import net.dv.tax.dto.purchase.PurchaseQueryDto
-import net.dv.tax.enum.purchase.getDeductionName
-import net.dv.tax.enum.purchase.getRecommendDeductionName
-import net.dv.tax.repository.sales.*
+import net.dv.tax.enums.purchase.getDeductionName
+import net.dv.tax.enums.purchase.getRecommendDeductionName
 import net.dv.tax.utils.ExcelComponent
 import org.springframework.stereotype.Component
 import java.util.*
-import kotlin.reflect.full.memberProperties
 
 @Component
 class PurchaseExcelDownloadService(

@@ -1,48 +1,48 @@
-package net.dv.tax.domain.sales
+package net.dv.tax.domain.consulting
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
-import org.hibernate.annotations.DynamicUpdate
 import org.jetbrains.annotations.NotNull
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
+@Comment("매출 누계 매출유형별 현황 아이템")
+@Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "sales_other_benefits")
+@Table(name = "sales_type_item")
 @EntityListeners(AuditingEntityListener::class)
-@DynamicUpdate
-@Comment("기타급여 매출")
-data class SalesOtherBenefitsEntity(
+data class SalesTypeItemEntity(
 
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Comment("병원 아이디")
-    var hospitalId: String? = null,
+    @Column(name = "SALES_TYPE_ID")
+    var salesTypeId: Long? = null,
 
-    @Comment("기간 yyyy-MM")
-    var dataPeriod: String? = null,
-
-    @Comment("항목명")
+    @Comment("구분 - 청구매출, 요양급여, 의료급여 ...")
     var itemName: String? = null,
 
     @Comment("본인부담금")
-    var ownCharge: Long? = 0,
+    var itemOwnChargeAmount: Long? = 0,
 
-    @Comment("기관부담금")
-    val agencyExpense: Long? = 0,
+    @Comment("본인부담 비률")
+    var itemOwnChargeRatio: Float? = 0.0.toFloat(),
 
-    @Comment("합계")
-    val totalAmount: Long? = 0,
+    @Comment("공단부담금")
+    var itemCorpChargeAmount: Long? = 0,
 
-    @Comment("삭제여부")
-    val isDelete: Boolean? = false,
+    @Comment("공단부담금 비율")
+    var itemCorpChargeRatio: Float? = 0.0.toFloat(),
 
-    var writer: String? = null,
+    @Comment("소계")
+    var groupAmount: Long? = 0,
+
+    @Comment("소계 비율")
+    var groupRatio: Float? = 0.0.toFloat(),
 
     @NotNull
     @CreatedDate

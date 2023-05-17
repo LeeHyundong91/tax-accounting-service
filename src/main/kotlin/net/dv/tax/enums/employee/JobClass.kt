@@ -1,4 +1,4 @@
-package net.dv.tax.enum.employee
+package net.dv.tax.enums.employee
 
 //재직구분
 enum class JobClass {

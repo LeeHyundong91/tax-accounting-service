@@ -27,6 +27,9 @@ interface EmployeeIndustrySupport {
     fun dataList(hospitalId: String, yearMonth: String): List<EmployeeIndustryDto>
 
     fun dataTotalList(hospitalId: String, yearMonth: String): EmployeeIndustryDto?
+
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
+
 }
 
 interface HealthCareSupport {
@@ -34,6 +37,8 @@ interface HealthCareSupport {
     fun dataList(hospitalId: String, yearMonth: String) : List<HealthCareDto>
 
     fun dataListTotal(hospitalId: String, yearMonth: String) : HealthCareDto?
+
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
 
 }
 
@@ -43,7 +48,10 @@ interface MedicalBenefitsSupport {
 
     fun dataListTotal(hospitalId: String, yearMonth: String) : MedicalBenefitsDto?
 
-    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
+    fun monthlyCorpSumAmount(hospitalId: String, yearMonth: String): Long?
+
+    fun monthlyOwnChargeSumAmount(hospitalId: String, yearMonth: String): Long?
+
 
 }
 
@@ -53,7 +61,9 @@ interface MedicalCareSupport {
 
     fun dataListTotal(hospitalId: String, yearMonth: String) : MedicalCareDto?
 
-    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
+    fun monthlyAgencySumAmount(hospitalId: String, yearMonth: String): Long?
+
+    fun monthlyOwnChargeSumAmount(hospitalId: String, yearMonth: String): Long?
 
 }
 
@@ -62,8 +72,6 @@ interface SalesAgentSupport {
     fun dataList(hospitalId: String, yearMonth: String) : List<SalesAgentDto>
 
     fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
-
-
 
 }
 
@@ -85,6 +93,12 @@ interface SalesCreditCardSupport {
     fun dataListTotal(hospitalId: String, yearMonth: String): SalesCreditCardDto?
 
     fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
+
+}
+
+interface SalesOtherBenefitsSupport {
+
+    fun dataList(hospitalId: String, yearMonth: String) : List<SalesOtherBenefitsGroupDto>
 
 
 }

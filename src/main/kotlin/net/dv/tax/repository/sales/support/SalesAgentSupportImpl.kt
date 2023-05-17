@@ -12,14 +12,15 @@ class SalesAgentSupportImpl(private val query: JPAQueryFactory) : CustomQuerydsl
 ), SalesAgentSupport {
     override fun dataList(hospitalId: String, yearMonth: String): List<SalesAgentDto> {
 
-        return query.select(
-            Projections.bean(
-                SalesAgentDto::class.java,
-                salesAgentEntity.approvalYearMonth.`as`("approvalYearMonth"),
-                salesAgentEntity.salesCount.sum().`as`("salesCount"),
-                salesAgentEntity.totalSales.sum().`as`("totalSales"),
-            )
-        ).from(salesAgentEntity)
+        return query
+            .select(
+                Projections.bean(
+                    SalesAgentDto::class.java,
+                    salesAgentEntity.approvalYearMonth.`as`("approvalYearMonth"),
+                    salesAgentEntity.salesCount.sum().`as`("salesCount"),
+                    salesAgentEntity.totalSales.sum().`as`("totalSales"),
+                )
+            ).from(salesAgentEntity)
             .where(
                 salesAgentEntity.hospitalId.eq(hospitalId),
                 salesAgentEntity.approvalYearMonth.startsWith(yearMonth)
@@ -29,9 +30,10 @@ class SalesAgentSupportImpl(private val query: JPAQueryFactory) : CustomQuerydsl
     }
 
     override fun monthlySumAmount(hospitalId: String, yearMonth: String): Long? {
-        return query.select(
-            salesAgentEntity.totalSales.sum()
-        ).from(salesAgentEntity)
+        return query
+            .select(
+                salesAgentEntity.totalSales.sum()
+            ).from(salesAgentEntity)
             .where(
                 salesAgentEntity.hospitalId.eq(hospitalId),
                 salesAgentEntity.approvalYearMonth.startsWith(yearMonth)

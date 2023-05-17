@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 import net.dv.tax.domain.employee.*
 import net.dv.tax.dto.employee.*
 
-import net.dv.tax.enum.employee.*
+import net.dv.tax.enums.employee.*
 import net.dv.tax.repository.employee.*
 import net.dv.tax.utils.Encrypt
 import org.dhatim.fastexcel.reader.Row
