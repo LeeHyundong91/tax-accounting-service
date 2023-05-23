@@ -1,5 +1,6 @@
 package net.dv.tax.controller.consulting
 
+import net.dv.tax.domain.consulting.InsuranceClaimEntity
 import net.dv.tax.domain.consulting.SalesPaymentMethodEntity
 import net.dv.tax.service.consulting.InsuranceClaimService
 import net.dv.tax.service.consulting.SalesPaymentMethodService
@@ -39,6 +40,11 @@ class SalesConsultingController(
     @GetMapping("/insurance-claim/test/{year}/{hospitalId}")
     fun makeInsuranceClaimList(@PathVariable hospitalId: String, @PathVariable year: String) {
         return insuranceClaimService.makeData(hospitalId, year)
+    }
+
+    @GetMapping("/insurance-claim/{year}/{hospitalId}")
+    fun getInsuranceClaimList(@PathVariable hospitalId: String, @PathVariable year: String): InsuranceClaimEntity? {
+        return insuranceClaimService.getData(hospitalId, year)
     }
 
 

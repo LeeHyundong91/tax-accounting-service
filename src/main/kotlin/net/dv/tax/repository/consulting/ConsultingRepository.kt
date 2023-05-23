@@ -2,6 +2,7 @@ package net.dv.tax.repository.consulting
 
 import net.dv.tax.domain.consulting.InsuranceClaimEntity
 import net.dv.tax.domain.consulting.SalesTypeEntity
+import net.dv.tax.domain.consulting.TaxExemptionEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface SalesTypeRepository : JpaRepository<SalesTypeEntity, Long> {
@@ -9,5 +10,9 @@ interface SalesTypeRepository : JpaRepository<SalesTypeEntity, Long> {
 }
 
 interface InsuranceClaimRepository : JpaRepository<InsuranceClaimEntity?, Long> {
-    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, dataPeriod: String): InsuranceClaimEntity?
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): InsuranceClaimEntity?
+}
+
+interface TaxExemptionRepository: JpaRepository<TaxExemptionEntity?, Long> {
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): TaxExemptionEntity?
 }

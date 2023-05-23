@@ -43,10 +43,10 @@ data class InsuranceClaimEntity(
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
 
-    @OneToMany(cascade = [CascadeType.ALL])
-    @BatchSize(size = 10)
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    @BatchSize(size = 30)
     @JoinColumn(name = "INSURANCE_CLAIM_ID")
-    var detailList: MutableList<InsuranceClaimItemEntity>? = mutableListOf(),
+    var detailList: MutableList<InsuranceClaimItemEntity> = mutableListOf(),
 
     )
 
@@ -55,7 +55,6 @@ data class InsuranceClaimEntity(
 @Entity
 @Table(name = "insurance_claim_item")
 @EntityListeners(AuditingEntityListener::class)
-@DynamicUpdate
 data class InsuranceClaimItemEntity(
 
     @Id

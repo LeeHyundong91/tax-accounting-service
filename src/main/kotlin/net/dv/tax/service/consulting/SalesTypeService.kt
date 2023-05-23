@@ -7,9 +7,7 @@ import net.dv.tax.enums.consulting.SalesTypeItem
 import net.dv.tax.repository.consulting.SalesTypeRepository
 import net.dv.tax.repository.sales.*
 import net.dv.tax.service.sales.SalesVaccineService
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SalesTypeService(
@@ -24,19 +22,20 @@ class SalesTypeService(
 ) {
     private val log = KotlinLogging.logger {}
 
-    @Transactional
     fun makeData(hospitalId: String, year: String) {
 
-        val data = SalesTypeEntity()
+        val defaultCondition = SalesTypeEntity()
         val itemList = mutableListOf<SalesTypeItemEntity>()
 
-        data.hospitalId = hospitalId
-        data.resultYearMonth = year
+        defaultCondition.hospitalId = hospitalId
+        defaultCondition.resultYearMonth = year
 
+        val data =
+            salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year) ?: salesTypeRepository.save(
+                defaultCondition
+            )
 
-
-        salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)?:salesTypeRepository.save(data).also {
-
+        data.also {
 
             /*자동차보험*/
             val carInsurance = carInsuranceRepository.monthlySumAmount(hospitalId, year) ?: 0
@@ -101,7 +100,6 @@ class SalesTypeService(
             it.totalAmount = itemTotalAmount
             it.totalRatio = 100.0.toFloat()
 
-            log.error { "ID ============${id}" }
             itemList.forEach { item ->
                 item.itemCorpChargeRatio = item.itemCorpChargeAmount!!.toFloat().div(itemTotalAmount) * 100
                 item.itemOwnChargeRatio = item.itemOwnChargeAmount!!.toFloat().div(itemTotalAmount) * 100

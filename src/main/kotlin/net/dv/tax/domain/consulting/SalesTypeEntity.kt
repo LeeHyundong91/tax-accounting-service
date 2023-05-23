@@ -38,7 +38,7 @@ data class SalesTypeEntity(
     @Comment("일반 = false / 청구 = true")
     var isClaim: Boolean? = false,
 
-    @OneToMany(cascade = [CascadeType.ALL])
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @BatchSize(size = 10)
     @JoinColumn(name = "SALES_TYPE_ID")
     var detailList: MutableList<SalesTypeItemEntity>? = mutableListOf(),
