@@ -90,6 +90,7 @@ data class CarInsuranceEntity(
     @Comment("청구총액 (청구사항) - dmdJbrdnAmt")
     val claimAmount: Long? = null,
 
+    /*자동차 보험 해당 항목 사용*/
     @Comment("진료비총액 (심사결정) - edecTdamt")
     val decisionTotalAmount: Long? = null,
 

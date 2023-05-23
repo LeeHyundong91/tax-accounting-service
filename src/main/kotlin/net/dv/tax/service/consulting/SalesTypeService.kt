@@ -7,7 +7,9 @@ import net.dv.tax.enums.consulting.SalesTypeItem
 import net.dv.tax.repository.consulting.SalesTypeRepository
 import net.dv.tax.repository.sales.*
 import net.dv.tax.service.sales.SalesVaccineService
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SalesTypeService(
@@ -22,30 +24,59 @@ class SalesTypeService(
 ) {
     private val log = KotlinLogging.logger {}
 
+    @Transactional
     fun makeData(hospitalId: String, year: String) {
 
-        if (salesTypeRepository.countAllByHospitalIdAndResultYearMonth(hospitalId, year).toInt() == 0) {
-            val data = SalesTypeEntity(
-                hospitalId = hospitalId,
-                resultYearMonth = year
-            )
-            salesTypeRepository.save(data)
+        val data = SalesTypeEntity()
+        val itemList = mutableListOf<SalesTypeItemEntity>()
 
-        } else {
-            val data = salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)
-            val detailItemList = mutableListOf<SalesTypeItemEntity>()
+        data.hospitalId = hospitalId
+        data.resultYearMonth = year
 
 
+
+        salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)?:salesTypeRepository.save(data).also {
+
+
+            /*자동차보험*/
             val carInsurance = carInsuranceRepository.monthlySumAmount(hospitalId, year) ?: 0
+            /*예방접종*/
             val vaccine = vaccineService.getList(hospitalId, year).listTotal?.payAmount ?: 0
+            /*산업, 고용보험*/
             val employee = employeeIndustryRepository.monthlySumAmount(hospitalId, year) ?: 0
+            /*건강검진*/
             val healthCare = healthCareRepository.monthlySumAmount(hospitalId, year) ?: 0
 
-            detailItemList.add(itemSet(SalesTypeItem.CAR_INSURANCE.value, carInsurance))
-            detailItemList.add(itemSet(SalesTypeItem.VACCINE.value, vaccine))
-            detailItemList.add(itemSet(SalesTypeItem.EMPLOYEE.value, employee))
-            detailItemList.add(itemSet(SalesTypeItem.HEALTH_CARE.value, healthCare))
+            /*요양급여*/
+            val medicalBenefitCorpChargeAmount = medicalBenefitsRepository.monthlyCorpSumAmount(hospitalId, year) ?: 0
+            val medicalBenefitOwnChargeAmount =
+                medicalBenefitsRepository.monthlyOwnChargeSumAmount(hospitalId, year) ?: 0
+            val medicalBenefitGroupAmount = medicalBenefitCorpChargeAmount.plus(medicalBenefitOwnChargeAmount)
+            val medicalBenefits = SalesTypeItemEntity(
+                itemName = SalesTypeItem.MEDICAL_BENEFITS.value,
+                itemCorpChargeAmount = medicalBenefitCorpChargeAmount,
+                itemOwnChargeAmount = medicalBenefitOwnChargeAmount,
+                groupAmount = medicalBenefitGroupAmount
+            )
 
+            /* 의료급여 */
+            val medicalCareCorpAmount = medicalCareRepository.monthlyAgencySumAmount(hospitalId, year) ?: 0
+            val medicalCareOwnChargeAmount = medicalCareRepository.monthlyOwnChargeSumAmount(hospitalId, year) ?: 0
+            val medicalCareGroupAmount = medicalCareCorpAmount.plus(medicalCareOwnChargeAmount)
+            val medicalCare = SalesTypeItemEntity(
+                itemName = SalesTypeItem.MEDICAL_CARE.value,
+                itemCorpChargeAmount = medicalCareCorpAmount,
+                itemOwnChargeAmount = medicalCareOwnChargeAmount,
+                groupAmount = medicalCareGroupAmount
+            )
+
+            itemList.add(medicalCare)
+            itemList.add(itemSet(SalesTypeItem.CAR_INSURANCE.value, carInsurance))
+            itemList.add(itemSet(SalesTypeItem.VACCINE.value, vaccine))
+            itemList.add(itemSet(SalesTypeItem.EMPLOYEE.value, employee))
+            itemList.add(itemSet(SalesTypeItem.HEALTH_CARE.value, healthCare))
+
+            /*기타급여 - 금연치료,소견서,희귀,기타*/
             salesOtherBenefitsRepository.dataList(hospitalId, year).forEach {
                 val item = SalesTypeItemEntity(
                     itemName = it.itemName,
@@ -53,27 +84,34 @@ class SalesTypeService(
                     itemCorpChargeAmount = it.agencyExpense,
                     groupAmount = it.totalAmount
                 )
-                detailItemList.add(item)
+                itemList.add(item)
             }
 
-            data.detailList = detailItemList
-            log.error { data.detailList }
-            log.error { salesOtherBenefitsRepository.dataList(hospitalId, year) }
+            /*일반매출 : 요양급여 소계 - 다른 소계전부*/
+            val normalSalesAmount = medicalBenefitGroupAmount.minus(itemList.sumOf { it.groupAmount!! })
 
+            /*일반 매출*/
+            itemList.add(itemSet(SalesTypeItem.NORMAL.value, normalSalesAmount))
 
-            data.totalAmount = detailItemList.sumOf { it.groupAmount!! }
-            data.totalRatio = 100.0.toFloat()
+            /*일반매출 계산을 위해 요양급여는 제일 마지막에 더함*/
+            itemList.add(medicalBenefits)
 
-            detailItemList.forEach {
-                it.itemCorpChargeRatio = it.itemCorpChargeAmount!!.toFloat().div(data.totalAmount!!) * 100
-                it.itemOwnChargeRatio = it.itemOwnChargeAmount!!.toFloat().div(data.totalAmount!!) * 100
-                it.groupRatio = it.groupAmount!!.toFloat().div(data.totalAmount!!) * 100
+            /*최종 합계*/
+            val itemTotalAmount = itemList.sumOf { it.groupAmount!! }
+            it.totalAmount = itemTotalAmount
+            it.totalRatio = 100.0.toFloat()
+
+            log.error { "ID ============${id}" }
+            itemList.forEach { item ->
+                item.itemCorpChargeRatio = item.itemCorpChargeAmount!!.toFloat().div(itemTotalAmount) * 100
+                item.itemOwnChargeRatio = item.itemOwnChargeAmount!!.toFloat().div(itemTotalAmount) * 100
+                item.groupRatio = item.groupAmount!!.toFloat().div(itemTotalAmount) * 100
             }
 
+            it.detailList = itemList
 
-            salesTypeRepository.save(data)
+            salesTypeRepository.save(it)
         }
-
     }
 
     fun itemSet(itemName: String, amountValue: Long): SalesTypeItemEntity {

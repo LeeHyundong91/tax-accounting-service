@@ -42,7 +42,7 @@ interface CarInsuranceRepository : JpaRepository<CarInsuranceEntity?, Int>, CarI
 /**
  * 예방접종
  */
-interface SalesVaccineRepository : JpaRepository<SalesVaccineEntity, Int> {
+interface SalesVaccineRepository : JpaRepository<SalesVaccineEntity, Int>, SalesVaccineSupport {
     fun findAllByHospitalIdAndPaymentYearMonthStartingWithOrderByPaymentYearMonth(
         hospitalId: String,
         year: String,

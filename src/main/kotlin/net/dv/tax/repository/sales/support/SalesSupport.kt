@@ -99,6 +99,8 @@ interface SalesCreditCardSupport {
 interface SalesOtherBenefitsSupport {
 
     fun dataList(hospitalId: String, yearMonth: String) : List<SalesOtherBenefitsGroupDto>
+}
 
-
+interface SalesVaccineSupport {
+    fun monthlySumAmount(hospitalId: String, yearMonth: String): Long?
 }

@@ -11,5 +11,9 @@ enum class SalesTypeItem(
     HEALTH_CARE("건강검진"),
     VACCINE("예방접종"),
     EMPLOYEE("고용산재"),
-    NORMAL("일반매출");
+    NORMAL("일반매출"),
+    MEDICAL_BENEFITS("요양급여"),
+    MEDICAL_CARE("의료급여"),
+    OWN_CHARGE("(본인)"),
+    CORP_CHARGE("(공단)");
 }

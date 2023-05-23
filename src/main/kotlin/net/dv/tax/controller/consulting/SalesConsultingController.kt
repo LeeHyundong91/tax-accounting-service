@@ -1,14 +1,18 @@
 package net.dv.tax.controller.consulting
 
 import net.dv.tax.domain.consulting.SalesPaymentMethodEntity
+import net.dv.tax.service.consulting.InsuranceClaimService
 import net.dv.tax.service.consulting.SalesPaymentMethodService
 import net.dv.tax.service.consulting.SalesTypeService
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v1/consulting/sales")
-class SalesConsultingController(private val salesPaymentMethodService: SalesPaymentMethodService,
-    private val salesTypeService: SalesTypeService) {
+class SalesConsultingController(
+    private val salesPaymentMethodService: SalesPaymentMethodService,
+    private val salesTypeService: SalesTypeService,
+    private val insuranceClaimService: InsuranceClaimService,
+) {
 
     @GetMapping("/payment-method/{year}/{hospitalId}")
     fun getPaymentMethodList(@PathVariable hospitalId: String, @PathVariable year: String): SalesPaymentMethodEntity? {
@@ -30,6 +34,11 @@ class SalesConsultingController(private val salesPaymentMethodService: SalesPaym
     @GetMapping("/sales-type/test/{year}/{hospitalId}")
     fun makeSalesTypeList(@PathVariable hospitalId: String, @PathVariable year: String) {
         return salesTypeService.makeData(hospitalId, year)
+    }
+
+    @GetMapping("/insurance-claim/test/{year}/{hospitalId}")
+    fun makeInsuranceClaimList(@PathVariable hospitalId: String, @PathVariable year: String) {
+        return insuranceClaimService.makeData(hospitalId, year)
     }
 
 
