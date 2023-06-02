@@ -37,7 +37,7 @@ data class TaxExemptionEntity(
     @Comment("면세합계")
     var exemptionAmount: Long? = 0,
 
-    @Comment("과세비율")
+    @Comment("비급여중 과세비율")
     var taxRatio: Float? = 0.0.toFloat(),
 
     @Comment("작성자")

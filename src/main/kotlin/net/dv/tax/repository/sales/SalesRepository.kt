@@ -5,6 +5,7 @@ import net.dv.tax.repository.sales.support.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 
 /**
  * 요양급여
@@ -82,6 +83,32 @@ interface HospitalChartRepository : JpaRepository<HospitalChartEntity?, Int> {
         hospitalId: String,
         treatmentYearMonth: String,
     ): List<HospitalChartEntity>
+
+    @Query(value = "" +
+            "select ifnull(sum(OWN_EXPENSE_AMOUNT), 0)\n" +
+            "           -\n" +
+            "       (\n" +
+            "               ifnull((select sum(TOTAL_SALES)\n" +
+            "                       from sales_credit_card\n" +
+            "                       where HOSPITAL_ID = ?1\n" +
+            "                         and APPROVAL_YEAR_MONTH like ?2), 0)\n" +
+            "               +\n" +
+            "               ifnull((select sum(TOTAL_AMOUNT)\n" +
+            "                       from sales_cash_receipt\n" +
+            "                       where HOSPITAL_ID = ?1\n" +
+            "                         and TRANSACTION_TYPE = '승인거래'\n" +
+            "                         and SALES_DATE like ?2), 0)\n" +
+            "           )\n" +
+            "           as sum_data\n" +
+            "from hospital_chart\n" +
+            "where HOSPITAL_ID = ?1\n" +
+            "  and TREATMENT_YEAR_MONTH like ?2", nativeQuery = true)
+    fun findByActualCash(
+        hospitalId: String,
+        likeYear: String,
+    ): Long
+
+
 }
 
 /**
@@ -98,6 +125,7 @@ interface SalesOtherBenefitsRepository : JpaRepository<SalesOtherBenefitsEntity,
  * 신용카드
  */
 interface SalesCreditCardRepository : JpaRepository<SalesCreditCardEntity?, Int>, SalesCreditCardSupport
+    
 
 /**
  * 판매결제 대행

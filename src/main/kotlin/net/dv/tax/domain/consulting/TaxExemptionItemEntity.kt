@@ -2,11 +2,13 @@ package net.dv.tax.domain.consulting
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
+import org.hibernate.annotations.DynamicUpdate
 
 @Comment("과/면세비율 항목")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
 @Table(name = "tax_exemption_item")
+@DynamicUpdate
 data class TaxExemptionItemEntity(
 
     @Id
@@ -34,6 +36,5 @@ data class TaxExemptionItemEntity(
 
     @Comment("공급가액 비율")
     var supplyValueRatio: Float? = 0.0.toFloat(),
-
 
     )

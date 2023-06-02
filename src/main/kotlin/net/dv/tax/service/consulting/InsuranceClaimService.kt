@@ -36,70 +36,62 @@ class InsuranceClaimService(
 
             /*요양급여*/
             val medicalBenefitCorp = medicalBenefitsRepository.monthlyCorpSumAmount(hospitalId, year) ?: 0
+            itemList.add(
+                itemSet(SalesTypeItem.MEDICAL_BENEFITS.value + SalesTypeItem.CORP_CHARGE.value, medicalBenefitCorp)
+            )
+
             val medicalBenefitOwn = medicalBenefitsRepository.monthlyOwnChargeSumAmount(hospitalId, year) ?: 0
+            itemList.add(
+                itemSet(SalesTypeItem.MEDICAL_BENEFITS.value + SalesTypeItem.OWN_CHARGE.value, medicalBenefitOwn)
+            )
 
             /*의료급여*/
             val medicalCareCorp = medicalCareRepository.monthlyAgencySumAmount(hospitalId, year) ?: 0
+            itemList.add(
+                itemSet(SalesTypeItem.MEDICAL_CARE.value + SalesTypeItem.CORP_CHARGE.value, medicalCareCorp)
+            )
+
             val medicalCareOwn = medicalCareRepository.monthlyOwnChargeSumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.MEDICAL_CARE.value + SalesTypeItem.OWN_CHARGE.value, medicalCareOwn))
+
 
             /*자동차 보험*/
             val carInsurance = carInsuranceRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.CAR_INSURANCE.value, carInsurance))
 
             /*건강검진*/
             val healthCare = healthCareRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.HEALTH_CARE.value, healthCare))
 
             /*예방접종*/
             val vaccine = salesVaccineRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.VACCINE.value, vaccine))
 
             /*고용산재*/
             val employee = employeeIndustryRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.EMPLOYEE.value, employee))
 
             /*기타급여 (금연치료, 소견서, 희귀, 기타급여)*/
-            val otherBenefits = otherBenefitsRepository.dataList(hospitalId, year)
-
-            otherBenefits.forEach {
-                var ownCharge = InsuranceClaimItemEntity(
-                    itemName = it.itemName + SalesTypeItem.OWN_CHARGE.value,
-                    itemAmount = it.ownCharge
+            otherBenefitsRepository.dataList(hospitalId, year).forEach { otherItem ->
+                val ownCharge = InsuranceClaimItemEntity(
+                    itemName = otherItem.itemName + SalesTypeItem.OWN_CHARGE.value,
+                    itemAmount = otherItem.ownCharge
                 )
-                var corpCharge = InsuranceClaimItemEntity(
-                    itemName = it.itemName + SalesTypeItem.CORP_CHARGE.value,
-                    itemAmount = it.agencyExpense
+                val corpCharge = InsuranceClaimItemEntity(
+                    itemName = otherItem.itemName + SalesTypeItem.CORP_CHARGE.value,
+                    itemAmount = otherItem.agencyExpense
                 )
                 itemList.add(ownCharge)
                 itemList.add(corpCharge)
             }
 
-            itemList.add(
-                itemSet(
-                    SalesTypeItem.MEDICAL_BENEFITS.value + SalesTypeItem.OWN_CHARGE.value,
-                    medicalBenefitOwn
-                )
-            )
-            itemList.add(
-                itemSet(
-                    SalesTypeItem.MEDICAL_BENEFITS.value + SalesTypeItem.CORP_CHARGE.value,
-                    medicalBenefitCorp
-                )
-            )
-            itemList.add(itemSet(SalesTypeItem.MEDICAL_CARE.value + SalesTypeItem.OWN_CHARGE.value, medicalCareOwn))
-            itemList.add(
-                itemSet(
-                    SalesTypeItem.MEDICAL_CARE.value + SalesTypeItem.CORP_CHARGE.value,
-                    medicalCareCorp
-                )
-            )
-            itemList.add(itemSet(SalesTypeItem.CAR_INSURANCE.value, carInsurance))
-            itemList.add(itemSet(SalesTypeItem.HEALTH_CARE.value, healthCare))
-            itemList.add(itemSet(SalesTypeItem.VACCINE.value, vaccine))
-            itemList.add(itemSet(SalesTypeItem.EMPLOYEE.value, employee))
 
-
-            val itemTotalAmount = itemList.sumOf { loop -> loop.itemAmount ?: 0 }
+            val itemTotalAmount = itemList.sumOf { item -> item.itemAmount ?: 0 }
 
             it.totalAmount = itemTotalAmount
-            itemList.forEach { loop ->
-                loop.itemRatio = loop.itemAmount!!.toFloat().div(itemTotalAmount) * 100
+
+            itemList.forEach { item ->
+                item.itemRatio = item.itemAmount!!.toFloat().div(itemTotalAmount) * 100
             }
 
             it.detailList = itemList

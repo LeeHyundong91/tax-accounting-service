@@ -6,7 +6,6 @@ import net.dv.tax.domain.consulting.SalesTypeItemEntity
 import net.dv.tax.enums.consulting.SalesTypeItem
 import net.dv.tax.repository.consulting.SalesTypeRepository
 import net.dv.tax.repository.sales.*
-import net.dv.tax.service.sales.SalesVaccineService
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,7 +15,7 @@ class SalesTypeService(
     private val medicalCareRepository: MedicalCareRepository,
     private val carInsuranceRepository: CarInsuranceRepository,
     private val healthCareRepository: HealthCareRepository,
-    private val vaccineService: SalesVaccineService,
+    private val vaccineRepository: SalesVaccineRepository,
     private val employeeIndustryRepository: EmployeeIndustryRepository,
     private val salesOtherBenefitsRepository: SalesOtherBenefitsRepository,
 ) {
@@ -31,20 +30,27 @@ class SalesTypeService(
         defaultCondition.resultYearMonth = year
 
         val data =
-            salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year) ?: salesTypeRepository.save(
-                defaultCondition
-            )
+            salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)
+                ?: salesTypeRepository.save(defaultCondition)
 
         data.also {
 
             /*자동차보험*/
             val carInsurance = carInsuranceRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.CAR_INSURANCE.value, carInsurance))
+
             /*예방접종*/
-            val vaccine = vaccineService.getList(hospitalId, year).listTotal?.payAmount ?: 0
+            val vaccine = vaccineRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.VACCINE.value, vaccine))
+
             /*산업, 고용보험*/
             val employee = employeeIndustryRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.EMPLOYEE.value, employee))
+
             /*건강검진*/
             val healthCare = healthCareRepository.monthlySumAmount(hospitalId, year) ?: 0
+            itemList.add(itemSet(SalesTypeItem.HEALTH_CARE.value, healthCare))
+
 
             /*요양급여*/
             val medicalBenefitCorpChargeAmount = medicalBenefitsRepository.monthlyCorpSumAmount(hospitalId, year) ?: 0
@@ -70,24 +76,20 @@ class SalesTypeService(
             )
 
             itemList.add(medicalCare)
-            itemList.add(itemSet(SalesTypeItem.CAR_INSURANCE.value, carInsurance))
-            itemList.add(itemSet(SalesTypeItem.VACCINE.value, vaccine))
-            itemList.add(itemSet(SalesTypeItem.EMPLOYEE.value, employee))
-            itemList.add(itemSet(SalesTypeItem.HEALTH_CARE.value, healthCare))
 
             /*기타급여 - 금연치료,소견서,희귀,기타*/
-            salesOtherBenefitsRepository.dataList(hospitalId, year).forEach {
-                val item = SalesTypeItemEntity(
-                    itemName = it.itemName,
-                    itemOwnChargeAmount = it.ownCharge,
-                    itemCorpChargeAmount = it.agencyExpense,
-                    groupAmount = it.totalAmount
+            salesOtherBenefitsRepository.dataList(hospitalId, year).forEach { item->
+                val otherBenefits = SalesTypeItemEntity(
+                    itemName = item.itemName,
+                    itemOwnChargeAmount = item.ownCharge,
+                    itemCorpChargeAmount = item.agencyExpense,
+                    groupAmount = item.totalAmount
                 )
-                itemList.add(item)
+                itemList.add(otherBenefits)
             }
 
             /*일반매출 : 요양급여 소계 - 다른 소계전부*/
-            val normalSalesAmount = medicalBenefitGroupAmount.minus(itemList.sumOf { it.groupAmount!! })
+            val normalSalesAmount = medicalBenefitGroupAmount.minus(itemList.sumOf { item -> item.groupAmount!! })
 
             /*일반 매출*/
             itemList.add(itemSet(SalesTypeItem.NORMAL.value, normalSalesAmount))
@@ -96,7 +98,7 @@ class SalesTypeService(
             itemList.add(medicalBenefits)
 
             /*최종 합계*/
-            val itemTotalAmount = itemList.sumOf { it.groupAmount!! }
+            val itemTotalAmount = itemList.sumOf { item -> item.groupAmount!! }
             it.totalAmount = itemTotalAmount
             it.totalRatio = 100.0.toFloat()
 
