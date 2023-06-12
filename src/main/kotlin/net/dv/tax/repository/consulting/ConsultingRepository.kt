@@ -19,5 +19,5 @@ interface TaxExemptionRepository: JpaRepository<TaxExemptionEntity?, Long> {
 }
 
 interface SalesPaymentMethodRepository: JpaRepository<SalesPaymentMethodEntity, Long>{
-    fun findTopByHospitalIdAndResultYearMonth(hospitalId: String, resultYearMonth: String): SalesPaymentMethodEntity
+    fun findTopByHospitalIdAndResultYearMonth(hospitalId: String, resultYearMonth: String): SalesPaymentMethodEntity?
 }
