@@ -42,7 +42,6 @@ data class InsuranceClaimEntity(
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @BatchSize(size = 30)
     @JoinColumn(name = "INSURANCE_CLAIM_ID")

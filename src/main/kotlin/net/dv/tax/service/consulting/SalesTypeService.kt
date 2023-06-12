@@ -7,6 +7,7 @@ import net.dv.tax.enums.consulting.SalesTypeItem
 import net.dv.tax.repository.consulting.SalesTypeRepository
 import net.dv.tax.repository.sales.*
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SalesTypeService(
@@ -21,7 +22,18 @@ class SalesTypeService(
 ) {
     private val log = KotlinLogging.logger {}
 
-    fun makeData(hospitalId: String, year: String) {
+    @Transactional
+    fun getData(hospitalId: String, year: String): SalesTypeEntity? {
+        return salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)
+            ?: SalesTypeEntity()
+    }
+
+    fun saveData(hospitalId: String, year: String) {
+        salesTypeRepository.save(makeData(hospitalId, year))
+    }
+
+
+    fun makeData(hospitalId: String, year: String): SalesTypeEntity {
 
         val defaultCondition = SalesTypeEntity()
         val itemList = mutableListOf<SalesTypeItemEntity>()
@@ -78,7 +90,7 @@ class SalesTypeService(
             itemList.add(medicalCare)
 
             /*기타급여 - 금연치료,소견서,희귀,기타*/
-            salesOtherBenefitsRepository.dataList(hospitalId, year).forEach { item->
+            salesOtherBenefitsRepository.dataList(hospitalId, year).forEach { item ->
                 val otherBenefits = SalesTypeItemEntity(
                     itemName = item.itemName,
                     itemOwnChargeAmount = item.ownCharge,
@@ -110,8 +122,9 @@ class SalesTypeService(
 
             it.detailList = itemList
 
-            salesTypeRepository.save(it)
         }
+
+        return data
     }
 
     fun itemSet(itemName: String, amountValue: Long): SalesTypeItemEntity {

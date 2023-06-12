@@ -1,10 +1,7 @@
 package net.dv.tax.controller.consulting
 
 import mu.KotlinLogging
-import net.dv.tax.domain.consulting.InsuranceClaimEntity
-import net.dv.tax.domain.consulting.SalesPaymentMethodEntity
-import net.dv.tax.domain.consulting.TaxExemptionEntity
-import net.dv.tax.domain.consulting.TaxExemptionItemEntity
+import net.dv.tax.domain.consulting.*
 import net.dv.tax.service.consulting.InsuranceClaimService
 import net.dv.tax.service.consulting.SalesPaymentMethodService
 import net.dv.tax.service.consulting.SalesTypeService
@@ -28,12 +25,17 @@ class SalesConsultingController(
 
     @GetMapping("/payment-method/test/{year}/{hospitalId}")
     fun makePaymentMethodList(@PathVariable hospitalId: String, @PathVariable year: String) {
-        return salesPaymentMethodService.makeData(hospitalId, year)
+        return salesPaymentMethodService.saveData(hospitalId, year)
+    }
+
+    @GetMapping("/sales-type/{year}/{hospitalId}")
+    fun getSalesTypeList(@PathVariable hospitalId: String, @PathVariable year: String): SalesTypeEntity? {
+        return salesTypeService.getData(hospitalId, year)
     }
 
     @GetMapping("/sales-type/test/{year}/{hospitalId}")
     fun makeSalesTypeList(@PathVariable hospitalId: String, @PathVariable year: String) {
-        return salesTypeService.makeData(hospitalId, year)
+        return salesTypeService.saveData(hospitalId, year)
     }
 
     @GetMapping("/insurance-claim/test/{year}/{hospitalId}")
@@ -47,10 +49,10 @@ class SalesConsultingController(
     }
 
     @GetMapping("/tax-exemption/{year}/{hospitalId}")
-    fun make(@PathVariable hospitalId: String, @PathVariable year: String) {
-//        taxExemptionService.updateData(hospitalId, year)
-        taxExemptionService.makeData(hospitalId, year)
+    fun make(@PathVariable hospitalId: String, @PathVariable year: String): TaxExemptionEntity? {
+        return taxExemptionService.makeData(hospitalId, year)
     }
+
 
     @PutMapping("/tax-exemption/cash/{year}/{hospitalId}")
     fun taxExemptionCashUpdate(

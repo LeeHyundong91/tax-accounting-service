@@ -38,7 +38,11 @@ class TaxExemptionService(
         year: String,
         itemList: MutableList<TaxExemptionItemEntity>,
     ): TaxExemptionEntity? {
-        return taxExemptionRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year).also {
+
+        var data = taxExemptionRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year)
+        var totalAmount: Long = 0
+
+        data.also {
             val innerItem = it?.detailList!!
 
             log.error { innerItem }
@@ -82,8 +86,25 @@ class TaxExemptionService(
             updateRatioValues(innerItem, cashSmallSumValue, TaxExemptionItem.TAX_CASH.value)
             updateRatioValues(innerItem, cashSmallSumValue, TaxExemptionItem.TAX_FREE_COMPLEX.value)
 
+            totalAmount = cardSmallSumValue.plus(cashReceiptSmallSumValue).plus(cashSmallSumValue)
+
+            var exemptionAmount: Long = getExemptionAmount(innerItem)
+
+            it.exemptionAmount = exemptionAmount
+            it.taxAmount = totalAmount.minus(exemptionAmount)
+            it.totalAmountRatio = 100.0.toFloat()
+
+            val exemptionAmountRatio: Float = exemptionAmount.toFloat().div(totalAmount) * 100
+            log.error { "exemptionAmountRatio$exemptionAmountRatio" }
+            it.exemptionAmountRatio = exemptionAmountRatio
+            it.taxAmountRatio = 100.0.toFloat() - exemptionAmountRatio
+
+            log.error { "show me the money $it" }
 
         }
+
+
+        return data
     }
 
 
@@ -94,7 +115,9 @@ class TaxExemptionService(
         itemList: MutableList<TaxExemptionItemEntity>,
     ): TaxExemptionEntity? {
 
-        return taxExemptionRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year).also {
+        var data = taxExemptionRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year)
+
+        data.also {
             val innerItem = it?.detailList!!
 
             log.error { innerItem }
@@ -144,70 +167,29 @@ class TaxExemptionService(
             log.error { "cashReceiptSmallSumValue: $cashReceiptSmallSumValue" }
             log.error { "cashSmallSumValue: $cashSmallSumValue" }
 
+            val exemptionAmount: Long = getExemptionAmount(innerItem)
+
+            val totalAmount = cardSmallSumValue.plus(cashReceiptSmallSumValue).plus(cashSmallSumValue)
+            log.error { totalAmount }
+            log.error { "exemptionAmount $exemptionAmount" }
+            it.exemptionAmount = exemptionAmount
+            it.taxAmount = totalAmount.minus(exemptionAmount)
+            it.totalAmountRatio = 100.0.toFloat()
+
+            val exemptionAmountRatio: Float = exemptionAmount.toFloat().div(totalAmount) * 100
+            it.exemptionAmountRatio = exemptionAmountRatio
+            it.taxAmountRatio = 100.0.toFloat() - exemptionAmountRatio
+
+            taxExemptionRepository.save(it)
+
         }
 
-    }
+        return data
 
-    fun updateRatioValues(
-        innerItem: MutableList<TaxExemptionItemEntity>,
-        sumValue: Long,
-        itemName: String,
-    ) {
-        innerItem.filter { item -> item.itemName == itemName }.forEach { item ->
-            item.costOfSupplyRatio = ratioReturn(item.costOfSupply!!, sumValue)
-            item.supplyValueRatio = ratioReturn(item.supplyValue!!, sumValue.div(1.1).toLong())
-        }
-    }
-
-    fun updateTaxUseRatioData(
-        innerItem: MutableList<TaxExemptionItemEntity>,
-        sumValue: Long,
-        itemName: String,
-    ) {
-        innerItem.filter { item -> item.itemName == itemName }.forEach { item ->
-            val supplyCost = sumValue.times(item.costOfSupplyRatio!!/100).toLong()
-            val supplyValue = supplyCost.div(1.1).toLong()
-            item.costOfSupply = supplyCost
-            item.supplyValue = supplyValue
-            item.supplyValueRatio = ratioReturn(supplyValue, sumValue)
-        }
-    }
-
-    fun updateTaxFreeUseValueData(
-        innerItem: MutableList<TaxExemptionItemEntity>,
-        sumValue: Long,
-        taxValue: Long,
-        itemName: String,
-    ) {
-        innerItem.filter { item -> item.itemName == itemName }.forEach { item ->
-            val supplyCost = sumValue - taxValue
-            val supplyValue = supplyCost.div(1.1).toLong()
-            item.costOfSupply = supplyCost
-            item.supplyValue = supplyValue
-            item.costOfSupplyRatio = ratioReturn(supplyCost, sumValue)
-            item.supplyValueRatio = ratioReturn(supplyValue, sumValue)
-        }
-    }
-
-    fun ratioReturn(targetAmount: Long, sumAmount: Long): Float {
-        log.error { "targetAmount $targetAmount" }
-        log.error { "sumAmount $sumAmount" }
-        return targetAmount.toFloat().div(sumAmount) * 100
     }
 
 
-    fun calculateSumValue(
-        innerItem: MutableList<TaxExemptionItemEntity>,
-        itemName: String,
-        category: String? = null,
-    ): Long {
-        return innerItem.find { item ->
-            item.itemName == itemName && (category == null || item.category == category)
-        }?.costOfSupply ?: 0
-    }
-
-
-    fun makeData(hospitalId: String, year: String) {
+    fun makeData(hospitalId: String, year: String): TaxExemptionEntity? {
 
         val defaultCondition = TaxExemptionEntity()
         defaultCondition.hospitalId = hospitalId
@@ -294,6 +276,8 @@ class TaxExemptionService(
             val supplyValueAmount =
                 calculateItemAmount(itemList, TaxExemptionItem.SMALL_TOTAL.value) { item -> item.supplyValue }
 
+            var taxAmount: Long = 0
+
 
             itemList.forEach { item ->
                 if (item.itemName == TaxExemptionItem.SMALL_TOTAL.value) {
@@ -301,15 +285,55 @@ class TaxExemptionService(
                     item.supplyValueRatio = item.supplyValue!!.toFloat().div(supplyValueAmount) * 100
                 }
             }
-            it.totalAmount = supplyValueAmount
 
-            it.detailList = itemList
+            val exemptionAmount: Long = getExemptionAmount(itemList)
+
+            it.totalAmount = supplyValueAmount
+            it.exemptionAmount = exemptionAmount
+            it.taxAmount = supplyValueAmount.minus(exemptionAmount)
+            it.totalAmountRatio = 100.0.toFloat()
+
+            log.error { supplyValueAmount }
+
+            val exemptionAmountRatio: Float = exemptionAmount.toFloat().div(supplyValueAmount) * 100
+            it.exemptionAmountRatio = exemptionAmountRatio
+            it.taxAmountRatio = 100.0.toFloat() - exemptionAmountRatio
+
 
             taxExemptionRepository.save(it)
 
         }
 
+        return data
+
     }
+
+    private fun getExemptionAmount(itemList: List<TaxExemptionItemEntity>): Long {
+        var exemptionAmount: Long = 0
+
+        itemList.forEach { item ->
+            when (item.itemName) {
+                TaxExemptionItem.TAX_FREE_CASH.value -> {
+                    exemptionAmount += item.supplyValue!!
+                    log.error { exemptionAmount }
+                }
+
+                TaxExemptionItem.TAX_FREE_CARD.value -> {
+                    exemptionAmount += item.supplyValue!!
+                }
+
+                TaxExemptionItem.TAX_FREE_CASH_RECEIPT.value -> {
+                    exemptionAmount += item.supplyValue!!
+                }
+
+                TaxExemptionItem.TAX_FREE_COMPLEX.value -> {
+                    exemptionAmount += item.supplyValue!!
+                }
+            }
+        }
+        return exemptionAmount
+    }
+
 
     fun taxFreeCorpAmount(hospitalId: String, year: String): Long {
         return medicalBenefitsRepository.monthlyCorpSumAmount(hospitalId, year) ?: 0
@@ -349,5 +373,64 @@ class TaxExemptionService(
                 0
             }
         }
+    }
+
+
+    fun updateRatioValues(
+        innerItem: MutableList<TaxExemptionItemEntity>,
+        sumValue: Long,
+        itemName: String,
+    ) {
+        innerItem.filter { item -> item.itemName == itemName }.forEach { item ->
+            item.costOfSupplyRatio = ratioReturn(item.costOfSupply!!, sumValue)
+            item.supplyValueRatio = ratioReturn(item.supplyValue!!, sumValue.div(1.1).toLong())
+        }
+    }
+
+    fun updateTaxUseRatioData(
+        innerItem: MutableList<TaxExemptionItemEntity>,
+        sumValue: Long,
+        itemName: String,
+    ) {
+        innerItem.filter { item -> item.itemName == itemName }.forEach { item ->
+            val supplyCost = sumValue.times(item.costOfSupplyRatio!! / 100).toLong()
+            val supplyValue = supplyCost.div(1.1).toLong()
+            item.costOfSupply = supplyCost
+            item.supplyValue = supplyValue
+            item.supplyValueRatio = ratioReturn(supplyValue, sumValue)
+        }
+    }
+
+    fun updateTaxFreeUseValueData(
+        innerItem: MutableList<TaxExemptionItemEntity>,
+        sumValue: Long,
+        taxValue: Long,
+        itemName: String,
+    ) {
+        innerItem.filter { item -> item.itemName == itemName }.forEach { item ->
+            val supplyCost = sumValue - taxValue
+            val supplyValue = supplyCost.div(1.1).toLong()
+            item.costOfSupply = supplyCost
+            item.supplyValue = supplyValue
+            item.costOfSupplyRatio = ratioReturn(supplyCost, sumValue)
+            item.supplyValueRatio = ratioReturn(supplyValue, sumValue)
+        }
+    }
+
+    fun ratioReturn(targetAmount: Long, sumAmount: Long): Float {
+        log.error { "targetAmount $targetAmount" }
+        log.error { "sumAmount $sumAmount" }
+        return targetAmount.toFloat().div(sumAmount) * 100
+    }
+
+
+    fun calculateSumValue(
+        innerItem: MutableList<TaxExemptionItemEntity>,
+        itemName: String,
+        category: String? = null,
+    ): Long {
+        return innerItem.find { item ->
+            item.itemName == itemName && (category == null || item.category == category)
+        }?.costOfSupply ?: 0
     }
 }

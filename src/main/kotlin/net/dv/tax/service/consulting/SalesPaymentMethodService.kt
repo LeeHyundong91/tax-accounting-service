@@ -5,8 +5,6 @@ import net.dv.tax.domain.consulting.SalesPaymentMethodEntity
 import net.dv.tax.repository.consulting.SalesPaymentMethodRepository
 import net.dv.tax.repository.sales.*
 import net.dv.tax.service.sales.HospitalChartService
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,65 +23,76 @@ class SalesPaymentMethodService(
     private val log = KotlinLogging.logger {}
 
 
-    fun saveData(data: SalesPaymentMethodEntity): ResponseEntity<Any> {
+//    fun saveData(data: SalesPaymentMethodEntity): ResponseEntity<Any> {
+//
+//        salesPaymentMethodRepository.findById(data.id!!).get().also {
+//            /**
+//             * 실제 받아야 할 데이터
+//             */
+//            /*수정신고 금액 - 현금소계*/
+//            val revisedAmount = data.revisedAmount ?: 0
+//            /*진료비 할인 금액*/
+//            val discountAmount = data.discountAmount ?: 0
+//            /*미수금*/
+//            val receivableAmount = data.receivableAmount ?: 0
+//
+//            /*수정신고 때문에 소계값도 바뀜 */
+//            val smallSumAmount =
+//                it.corpPayAmount!!
+//                    .plus(it.insPayAmount!!)
+//                    .plus(it.actualCashAmount!!)
+//                    .plus(receivableAmount)
+//
+//            /*백분율 계산을 위한 Total 데이터가 바뀌어서 또 합처야함 ㅅㅂ*/
+//            val totalAmount =
+//                it.creditCardAmount!!
+//                    .plus(it.cashReceiptAmount!!)
+//                    .plus(it.salesAgentAmount!!)
+//                    .plus(smallSumAmount)
+//                    .plus(discountAmount)
+//                    .plus(receivableAmount)
+//
+//
+//
+//            it.creditCardRatio = it.creditCardAmount!!.toFloat().div(totalAmount) * 100
+//            it.cashReceiptRatio = it.cashReceiptAmount!!.toFloat().div(totalAmount) * 100
+//            it.salesAgentRatio = it.salesAgentAmount!!.toFloat().div(totalAmount) * 100
+//
+//            it.corpPayRatio = it.corpPayAmount!!.toFloat().div(totalAmount) * 100
+//            it.insPayRatio = it.insPayAmount!!.toFloat().div(totalAmount) * 100
+//            it.actualCashRatio = it.actualCashAmount!!.toFloat().div(totalAmount) * 100
+//            it.revisedAmount = revisedAmount
+//            it.revisedRatio = revisedAmount.toFloat().div(totalAmount) * 100
+//
+//            it.smallSumAmount = smallSumAmount
+//            it.smallSumRatio = smallSumAmount.toFloat().div(totalAmount) * 100
+//
+//            it.discountAmount = discountAmount
+//            it.discountRatio = discountAmount.toFloat().div(totalAmount) * 100
+//
+//            it.receivableAmount = receivableAmount
+//            it.receivableRatio = receivableAmount.toFloat().div(totalAmount) * 100
+//
+//            it.totalAmount = totalAmount
+//
+//            salesPaymentMethodRepository.save(it)
+//        }
+//
+//        return ResponseEntity.ok(HttpStatus.OK)
+//    }
 
-        salesPaymentMethodRepository.findById(data.id!!).get().also {
-            /**
-             * 실제 받아야 할 데이터
-             */
-            /*수정신고 금액 - 현금소계*/
-            val revisedAmount = data.revisedAmount ?: 0
-            /*진료비 할인 금액*/
-            val discountAmount = data.discountAmount ?: 0
-            /*미수금*/
-            val receivableAmount = data.receivableAmount ?: 0
-
-            /*수정신고 때문에 소계값도 바뀜 */
-            val smallSumAmount =
-                it.corpPayAmount!!.plus(it.insPayAmount!!).plus(it.actualCashAmount!!).plus(receivableAmount)
-
-            /*백분율 계산을 위한 Total 데이터가 바뀌어서 또 합처야함 ㅅㅂ*/
-            val totalAmount =
-                it.creditCardAmount!!.plus(it.cashReceiptAmount!!).plus(it.salesAgentAmount!!).plus(smallSumAmount)
-                    .plus(discountAmount).plus(receivableAmount)
-
-
-
-            it.creditCardRatio = it.creditCardAmount!!.toFloat().div(totalAmount) * 100
-            it.cashReceiptRatio = it.cashReceiptAmount!!.toFloat().div(totalAmount) * 100
-            it.salesAgentRatio = it.salesAgentAmount!!.toFloat().div(totalAmount) * 100
-
-            it.corpPayRatio = it.corpPayAmount!!.toFloat().div(totalAmount) * 100
-            it.insPayRatio = it.insPayAmount!!.toFloat().div(totalAmount) * 100
-            it.actualCashRatio = it.actualCashAmount!!.toFloat().div(totalAmount) * 100
-            it.revisedAmount = revisedAmount
-            it.revisedRatio = revisedAmount.toFloat().div(totalAmount) * 100
-
-            it.smallSumAmount = smallSumAmount
-            it.smallSumRatio = smallSumAmount.toFloat().div(totalAmount) * 100
-
-            it.discountAmount = discountAmount
-            it.discountRatio = discountAmount.toFloat().div(totalAmount) * 100
-
-            it.receivableAmount = receivableAmount
-            it.receivableRatio = receivableAmount.toFloat().div(totalAmount) * 100
-
-            it.totalAmount = totalAmount
-
-            salesPaymentMethodRepository.save(it)
-        }
-
-        return ResponseEntity.ok(HttpStatus.OK)
-    }
-
-    fun getData(hospitalId: String, year: String): SalesPaymentMethodEntity {
+    fun getData(hospitalId: String, year: String): SalesPaymentMethodEntity? {
         return salesPaymentMethodRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)
+            ?: SalesPaymentMethodEntity()
     }
 
-    fun makeData(hospitalId: String, year: String) {
+    fun saveData(hospitalId: String, year: String) {
+        salesPaymentMethodRepository.save(makeData(hospitalId, year))
+    }
+
+    fun makeData(hospitalId: String, year: String): SalesPaymentMethodEntity {
 
         val hospitalChart = hospitalChartService.getList(hospitalId, year).listTotal
-
         val creditCardAmount = salesCreditCardRepository.monthlySumAmount(hospitalId, year) ?: 0
         val cashReceiptAmount = salesCashReceiptRepository.monthlySumAmount(hospitalId, year) ?: 0
         val salesAgentAmount = salesAgentRepository.monthlySumAmount(hospitalId, year) ?: 0
@@ -112,29 +121,27 @@ class SalesPaymentMethodService(
         val totalAmount = creditCardAmount.plus(cashReceiptAmount).plus(salesAgentAmount).plus(cashAmount)
 
 
-        val data =
-            SalesPaymentMethodEntity(
-                hospitalId = hospitalId,
-                resultYearMonth = year,
-                creditCardAmount = creditCardAmount,
-                creditCardRatio = creditCardAmount.toFloat().div(totalAmount) * 100,
-                cashReceiptAmount = cashReceiptAmount,
-                cashReceiptRatio = cashReceiptAmount.toFloat().div(totalAmount) * 100,
-                salesAgentAmount = salesAgentAmount,
-                salesAgentRatio = salesAgentAmount.toFloat().div(totalAmount) * 100,
-                corpPayAmount = corpPayAmount,
-                corpPayRatio = corpPayAmount.toFloat().div(totalAmount) * 100,
-                insPayAmount = carInsuranceAmount,
-                insPayRatio = carInsuranceAmount.toFloat().div(totalAmount) * 100,
-                actualCashAmount = actualCash,
-                actualCashRatio = actualCash.toFloat().div(totalAmount) * 100,
-                smallSumAmount = cashAmount,
-                smallSumRatio = cashAmount.toFloat().div(totalAmount) * 100,
-                totalAmount = totalAmount,
-                totalRatio = totalAmount.toFloat().div(totalAmount) * 100,
-            )
+        return SalesPaymentMethodEntity(
+            hospitalId = hospitalId,
+            resultYearMonth = year,
+            creditCardAmount = creditCardAmount,
+            creditCardRatio = creditCardAmount.toFloat().div(totalAmount) * 100,
+            cashReceiptAmount = cashReceiptAmount,
+            cashReceiptRatio = cashReceiptAmount.toFloat().div(totalAmount) * 100,
+            salesAgentAmount = salesAgentAmount,
+            salesAgentRatio = salesAgentAmount.toFloat().div(totalAmount) * 100,
+            corpPayAmount = corpPayAmount,
+            corpPayRatio = corpPayAmount.toFloat().div(totalAmount) * 100,
+            insPayAmount = carInsuranceAmount,
+            insPayRatio = carInsuranceAmount.toFloat().div(totalAmount) * 100,
+            actualCashAmount = actualCash,
+            actualCashRatio = actualCash.toFloat().div(totalAmount) * 100,
+            smallSumAmount = cashAmount,
+            smallSumRatio = cashAmount.toFloat().div(totalAmount) * 100,
+            totalAmount = totalAmount,
+            totalRatio = totalAmount.toFloat().div(totalAmount) * 100,
+        )
 
-        salesPaymentMethodRepository.save(data)
 
     }
 

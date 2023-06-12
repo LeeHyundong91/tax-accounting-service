@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 
 @Comment("매출 누계 매출유형별 현황")
 @Suppress("JpaAttributeTypeInspection")
-@BatchSize(size = 10)
 @Entity
 @Table(name = "sales_type")
 @EntityListeners(AuditingEntityListener::class)
@@ -35,8 +34,8 @@ data class SalesTypeEntity(
     @Comment("합계 비율")
     var totalRatio: Float? = null,
 
-    @Comment("일반 = false / 청구 = true")
-    var isClaim: Boolean? = false,
+    @Comment("일반매출")
+    var normalSalesAmount: Long? = 0,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @BatchSize(size = 10)
