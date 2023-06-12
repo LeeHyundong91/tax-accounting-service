@@ -2,6 +2,7 @@ package net.dv.tax.domain.consulting
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
+import org.hibernate.annotations.DynamicUpdate
 import org.jetbrains.annotations.NotNull
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -13,6 +14,7 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "sales_payment_method")
 @EntityListeners(AuditingEntityListener::class)
+@DynamicUpdate
 data class SalesPaymentMethodEntity(
 
     @Id
