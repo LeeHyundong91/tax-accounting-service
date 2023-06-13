@@ -85,7 +85,7 @@ class PurchaseCashReceiptService(
         log.error { dataList }
 //        sendQueueService.sandMessage(SendQueueDto(MenuCategoryCode.CASH_RECEIPT.name, dataList))
 
-//        purchaseCashReceiptRepository.saveAll(dataList)
+        purchaseCashReceiptRepository.saveAll(dataList)
     }
 
     fun getPurchaseCashReceipt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
