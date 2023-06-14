@@ -14,6 +14,7 @@ import java.time.LocalDateTime
 @Suppress("JpaAttributeTypeInspection")
 @Entity
 @Table(name = "purchase_report")
+@DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class PurchaseReportEntity(
     @Id
