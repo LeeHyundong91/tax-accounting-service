@@ -26,3 +26,4 @@ enum class TaxExemptionCategory(
     CASH_RECEIPT("CASH_RECEIPT","현금영수증"),
     CASH("CASH","현금");
 }
+
