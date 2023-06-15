@@ -135,12 +135,28 @@ class PurchaseReportService(
                     }
             }
 
-            val sgaTotalAmount = calculateTotalAmountByCategory(updatedItemList, PurchaseCategory.SGA_EXPENSE.code)
-            val salesOfCostTotal = calculateTotalAmountByCategory(updatedItemList, PurchaseCategory.SALES_OF_COST.code)
+            val sgaTotalAmount = calculateTotalAmountByCategory(
+                updatedItemList,
+                PurchaseCategory.SGA_EXPENSE.code,
+                PurchaseTitleItem.SGA_EXPENSE_TOTAL.value
+            )
+            val salesOfCostTotal = calculateTotalAmountByCategory(
+                updatedItemList,
+                PurchaseCategory.SALES_OF_COST.code,
+                PurchaseTitleItem.COST_OF_SALES.value
+            )
             val operatingExpensesTotal =
-                calculateTotalAmountByCategory(updatedItemList, PurchaseCategory.NON_OPERATING_EXPENSES.code)
+                calculateTotalAmountByCategory(
+                    updatedItemList,
+                    PurchaseCategory.NON_OPERATING_EXPENSES.code,
+                    PurchaseTitleItem.NON_OPERATING_EXPENSES_TOTAL.value
+                )
             val operatingIncomeTotal =
-                calculateTotalAmountByCategory(updatedItemList, PurchaseCategory.NON_OPERATING_INCOME.code)
+                calculateTotalAmountByCategory(
+                    updatedItemList,
+                    PurchaseCategory.NON_OPERATING_INCOME.code,
+                    PurchaseTitleItem.NON_OPERATING_INCOME_TOTAL.value
+                )
 
             itemList.forEach { item ->
                 when (item.itemName) {
@@ -173,63 +189,67 @@ class PurchaseReportService(
     }
 
 
-    fun calculateTotalAmountByCategory(itemList: List<PurchaseReportItemEntity>, category: String): Long {
-        return itemList.filter { it.category == category }
+    fun calculateTotalAmountByCategory(
+        itemList: List<PurchaseReportItemEntity>,
+        category: String,
+        exceptItem: String,
+    ): Long {
+        return itemList.filter { it.category == category && it.itemName != exceptItem }
             .fold(0L) { acc, item ->
                 acc + (item.valueAmount ?: 0)
             }
     }
 
-   fun setItem(category: String, itemName: String): PurchaseReportItemEntity {
-    return PurchaseReportItemEntity(
-        itemName = itemName,
-        category = category
-    )
-}
-
-fun makeBasicForm(dataList: MutableList<PurchaseReportItemEntity>): MutableList<PurchaseReportItemEntity> {
-    val categoryItemMap = mapOf(
-        PurchaseCategory.SALES_OF_COST.code to listOf(
-            PurchaseTitleItem.BASIC_INVENTORY.value,
-            PurchaseTitleItem.CURRENT_PURCHASE.value,
-            PurchaseTitleItem.ENDING_STOCK.value,
-            PurchaseTitleItem.COST_OF_SALES.value
-        ),
-        PurchaseCategory.NON_OPERATING_EXPENSES.code to listOf(
-            PurchaseTitleItem.INTEREST_EXPENSE.value,
-            PurchaseTitleItem.LEASE_INTEREST.value,
-            PurchaseTitleItem.DONATION_EXPENSE.value,
-            PurchaseTitleItem.SETTLEMENT_AMOUNT.value,
-            PurchaseTitleItem.MISCELLANEOUS_LOSS.value,
-            PurchaseTitleItem.LOSS_ON_DISPOSAL_OF_FIXED_ASSETS.value,
-            PurchaseTitleItem.ADDITIONAL_NON_OPERATING_EXPENSES.value,
-            PurchaseTitleItem.NON_OPERATING_EXPENSES_TOTAL.value
-        ),
-        PurchaseCategory.NON_OPERATING_INCOME.code to listOf(
-            PurchaseTitleItem.SUPPORT_FUNDS.value,
-            PurchaseTitleItem.MISCELLANEOUS_PROFIT.value,
-            PurchaseTitleItem.INCOME_SETTLEMENT_AMOUNT.value,
-            PurchaseTitleItem.GAIN_ON_DISPOSAL_OF_FIXED_ASSETS.value,
-            PurchaseTitleItem.ADDITIONAL_NON_OPERATING_REVENUES.value,
-            PurchaseTitleItem.NON_OPERATING_INCOME_TOTAL.value,
-            PurchaseTitleItem.NON_OPERATING_TOTAL.value
-        ),
-        PurchaseCategory.DEPRECIATION.code to listOf(
-            PurchaseTitleItem.DEPRECIABLE_AMOUNT.value,
-            PurchaseTitleItem.DEPRECIATION_LIMIT.value,
-            PurchaseTitleItem.DEPRECIATION_EXPENSE.value,
-            PurchaseTitleItem.VEHICLE_LIMIT_EXCESS_AMOUNT.value,
-            PurchaseTitleItem.RECOGNIZED_DEPRECIATION_AMOUNT.value
+    fun setItem(category: String, itemName: String): PurchaseReportItemEntity {
+        return PurchaseReportItemEntity(
+            itemName = itemName,
+            category = category
         )
-    )
-
-    categoryItemMap.forEach { (category, items) ->
-        items.forEach { itemName ->
-            dataList.add(setItem(category, itemName))
-        }
     }
 
-    return dataList
-}
+    fun makeBasicForm(dataList: MutableList<PurchaseReportItemEntity>): MutableList<PurchaseReportItemEntity> {
+        val categoryItemMap = mapOf(
+            PurchaseCategory.SALES_OF_COST.code to listOf(
+                PurchaseTitleItem.BASIC_INVENTORY.value,
+                PurchaseTitleItem.CURRENT_PURCHASE.value,
+                PurchaseTitleItem.ENDING_STOCK.value,
+                PurchaseTitleItem.COST_OF_SALES.value
+            ),
+            PurchaseCategory.NON_OPERATING_EXPENSES.code to listOf(
+                PurchaseTitleItem.INTEREST_EXPENSE.value,
+                PurchaseTitleItem.LEASE_INTEREST.value,
+                PurchaseTitleItem.DONATION_EXPENSE.value,
+                PurchaseTitleItem.SETTLEMENT_AMOUNT.value,
+                PurchaseTitleItem.MISCELLANEOUS_LOSS.value,
+                PurchaseTitleItem.LOSS_ON_DISPOSAL_OF_FIXED_ASSETS.value,
+                PurchaseTitleItem.ADDITIONAL_NON_OPERATING_EXPENSES.value,
+                PurchaseTitleItem.NON_OPERATING_EXPENSES_TOTAL.value
+            ),
+            PurchaseCategory.NON_OPERATING_INCOME.code to listOf(
+                PurchaseTitleItem.SUPPORT_FUNDS.value,
+                PurchaseTitleItem.MISCELLANEOUS_PROFIT.value,
+                PurchaseTitleItem.INCOME_SETTLEMENT_AMOUNT.value,
+                PurchaseTitleItem.GAIN_ON_DISPOSAL_OF_FIXED_ASSETS.value,
+                PurchaseTitleItem.ADDITIONAL_NON_OPERATING_REVENUES.value,
+                PurchaseTitleItem.NON_OPERATING_INCOME_TOTAL.value,
+                PurchaseTitleItem.NON_OPERATING_TOTAL.value
+            ),
+            PurchaseCategory.DEPRECIATION.code to listOf(
+                PurchaseTitleItem.DEPRECIABLE_AMOUNT.value,
+                PurchaseTitleItem.DEPRECIATION_LIMIT.value,
+                PurchaseTitleItem.DEPRECIATION_EXPENSE.value,
+                PurchaseTitleItem.VEHICLE_LIMIT_EXCESS_AMOUNT.value,
+                PurchaseTitleItem.RECOGNIZED_DEPRECIATION_AMOUNT.value
+            )
+        )
+
+        categoryItemMap.forEach { (category, items) ->
+            items.forEach { itemName ->
+                dataList.add(setItem(category, itemName))
+            }
+        }
+
+        return dataList
+    }
 
 }
