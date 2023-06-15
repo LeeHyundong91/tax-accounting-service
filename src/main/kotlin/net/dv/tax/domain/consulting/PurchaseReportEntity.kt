@@ -29,16 +29,28 @@ data class PurchaseReportEntity(
     var resultYearMonth: String? = null,
 
     @Comment("매입합계")
-    val purchaseTotalAmount: Long? = 0,
+    var purchaseTotalAmount: Long? = 0,
+
+    @Comment("매입합계 비율")
+    var purchaseTotalRatio: Float? = 0.0.toFloat(),
 
     @Comment("매출원가")
-    val costOfSalesTotal: Long? = 0,
+    var costOfSalesTotal: Long? = 0,
+
+    @Comment("매출원가 비율")
+    var costOfSalesRatio: Float? = 0.0.toFloat(),
 
     @Comment("판관비 합계")
-    val sgaExpensesTotal: Long? = 0,
+    var sgaExpensesTotal: Long? = 0,
+
+    @Comment("판관비 합계비율")
+    var sgaExpensesRatio: Float? = 0.0.toFloat(),
 
     @Comment("영업외 합계")
-    val nonOperatingIncomeTotal: Long? = 0,
+    var nonOperatingIncomeTotal: Long? = 0,
+
+    @Comment("영업외 합계비율")
+    var nonOperatingIncomeRatio: Float? = 0.0.toFloat(),
 
     var writer: String? = null,
 
