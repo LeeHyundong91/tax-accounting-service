@@ -173,7 +173,6 @@ class PurchaseReportService(
     }
 
 
-    // Function to calculate the total amount for a given category in the item list
     fun calculateTotalAmountByCategory(itemList: List<PurchaseReportItemEntity>, category: String): Long {
         return itemList.filter { it.category == category }
             .fold(0L) { acc, item ->
@@ -181,148 +180,56 @@ class PurchaseReportService(
             }
     }
 
-    fun setItem(category: String, itemName: String): PurchaseReportItemEntity {
+   fun setItem(category: String, itemName: String): PurchaseReportItemEntity {
+    return PurchaseReportItemEntity(
+        itemName = itemName,
+        category = category
+    )
+}
 
-        return PurchaseReportItemEntity(
-            itemName = itemName,
-            category = category
+fun makeBasicForm(dataList: MutableList<PurchaseReportItemEntity>): MutableList<PurchaseReportItemEntity> {
+    val categoryItemMap = mapOf(
+        PurchaseCategory.SALES_OF_COST.code to listOf(
+            PurchaseTitleItem.BASIC_INVENTORY.value,
+            PurchaseTitleItem.CURRENT_PURCHASE.value,
+            PurchaseTitleItem.ENDING_STOCK.value,
+            PurchaseTitleItem.COST_OF_SALES.value
+        ),
+        PurchaseCategory.NON_OPERATING_EXPENSES.code to listOf(
+            PurchaseTitleItem.INTEREST_EXPENSE.value,
+            PurchaseTitleItem.LEASE_INTEREST.value,
+            PurchaseTitleItem.DONATION_EXPENSE.value,
+            PurchaseTitleItem.SETTLEMENT_AMOUNT.value,
+            PurchaseTitleItem.MISCELLANEOUS_LOSS.value,
+            PurchaseTitleItem.LOSS_ON_DISPOSAL_OF_FIXED_ASSETS.value,
+            PurchaseTitleItem.ADDITIONAL_NON_OPERATING_EXPENSES.value,
+            PurchaseTitleItem.NON_OPERATING_EXPENSES_TOTAL.value
+        ),
+        PurchaseCategory.NON_OPERATING_INCOME.code to listOf(
+            PurchaseTitleItem.SUPPORT_FUNDS.value,
+            PurchaseTitleItem.MISCELLANEOUS_PROFIT.value,
+            PurchaseTitleItem.INCOME_SETTLEMENT_AMOUNT.value,
+            PurchaseTitleItem.GAIN_ON_DISPOSAL_OF_FIXED_ASSETS.value,
+            PurchaseTitleItem.ADDITIONAL_NON_OPERATING_REVENUES.value,
+            PurchaseTitleItem.NON_OPERATING_INCOME_TOTAL.value,
+            PurchaseTitleItem.NON_OPERATING_TOTAL.value
+        ),
+        PurchaseCategory.DEPRECIATION.code to listOf(
+            PurchaseTitleItem.DEPRECIABLE_AMOUNT.value,
+            PurchaseTitleItem.DEPRECIATION_LIMIT.value,
+            PurchaseTitleItem.DEPRECIATION_EXPENSE.value,
+            PurchaseTitleItem.VEHICLE_LIMIT_EXCESS_AMOUNT.value,
+            PurchaseTitleItem.RECOGNIZED_DEPRECIATION_AMOUNT.value
         )
+    )
+
+    categoryItemMap.forEach { (category, items) ->
+        items.forEach { itemName ->
+            dataList.add(setItem(category, itemName))
+        }
     }
 
-    fun makeBasicForm(dataList: MutableList<PurchaseReportItemEntity>): MutableList<PurchaseReportItemEntity> {
-        /*매출원가*/
-        dataList.add(setItem(PurchaseCategory.SALES_OF_COST.code, PurchaseTitleItem.BASIC_INVENTORY.value))
-        dataList.add(setItem(PurchaseCategory.SALES_OF_COST.code, PurchaseTitleItem.CURRENT_PURCHASE.value))
-        dataList.add(setItem(PurchaseCategory.SALES_OF_COST.code, PurchaseTitleItem.ENDING_STOCK.value))
-        dataList.add(setItem(PurchaseCategory.SALES_OF_COST.code, PurchaseTitleItem.COST_OF_SALES.value))
-
-        /*영업외 비용*/
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.INTEREST_EXPENSE.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.LEASE_INTEREST.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.DONATION_EXPENSE.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.SETTLEMENT_AMOUNT.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.MISCELLANEOUS_LOSS.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.LOSS_ON_DISPOSAL_OF_FIXED_ASSETS.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.ADDITIONAL_NON_OPERATING_EXPENSES.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_EXPENSES.code,
-                PurchaseTitleItem.NON_OPERATING_EXPENSES_TOTAL.value
-            )
-        )
-
-        /*영업외 수익*/
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_INCOME.code,
-                PurchaseTitleItem.SUPPORT_FUNDS.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_INCOME.code,
-                PurchaseTitleItem.MISCELLANEOUS_PROFIT.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_INCOME.code,
-                PurchaseTitleItem.INCOME_SETTLEMENT_AMOUNT.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_INCOME.code,
-                PurchaseTitleItem.GAIN_ON_DISPOSAL_OF_FIXED_ASSETS.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_INCOME.code,
-                PurchaseTitleItem.ADDITIONAL_NON_OPERATING_REVENUES.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_INCOME.code,
-                PurchaseTitleItem.NON_OPERATING_INCOME_TOTAL.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.NON_OPERATING_INCOME.code,
-                PurchaseTitleItem.NON_OPERATING_TOTAL.value
-            )
-        )
-
-        /*감가비*/
-        dataList.add(
-            setItem(
-                PurchaseCategory.DEPRECIATION.code,
-                PurchaseTitleItem.DEPRECIABLE_AMOUNT.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.DEPRECIATION.code,
-                PurchaseTitleItem.DEPRECIATION_LIMIT.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.DEPRECIATION.code,
-                PurchaseTitleItem.DEPRECIATION_EXPENSE.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.DEPRECIATION.code,
-                PurchaseTitleItem.VEHICLE_LIMIT_EXCESS_AMOUNT.value
-            )
-        )
-        dataList.add(
-            setItem(
-                PurchaseCategory.DEPRECIATION.code,
-                PurchaseTitleItem.RECOGNIZED_DEPRECIATION_AMOUNT.value
-            )
-        )
-
-        return dataList
-    }
+    return dataList
+}
 
 }
