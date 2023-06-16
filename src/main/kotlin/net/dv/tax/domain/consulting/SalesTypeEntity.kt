@@ -28,6 +28,8 @@ data class SalesTypeEntity(
     @Comment("결산 년월")
     var resultYearMonth: String? = null,
 
+    val consultingReportId: Long? = null,
+
     @Comment("합계액")
     var totalAmount: Long? = null,
 
