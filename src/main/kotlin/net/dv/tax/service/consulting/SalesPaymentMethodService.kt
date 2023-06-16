@@ -82,7 +82,7 @@ class SalesPaymentMethodService(
 //    }
 
     fun getData(hospitalId: String, year: String): SalesPaymentMethodEntity? {
-        return salesPaymentMethodRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)
+        return salesPaymentMethodRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year)
             ?: SalesPaymentMethodEntity()
     }
 

@@ -24,7 +24,7 @@ class SalesTypeService(
 
     @Transactional
     fun getData(hospitalId: String, year: String): SalesTypeEntity? {
-        return salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)
+        return salesTypeRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year)
             ?: SalesTypeEntity()
     }
 
@@ -42,7 +42,7 @@ class SalesTypeService(
         defaultCondition.resultYearMonth = year
 
         val data =
-            salesTypeRepository.findTopByHospitalIdAndResultYearMonth(hospitalId, year)
+            salesTypeRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year)
                 ?: salesTypeRepository.save(defaultCondition)
 
         data.also {

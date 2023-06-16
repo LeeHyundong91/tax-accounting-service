@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
 interface SalesTypeRepository : JpaRepository<SalesTypeEntity, Long> {
-    fun findTopByHospitalIdAndResultYearMonth(hospitalId: String, resultYearMonth: String): SalesTypeEntity?
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): SalesTypeEntity?
 }
 
 interface InsuranceClaimRepository : JpaRepository<InsuranceClaimEntity?, Long> {
@@ -24,8 +24,13 @@ interface TaxExemptionRepository : JpaRepository<TaxExemptionEntity?, Long> {
 }
 
 interface SalesPaymentMethodRepository : JpaRepository<SalesPaymentMethodEntity, Long> {
-    fun findTopByHospitalIdAndResultYearMonth(hospitalId: String, resultYearMonth: String): SalesPaymentMethodEntity?
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): SalesPaymentMethodEntity?
 }
+
+interface AdjustmentCostRepository: JpaRepository<AdjustmentCostEntity, Long>{
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): AdjustmentCostEntity?
+}
+
 
 interface PurchaseReportRepository : JpaRepository<PurchaseReportEntity, Long> {
 

@@ -1,5 +1,15 @@
 package net.dv.tax.enums.consulting
 
+enum class TaxExemptionCategory(
+    var code: String,
+    var value: String,
+) {
+    CARD("CARD","카드"),
+    CASH_RECEIPT("CASH_RECEIPT","현금영수증"),
+    CASH("CASH","현금");
+}
+
+
 enum class TaxExemptionItem(
     var code: String,
     var value: String,
@@ -18,12 +28,4 @@ enum class TaxExemptionItem(
 
 }
 
-enum class TaxExemptionCategory(
-    var code: String,
-    var value: String,
-) {
-    CARD("CARD","카드"),
-    CASH_RECEIPT("CASH_RECEIPT","현금영수증"),
-    CASH("CASH","현금");
-}
 
