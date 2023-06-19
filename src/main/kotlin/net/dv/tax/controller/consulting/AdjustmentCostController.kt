@@ -3,6 +3,8 @@ package net.dv.tax.controller.consulting
 import net.dv.tax.domain.consulting.AdjustmentCostEntity
 import net.dv.tax.domain.consulting.AdjustmentCostItemEntity
 import net.dv.tax.service.consulting.AdjustmentCostService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -28,5 +30,9 @@ class AdjustmentCostController(private val adjustmentCostService: AdjustmentCost
         return adjustmentCostService.getData(hospitalId, year)
     }
 
+    @DeleteMapping("/{id}")
+    fun removeData(@PathVariable id: Long): ResponseEntity<HttpStatus>{
+        return adjustmentCostService.removeItem(id)
+    }
 
 }

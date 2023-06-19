@@ -8,6 +8,8 @@ import net.dv.tax.enums.consulting.AdjustmentCostItem
 import net.dv.tax.enums.consulting.AdjustmentCostItemOption
 import net.dv.tax.repository.consulting.AdjustmentCostItemRepository
 import net.dv.tax.repository.consulting.AdjustmentCostRepository
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,6 +19,11 @@ class AdjustmentCostService(
 ) {
 
     private val log = KotlinLogging.logger {}
+
+    fun removeItem(id: Long): ResponseEntity<HttpStatus>{
+        adjustmentCostItemRepository.deleteById(id)
+        return ResponseEntity.ok(HttpStatus.OK)
+    }
 
     fun saveData(hospitalId: String, year: String) {
         adjustmentCostRepository.save(makeData(hospitalId, year))
