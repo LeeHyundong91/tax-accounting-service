@@ -38,5 +38,14 @@ enum class AdjustmentCostItem(
     FRINGE_BENEFIT_EXPENSE("복리후생비"),
     CONSUMABLES_EXPENSE("소모품비"),
     INCOME_TAX("소득세"),
-    INCOME_ADJUSTMENT("소득조정 합계");
+    INCOME_ADJUSTMENT_TOTAL("소득조정 합계");
+}
+
+enum class AdjustmentCostItemOption(
+    var code: String,
+    var value: String,
+) {
+    FINAL("FINAL", "결산시 반영"),
+    MONTH("MONTH", "월별 분할"),
+    PERIOD("PERIOD", "기간 분할"),
 }

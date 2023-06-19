@@ -40,7 +40,7 @@ data class AdjustmentCostEntity(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @BatchSize(size = 10)
     @JoinColumn(name = "ADJUSTMENT_COST_ID")
-    var detailList: MutableList<AdjustmentCostItemEntity>? = mutableListOf(),
+    var detailList: MutableList<AdjustmentCostItemEntity> = mutableListOf(),
 
     )
 
@@ -75,7 +75,7 @@ data class AdjustmentCostItemEntity(
 
     var endDate: String? = null,
 
-    var meno: String? = null,
+    var memo: String? = null,
 
 
     )

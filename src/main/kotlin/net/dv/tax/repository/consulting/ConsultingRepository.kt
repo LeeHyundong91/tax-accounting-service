@@ -31,6 +31,8 @@ interface AdjustmentCostRepository: JpaRepository<AdjustmentCostEntity, Long>{
     fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): AdjustmentCostEntity?
 }
 
+interface AdjustmentCostItemRepository: JpaRepository<AdjustmentCostItemEntity, Long>
+
 
 interface PurchaseReportRepository : JpaRepository<PurchaseReportEntity, Long> {
 

@@ -1,15 +1,22 @@
 package net.dv.tax.service.consulting
 
+import mu.KotlinLogging
 import net.dv.tax.domain.consulting.AdjustmentCostEntity
 import net.dv.tax.domain.consulting.AdjustmentCostItemEntity
 import net.dv.tax.enums.consulting.AdjustmentCostCategory
 import net.dv.tax.enums.consulting.AdjustmentCostItem
+import net.dv.tax.enums.consulting.AdjustmentCostItemOption
+import net.dv.tax.repository.consulting.AdjustmentCostItemRepository
 import net.dv.tax.repository.consulting.AdjustmentCostRepository
 import org.springframework.stereotype.Service
 
 @Service
-class AdjustmentCostService(private val adjustmentCostRepository: AdjustmentCostRepository) {
+class AdjustmentCostService(
+    private val adjustmentCostRepository: AdjustmentCostRepository,
+    private val adjustmentCostItemRepository: AdjustmentCostItemRepository,
+) {
 
+    private val log = KotlinLogging.logger {}
 
     fun saveData(hospitalId: String, year: String) {
         adjustmentCostRepository.save(makeData(hospitalId, year))
@@ -22,7 +29,7 @@ class AdjustmentCostService(private val adjustmentCostRepository: AdjustmentCost
 
     fun makeData(hospitalId: String, year: String): AdjustmentCostEntity {
 
-        var defaultCondition = AdjustmentCostEntity()
+        val defaultCondition = AdjustmentCostEntity()
         val dataList: MutableList<AdjustmentCostItemEntity> = mutableListOf()
 
         defaultCondition.hospitalId = hospitalId
@@ -34,7 +41,7 @@ class AdjustmentCostService(private val adjustmentCostRepository: AdjustmentCost
         data.also {
             dataList.addAll(makeBasicForm(dataList))
             it.detailList = dataList
-            adjustmentCostRepository.save(it)
+//            adjustmentCostRepository.save(it)
         }
         return data
 
@@ -58,7 +65,7 @@ class AdjustmentCostService(private val adjustmentCostRepository: AdjustmentCost
                 AdjustmentCostItem.CREDIT_CARD_EXPENSE.value,
                 AdjustmentCostItem.DONATION.value,
                 AdjustmentCostItem.OTHER.value,
-                AdjustmentCostItem.ADDITIONAL_EXPENSES_TOTAL.value
+                AdjustmentCostItem.INCOME_ADJUSTMENT_TOTAL.value
             ),
             AdjustmentCostCategory.ADDITIONAL_EXPENSES.code to listOf(
                 AdjustmentCostItem.INTEREST_EXPENSE.value,
@@ -69,7 +76,7 @@ class AdjustmentCostService(private val adjustmentCostRepository: AdjustmentCost
                 AdjustmentCostItem.FRINGE_BENEFIT_EXPENSE.value,
                 AdjustmentCostItem.CONSUMABLES_EXPENSE.value,
                 AdjustmentCostItem.INCOME_TAX.value,
-                AdjustmentCostItem.INCOME_ADJUSTMENT.value
+                AdjustmentCostItem.ADDITIONAL_EXPENSES_TOTAL.value
             )
 
         )
@@ -86,8 +93,90 @@ class AdjustmentCostService(private val adjustmentCostRepository: AdjustmentCost
     fun setItem(category: String, itemName: String): AdjustmentCostItemEntity {
         return AdjustmentCostItemEntity(
             itemName = itemName,
-            category = category
+            category = category,
+            distribution = AdjustmentCostItemOption.FINAL.code
         )
     }
 
+    fun calculateTotalAmountByCategory(
+        itemList: List<AdjustmentCostItemEntity>,
+        category: String,
+        exceptItem: String,
+    ): Long {
+        return itemList.filter { it.category == category && it.itemName != exceptItem }
+            .fold(0L) { acc, item ->
+                acc + (item.itemValue ?: 0)
+            }
+    }
+
+
+    fun saveItemData(
+        hospitalId: String,
+        year: String,
+        dataList: MutableList<AdjustmentCostItemEntity>,
+    ) {
+        adjustmentCostRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year)?.let { report ->
+            val itemList = report.detailList
+
+            val newThingList = dataList.filter { it.id == null }
+                .map { item ->
+                    AdjustmentCostItemEntity(
+                        itemName = item.itemName,
+                        category = item.category,
+                        memo = item.memo,
+                        itemValue = item.itemValue,
+                        distribution = item.distribution,
+                        startDate = item.startDate,
+                        endDate = item.endDate
+                    )
+                }
+
+            val updatedItemList = itemList + newThingList
+            adjustmentCostItemRepository.saveAll(newThingList).also { savedData ->
+                updatedItemList + savedData
+            }
+
+
+            updatedItemList.forEach { origin ->
+                dataList.find { addData -> origin.id == addData.id }
+                    ?.let { addData ->
+                        origin.itemValue = addData.itemValue
+                        origin.memo = addData.memo
+                        origin.distribution = addData.distribution
+                        if (addData.distribution == AdjustmentCostItemOption.PERIOD.code) {
+                            origin.startDate = addData.startDate
+                            origin.endDate = addData.endDate
+                        }
+                    }
+            }
+
+
+            val additionalExpensesTotalAmount = calculateTotalAmountByCategory(
+                updatedItemList,
+                AdjustmentCostCategory.ADDITIONAL_EXPENSES.code,
+                AdjustmentCostItem.ADDITIONAL_EXPENSES_TOTAL.value
+            )
+
+
+           val incomeAdjustmentTotalAmount = calculateTotalAmountByCategory(
+               updatedItemList,
+               AdjustmentCostCategory.INCOME_ADJUSTMENT.code,
+               AdjustmentCostItem.INCOME_ADJUSTMENT_TOTAL.value
+           )
+
+
+            updatedItemList.forEach { item ->
+                when (item.itemName) {
+                    AdjustmentCostItem.ADDITIONAL_EXPENSES_TOTAL.value -> item.itemValue = additionalExpensesTotalAmount
+                    AdjustmentCostItem.INCOME_ADJUSTMENT_TOTAL.value -> item.itemValue = incomeAdjustmentTotalAmount
+                }
+            }
+
+            report.detailList.addAll(updatedItemList)
+            adjustmentCostRepository.save(report)
+
+        }
+
+
+    }
 }
