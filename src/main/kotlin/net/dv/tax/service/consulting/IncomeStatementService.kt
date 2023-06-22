@@ -27,6 +27,12 @@ class IncomeStatementService(
     private val purchaseReportRepository: PurchaseReportRepository,
 ) {
 
+    fun getData(hospitalId: String, year: String): IncomeStatementEntity {
+        return incomeStatementRepository.findTopByHospitalIdAndResultYearMonthStartingWith(
+            hospitalId,
+            year
+        ) ?: IncomeStatementEntity()
+    }
 
     fun saveData(hospitalId: String, year: String) {
         incomeStatementRepository.save(makeData(hospitalId, year))
@@ -55,6 +61,8 @@ class IncomeStatementService(
             val purchaseItemList =
                 purchaseReportRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year)?.detailList
 
+            /*매출총액 비율*/
+            val salesTotalRatio = 100.0.toFloat()
 
             /*매출액 하위*/
             salesTypeItem?.detailList?.forEach { item ->
@@ -66,7 +74,9 @@ class IncomeStatementService(
                 IncomeStatementCategory.SALES_REVENUE.code,
                 IncomeStatementItem.SALES_REVENUE_TOTAL.value,
                 salesTypeItem?.totalAmount ?: 0
-            )
+            ).apply {
+                currentValueRatio = salesTotalRatio
+            }
             dataList.add(salesRevenueTotal)
 
             /*매출총액*/
@@ -85,7 +95,9 @@ class IncomeStatementService(
                                 IncomeStatementCategory.COST_OF_GOODS_SOLD.code,
                                 IncomeStatementItem.COST_OF_GOODS_SOLD_TOTAL.value,
                                 item.valueAmount ?: 0
-                            )
+                            ).apply {
+                                currentValueRatio = item.valueAmount!!.toFloat().div(salesTotalAmount) * 100
+                            }
                     } else {
                         data =
                             setItem(
@@ -111,7 +123,9 @@ class IncomeStatementService(
                 IncomeStatementCategory.GROSS_PROFIT.code,
                 IncomeStatementItem.GROSS_PROFIT_TOTAL.value,
                 grossProfitCurrentValue
-            )
+            ).apply {
+                currentValueRatio = grossProfitCurrentValue.toFloat().div(salesTotalAmount) * 100
+            }
             dataList.add(grossProfit)
 
             /*판관비 타이틀*/
@@ -127,7 +141,9 @@ class IncomeStatementService(
                                 IncomeStatementCategory.SGA_EXPENSES.code,
                                 IncomeStatementItem.SGA_EXPENSES_TOTAL.value,
                                 item.valueAmount ?: 0
-                            )
+                            ).apply {
+                                currentValueRatio = item.valueAmount!!.toFloat().div(salesTotalAmount) * 100
+                            }
                     } else {
                         data =
                             setItem(IncomeStatementCategory.SGA_EXPENSES.code, item.itemName!!, item.valueAmount ?: 0)
@@ -149,7 +165,9 @@ class IncomeStatementService(
                     IncomeStatementItem.OPERATING_PROFIT_TOTAL.value,
                     /*영업이익 - 판관비*/
                     operatingProfitAmount
-                )
+                ).apply {
+                    currentValueRatio = operatingProfitAmount.toFloat().div(salesTotalAmount) * 100
+                }
             )
 
             /*영업외 수익 타이틀*/
@@ -165,7 +183,9 @@ class IncomeStatementService(
                                 IncomeStatementCategory.NON_OPERATING_REVENUE.code,
                                 IncomeStatementItem.NON_OPERATING_REVENUE_TOTAL.value,
                                 item.valueAmount ?: 0
-                            )
+                            ).apply {
+                                currentValueRatio = item.valueAmount!!.toFloat().div(salesTotalAmount) * 100
+                            }
                     } else {
                         data =
                             setItem(
@@ -192,7 +212,9 @@ class IncomeStatementService(
                                 IncomeStatementCategory.NON_OPERATING_EXPENSE.code,
                                 IncomeStatementItem.NON_OPERATING_EXPENSE_TOTAL.value,
                                 item.valueAmount ?: 0
-                            )
+                            ).apply {
+                                currentValueRatio = item.valueAmount!!.toFloat().div(salesTotalAmount) * 100
+                            }
                     } else {
                         data =
                             setItem(
@@ -216,7 +238,9 @@ class IncomeStatementService(
                 IncomeStatementCategory.PROFIT_BEFORE_INCOME_TAX.code,
                 IncomeStatementItem.PROFIT_BEFORE_INCOME_TAX_TOTAL.value,
                 profitBeforeIncomeTaxValue
-            )
+            ).apply {
+                currentValueRatio = profitBeforeIncomeTaxValue.toFloat().div(salesTotalAmount) * 100
+            }
             dataList.add(profitBeforeIncomeTax)
 
             /*소득세 등*/
@@ -224,7 +248,9 @@ class IncomeStatementService(
                 IncomeStatementCategory.INCOME_TAX.code,
                 IncomeStatementItem.INCOME_TAX_TOTAL.value,
                 0
-            )
+            ).apply {
+                currentValueRatio = 0.0.toFloat()
+            }
             dataList.add(incomeTax)
 
 
@@ -237,15 +263,17 @@ class IncomeStatementService(
                 IncomeStatementCategory.NET_PROFIT.code,
                 IncomeStatementItem.NET_PROFIT_TOTAL.value,
                 netProfitValue
-            )
+            ).apply {
+                currentValueRatio = netProfitValue.toFloat().div(salesTotalAmount) * 100
+            }
             dataList.add(netProfit)
 
             dataList.removeIf { item -> item.category == null }
 
-            dataList.forEach { item->
+            dataList.forEach { item ->
                 item.yearValueAmount = item.currentValueAmount!!.div(getCurrentMonthCount()) * 12
+                item.yearValueRatio = item.currentValueRatio
             }
-
 
             it.detailList = dataList
         }

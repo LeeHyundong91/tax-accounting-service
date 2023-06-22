@@ -24,14 +24,20 @@ interface TaxExemptionRepository : JpaRepository<TaxExemptionEntity?, Long> {
 }
 
 interface SalesPaymentMethodRepository : JpaRepository<SalesPaymentMethodEntity, Long> {
-    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): SalesPaymentMethodEntity?
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(
+        hospitalId: String,
+        resultYearMonth: String,
+    ): SalesPaymentMethodEntity?
 }
 
-interface AdjustmentCostRepository: JpaRepository<AdjustmentCostEntity, Long>{
-    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, resultYearMonth: String): AdjustmentCostEntity?
+interface AdjustmentCostRepository : JpaRepository<AdjustmentCostEntity, Long> {
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(
+        hospitalId: String,
+        resultYearMonth: String,
+    ): AdjustmentCostEntity?
 }
 
-interface AdjustmentCostItemRepository: JpaRepository<AdjustmentCostItemEntity, Long>
+interface AdjustmentCostItemRepository : JpaRepository<AdjustmentCostItemEntity, Long>
 
 
 interface PurchaseReportRepository : JpaRepository<PurchaseReportEntity, Long> {
@@ -82,10 +88,10 @@ interface PurchaseReportRepository : JpaRepository<PurchaseReportEntity, Long> {
 
 interface PurchaseReportItemRepository : JpaRepository<PurchaseReportItemEntity, Long>
 
-interface IncomeStatementRepository: JpaRepository<IncomeStatementEntity, Long>{
-    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, yearMonth:String): IncomeStatementEntity?
+interface IncomeStatementRepository : JpaRepository<IncomeStatementEntity, Long> {
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, yearMonth: String): IncomeStatementEntity?
 }
 
-interface IncomeStatementItemRepository: JpaRepository<IncomeStatementItemEntity, Long>
+interface IncomeStatementItemRepository : JpaRepository<IncomeStatementItemEntity, Long>
 
 
