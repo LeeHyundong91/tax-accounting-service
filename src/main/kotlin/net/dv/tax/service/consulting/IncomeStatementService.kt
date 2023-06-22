@@ -275,6 +275,7 @@ class IncomeStatementService(
                 item.yearValueRatio = item.currentValueRatio
             }
 
+            it.exchangeRate = getCurrentDatePercentageOfYear()
             it.detailList = dataList
         }
 
@@ -294,6 +295,15 @@ class IncomeStatementService(
     fun getCurrentMonthCount(): Int {
         val currentDate = LocalDate.now()
         return currentDate.monthValue
+    }
+
+    fun getCurrentDatePercentageOfYear(): Float {
+        val currentDate = LocalDate.now()
+        val startOfYear = LocalDate.of(currentDate.year, 1, 1)
+        val endOfYear = LocalDate.of(currentDate.year, 12, 31)
+        val totalDaysOfYear = endOfYear.toEpochDay() - startOfYear.toEpochDay() + 1
+        val currentDayOfYear = currentDate.toEpochDay()+30 - startOfYear.toEpochDay() + 1
+        return currentDayOfYear.toFloat().div(totalDaysOfYear) * 100
     }
 
 
