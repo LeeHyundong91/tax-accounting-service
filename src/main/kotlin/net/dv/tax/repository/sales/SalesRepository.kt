@@ -172,10 +172,6 @@ interface SalesHandInvoiceRepository : JpaRepository<SalesHandInvoiceEntity, Int
     ): Page<SalesHandInvoiceEntity>
 }
 
-interface IncomeStatementRepository : JpaRepository<IncomeStatementEntity?, Int> {
-    fun findAllByHospitalIdAndDataPeriodStartingWith(hospitalId: String, dataPeriod: String)
-}
-
 
 
 

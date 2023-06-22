@@ -13,7 +13,11 @@ enum class SalesTypeItem(
     EMPLOYEE("고용산재"),
     NORMAL("일반매출"),
     MEDICAL_BENEFITS("요양급여"),
-    MEDICAL_CARE("의료급여"),
+    MEDICAL_CARE("의료급여");
+}
+enum class SalesDivideType(
+    var value: String
+) {
     OWN_CHARGE("(본인)"),
     CORP_CHARGE("(공단)");
 }

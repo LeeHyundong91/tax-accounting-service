@@ -2,6 +2,7 @@ package net.dv.tax.service.consulting
 
 import net.dv.tax.domain.consulting.InsuranceClaimEntity
 import net.dv.tax.domain.consulting.InsuranceClaimItemEntity
+import net.dv.tax.enums.consulting.SalesDivideType
 import net.dv.tax.enums.consulting.SalesTypeItem
 import net.dv.tax.repository.consulting.InsuranceClaimRepository
 import net.dv.tax.repository.sales.*
@@ -37,22 +38,22 @@ class InsuranceClaimService(
             /*요양급여*/
             val medicalBenefitCorp = medicalBenefitsRepository.monthlyCorpSumAmount(hospitalId, year) ?: 0
             itemList.add(
-                itemSet(SalesTypeItem.MEDICAL_BENEFITS.value + SalesTypeItem.CORP_CHARGE.value, medicalBenefitCorp)
+                itemSet(SalesTypeItem.MEDICAL_BENEFITS.value + SalesDivideType.CORP_CHARGE.value, medicalBenefitCorp)
             )
 
             val medicalBenefitOwn = medicalBenefitsRepository.monthlyOwnChargeSumAmount(hospitalId, year) ?: 0
             itemList.add(
-                itemSet(SalesTypeItem.MEDICAL_BENEFITS.value + SalesTypeItem.OWN_CHARGE.value, medicalBenefitOwn)
+                itemSet(SalesTypeItem.MEDICAL_BENEFITS.value + SalesDivideType.OWN_CHARGE.value, medicalBenefitOwn)
             )
 
             /*의료급여*/
             val medicalCareCorp = medicalCareRepository.monthlyAgencySumAmount(hospitalId, year) ?: 0
             itemList.add(
-                itemSet(SalesTypeItem.MEDICAL_CARE.value + SalesTypeItem.CORP_CHARGE.value, medicalCareCorp)
+                itemSet(SalesTypeItem.MEDICAL_CARE.value + SalesDivideType.CORP_CHARGE.value, medicalCareCorp)
             )
 
             val medicalCareOwn = medicalCareRepository.monthlyOwnChargeSumAmount(hospitalId, year) ?: 0
-            itemList.add(itemSet(SalesTypeItem.MEDICAL_CARE.value + SalesTypeItem.OWN_CHARGE.value, medicalCareOwn))
+            itemList.add(itemSet(SalesTypeItem.MEDICAL_CARE.value + SalesDivideType.OWN_CHARGE.value, medicalCareOwn))
 
 
             /*자동차 보험*/
@@ -74,11 +75,11 @@ class InsuranceClaimService(
             /*기타급여 (금연치료, 소견서, 희귀, 기타급여)*/
             otherBenefitsRepository.dataList(hospitalId, year).forEach { otherItem ->
                 val ownCharge = InsuranceClaimItemEntity(
-                    itemName = otherItem.itemName + SalesTypeItem.OWN_CHARGE.value,
+                    itemName = otherItem.itemName + SalesDivideType.OWN_CHARGE.value,
                     itemAmount = otherItem.ownCharge
                 )
                 val corpCharge = InsuranceClaimItemEntity(
-                    itemName = otherItem.itemName + SalesTypeItem.CORP_CHARGE.value,
+                    itemName = otherItem.itemName + SalesDivideType.CORP_CHARGE.value,
                     itemAmount = otherItem.agencyExpense
                 )
                 itemList.add(ownCharge)

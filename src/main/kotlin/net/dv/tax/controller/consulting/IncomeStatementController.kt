@@ -1,18 +1,19 @@
-package net.dv.tax.controller.sales
+package net.dv.tax.controller.consulting
 
-import net.dv.tax.service.sales.IncomeStatementService
+import net.dv.tax.service.consulting.IncomeStatementService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/sales/income-statement")
+@RequestMapping("/v1/consulting/income-statement")
 class IncomeStatementController(private val incomeStatementService: IncomeStatementService) {
 
-    @GetMapping("/list/{year}/{hospitalId}")
-    fun getList(@PathVariable hospitalId: String, @PathVariable year: String){
-        incomeStatementService.dataList(hospitalId, year)
+    /*for test*/
+    @GetMapping("/test/{year}/{hospitalId}")
+    fun test(@PathVariable hospitalId: String, @PathVariable year: String) {
+        incomeStatementService.saveData(hospitalId, year)
     }
 
 }
