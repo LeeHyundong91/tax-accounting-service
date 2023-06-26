@@ -42,7 +42,6 @@ class IncomeStatementService(
 
 
         val defaultCondition = IncomeStatementEntity()
-//        val itemList = mutableListOf<InsuranceClaimItemEntity>()
 
         defaultCondition.hospitalId = hospitalId
         defaultCondition.resultYearMonth = year
@@ -305,41 +304,5 @@ class IncomeStatementService(
         val currentDayOfYear = currentDate.toEpochDay()+30 - startOfYear.toEpochDay() + 1
         return currentDayOfYear.toFloat().div(totalDaysOfYear) * 100
     }
-
-
-    //            fun purchaseDataList(
-//            dataList: MutableList<PurchaseReportItemEntity>,
-//            filterCondition: String,
-//            smallSumItemName: String,
-//            titleItemName: String,
-//            category: String
-//        ): MutableList<IncomeStatementItemEntity> {
-//            var resultList = mutableListOf<IncomeStatementItemEntity>()
-//
-//
-//            dataList.filter { item -> item.category == filterCondition }
-//                ?.forEach { item ->
-//                    var data = IncomeStatementItemEntity()
-//                    if (item.itemName == smallSumItemName) {
-//                        costOfGoodsSoldTotal =
-//                            setItem(
-//                                category,
-//                                titleItemName,
-//                                item.valueAmount ?: 0
-//                            )
-//                    } else {
-//                        data =
-//                            setItem(
-//                                category,
-//                                item.itemName!!,
-//                                item.valueAmount ?: 0
-//                            )
-//                    }
-//                    resultList.add(data)
-//                }
-//
-//            return resultList
-//        }
-
 
 }

@@ -95,3 +95,12 @@ interface IncomeStatementRepository : JpaRepository<IncomeStatementEntity, Long>
 interface IncomeStatementItemRepository : JpaRepository<IncomeStatementItemEntity, Long>
 
 
+interface ExpectedIncomeRepository : JpaRepository<ExpectedIncomeEntity, Long> {
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(
+        hospitalId: String,
+        resultYearMonth: String,
+    ): ExpectedIncomeEntity?
+}
+
+interface ExpectedIncomeItemRepository : JpaRepository<ExpectedIncomeItemEntity, Long>
+interface ExpectedIncomeMonthlyItemRepository : JpaRepository<ExpectedIncomeMonthlyItemEntity, Long>
