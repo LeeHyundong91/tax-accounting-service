@@ -3,7 +3,7 @@ package net.dv.tax.service.consulting
 import mu.KotlinLogging
 import net.dv.tax.domain.consulting.PurchaseReportEntity
 import net.dv.tax.domain.consulting.PurchaseReportItemEntity
-import net.dv.tax.dto.consulting.SgaExpenseCalcDto
+import net.dv.tax.dto.consulting.SgaExpense
 import net.dv.tax.dto.consulting.SgaExpenseDto
 import net.dv.tax.enums.consulting.PurchaseCategory
 import net.dv.tax.enums.consulting.PurchaseTitleItem
@@ -39,8 +39,8 @@ class PurchaseReportService(
             ?: purchaseReportRepository.save(defaultCondition)
 
         data.also {
-            val resultList: MutableList<SgaExpenseDto> = mutableListOf()
-            val calcEmptyList: MutableList<SgaExpenseCalcDto> = mutableListOf()
+            val resultList: MutableList<SgaExpense> = mutableListOf()
+            val calcEmptyList: MutableList<SgaExpenseDto> = mutableListOf()
 
             val cashReceipt = purchaseReportRepository.cashReceiptSgaExpense(hospitalId, year)
             val creditCard = purchaseReportRepository.creditCardSgaExpense(hospitalId, year)
@@ -50,7 +50,7 @@ class PurchaseReportService(
             resultList.addAll(elecInvoice)
 
             resultList.forEach { cash ->
-                val data = SgaExpenseCalcDto(
+                val data = SgaExpenseDto(
                     valueAmount = cash.valueAmount,
                     itemName = cash.itemName
                 )

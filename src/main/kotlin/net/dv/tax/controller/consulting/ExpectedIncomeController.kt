@@ -14,7 +14,7 @@ class ExpectedIncomeController(private val expectedIncomeService: ExpectedIncome
 
     /*for test*/
     @GetMapping("/test/{year}/{hospitalId}")
-    fun test(@PathVariable hospitalId: String, @PathVariable year: String) {
+    fun makeData(@PathVariable hospitalId: String, @PathVariable year: String) {
         expectedIncomeService.saveData(hospitalId, year)
     }
 

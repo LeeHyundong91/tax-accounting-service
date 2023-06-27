@@ -1,7 +1,8 @@
 package net.dv.tax.repository.consulting
 
 import net.dv.tax.domain.consulting.*
-import net.dv.tax.dto.consulting.SgaExpenseDto
+import net.dv.tax.dto.consulting.DirectorAndStake
+import net.dv.tax.dto.consulting.SgaExpense
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -53,7 +54,7 @@ interface PurchaseReportRepository : JpaRepository<PurchaseReportEntity, Long> {
                 "  and STATEMENT_STATUS = '전송완료'\n" +
                 "group by debtor_account"
     )
-    fun cashReceiptSgaExpense(hospitalId: String, yearMonth: String): List<SgaExpenseDto>
+    fun cashReceiptSgaExpense(hospitalId: String, yearMonth: String): List<SgaExpense>
 
     @Query(
         nativeQuery = true, value = "" +
@@ -65,7 +66,7 @@ interface PurchaseReportRepository : JpaRepository<PurchaseReportEntity, Long> {
                 "  and STATEMENT_STATUS = '전송완료'\n" +
                 "group by debtor_account"
     )
-    fun creditCardSgaExpense(hospitalId: String, yearMonth: String): List<SgaExpenseDto>
+    fun creditCardSgaExpense(hospitalId: String, yearMonth: String): List<SgaExpense>
 
     @Query(
         nativeQuery = true, value = "" +
@@ -77,7 +78,7 @@ interface PurchaseReportRepository : JpaRepository<PurchaseReportEntity, Long> {
                 "  and STATEMENT_STATUS = '전송완료'\n" +
                 "group by debtor_account"
     )
-    fun elecInvoiceSgaExpense(hospitalId: String, yearMonth: String): List<SgaExpenseDto>
+    fun elecInvoiceSgaExpense(hospitalId: String, yearMonth: String): List<SgaExpense>
 
     fun findTopByHospitalIdAndResultYearMonthStartingWith(
         hospitalId: String,
@@ -104,3 +105,27 @@ interface ExpectedIncomeRepository : JpaRepository<ExpectedIncomeEntity, Long> {
 
 interface ExpectedIncomeItemRepository : JpaRepository<ExpectedIncomeItemEntity, Long>
 interface ExpectedIncomeMonthlyItemRepository : JpaRepository<ExpectedIncomeMonthlyItemEntity, Long>
+
+interface TaxCreditRepository : JpaRepository<TaxCreditEntity, Long> {
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, yearMonth: String): TaxCreditEntity?
+}
+
+interface TaxCreditPersonalRepository : JpaRepository<TaxCreditPersonalEntity, Long> {
+
+    @Query(
+        nativeQuery = true, value = "" +
+                "select ACCOUNT_NAME as director, STAKE as stake\n" +
+                "from hospital_director\n" +
+                "where COMPANY_ID = ?1 \n" +
+                "  and STATUS = 'ACTIVE'\n" +
+                "  and STAKE is not null"
+    )
+    fun directorAndStakeList(hospitalId: String): List<DirectorAndStake>
+
+    fun findAllByHospitalIdAndResultYearMonthStartingWith(
+        hospitalId: String,
+        yearMonth: String,
+    ): List<TaxCreditPersonalEntity>
+
+}
+
