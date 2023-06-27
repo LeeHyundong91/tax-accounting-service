@@ -2,6 +2,8 @@ package net.dv.tax.controller.consulting
 
 import net.dv.tax.dto.consulting.TaxCreditDto
 import net.dv.tax.service.consulting.TaxCreditService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -23,8 +25,9 @@ class TaxCreditController(private val taxCreditService: TaxCreditService) {
     fun patchOption(
         @PathVariable hospitalId: String,
         @PathVariable year: String,
+        /*EMPLOYMENT_INCREASE, INTEGRATED_EMPLOYMENT*/
         @PathVariable option: String,
-    ) {
+    ):ResponseEntity<HttpStatus> {
         return taxCreditService.patchItemOption(hospitalId, year, option)
     }
 

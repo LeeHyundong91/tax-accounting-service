@@ -11,6 +11,8 @@ import net.dv.tax.enums.consulting.TaxCreditPersonalCategory
 import net.dv.tax.enums.consulting.TaxCreditPersonalItem
 import net.dv.tax.repository.consulting.TaxCreditPersonalRepository
 import net.dv.tax.repository.consulting.TaxCreditRepository
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,7 +21,7 @@ class TaxCreditService(
     private val taxCreditPersonalRepository: TaxCreditPersonalRepository,
 ) {
 
-    fun patchItemOption(hospitalId: String, year: String, option: String) {
+    fun patchItemOption(hospitalId: String, year: String, option: String): ResponseEntity<HttpStatus> {
         taxCreditRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, year).also {
 
             val taxCreditItemList = it!!.detailList
@@ -61,6 +63,7 @@ class TaxCreditService(
             }
 
         }
+        return ResponseEntity.ok(HttpStatus.OK)
     }
 
     fun getData(hospitalId: String, year: String): TaxCreditDto {
