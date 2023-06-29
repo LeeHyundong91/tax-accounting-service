@@ -35,6 +35,7 @@ enum class TaxCreditPersonalCategory(
 ) {
     HOSPITAL("HOSPITAL", "병원 공제"),
     PERSONAL("PERSONAL", "개인 공제"),
+    TOTAL("TOTAL","합계")
 }
 
 enum class TaxCreditPersonalItem(
@@ -50,8 +51,8 @@ enum class TaxCreditPersonalItem(
     DONATION("기부금"),
     STANDARD_DEDUCTION("표준세액공제"),
 
-    PERSONAL_SMALL_AMOUNT("개인 공제"),
-    HOSPITAL_SMALL_AMOUNT("병원 공제"),
+    PERSONAL_SMALL_AMOUNT("개인 공제 합계"),
+    HOSPITAL_SMALL_AMOUNT("병원 공제 합계"),
 
     TOTAL_AMOUNT("합계"),
 

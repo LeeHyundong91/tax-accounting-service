@@ -2,6 +2,7 @@ package net.dv.tax.repository.consulting
 
 import net.dv.tax.domain.consulting.*
 import net.dv.tax.dto.consulting.DirectorAndStake
+import net.dv.tax.dto.consulting.PersonalSum
 import net.dv.tax.dto.consulting.SgaExpense
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -110,11 +111,15 @@ interface TaxCreditRepository : JpaRepository<TaxCreditEntity, Long> {
     fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, yearMonth: String): TaxCreditEntity?
 }
 
+interface TaxCreditItemRepository: JpaRepository<TaxCreditItemEntity, Long>
+
 interface TaxCreditPersonalRepository : JpaRepository<TaxCreditPersonalEntity, Long> {
 
     @Query(
         nativeQuery = true, value = "" +
-                "select ACCOUNT_NAME as director, STAKE as stake\n" +
+                "select ACCOUNT_NAME as director" +
+                ", STAKE as stake\n" +
+                ", ACCOUNT_NAME as directorId\n" +
                 "from hospital_director\n" +
                 "where COMPANY_ID = ?1 \n" +
                 "  and STATUS = 'ACTIVE'\n" +
@@ -122,10 +127,25 @@ interface TaxCreditPersonalRepository : JpaRepository<TaxCreditPersonalEntity, L
     )
     fun directorAndStakeList(hospitalId: String): List<DirectorAndStake>
 
+    fun findAllByHospitalIdAndDirectorAndDirectorId(hospitalId: String, director:String, directorId: String): TaxCreditPersonalEntity?
+
     fun findAllByHospitalIdAndResultYearMonthStartingWith(
         hospitalId: String,
         yearMonth: String,
     ): List<TaxCreditPersonalEntity>
 
+    @Query(nativeQuery = true, value = "" +
+            "select sum(LAST_YEAR_AMOUNT)       as lastYearAmount,\n" +
+            "       sum(CURRENT_ACCRUALS)       as currentAccruals,\n" +
+            "       sum(VANISHING_AMOUNT)       as vanishingAmount,\n" +
+            "       sum(CURRENT_DEDUCTION)      as currentDeduction,\n" +
+            "       sum(AMOUNT_CARRIED_FORWARD) as amountCarriedForward\n" +
+            "from tax_credit_personal_item\n" +
+            "  where TAX_CREDIT_PERSONAL_ID = ?1")
+    fun personalTotalAmount(taxCreditPersonalId: Long): PersonalSum
+
+
 }
+
+interface TaxCreditPersonalItemRepository:JpaRepository<TaxCreditPersonalItemEntity, Long>
 

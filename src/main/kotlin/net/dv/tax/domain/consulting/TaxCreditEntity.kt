@@ -98,6 +98,9 @@ data class TaxCreditPersonalEntity(
     @Comment("병원장")
     var director: String? = null,
 
+    @Comment("병원장 아이디")
+    var directorId: String? = null,
+
     @Comment("지분")
     var stake: Float? = 0.0.toFloat(),
 
@@ -131,7 +134,7 @@ data class TaxCreditPersonalItemEntity(
     var lastYearAmount: Long? = 0,
 
     @Comment("당기발생액")
-    var currentAccruals: Long = 0,
+    var currentAccruals: Long? = 0,
 
     @Comment("당기소멸액")
     var vanishingAmount: Long? = 0,

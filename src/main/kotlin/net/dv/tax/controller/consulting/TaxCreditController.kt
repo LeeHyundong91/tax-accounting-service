@@ -1,5 +1,7 @@
 package net.dv.tax.controller.consulting
 
+import net.dv.tax.domain.consulting.TaxCreditItemEntity
+import net.dv.tax.domain.consulting.TaxCreditPersonalItemEntity
 import net.dv.tax.dto.consulting.TaxCreditDto
 import net.dv.tax.service.consulting.TaxCreditService
 import org.springframework.http.HttpStatus
@@ -27,8 +29,45 @@ class TaxCreditController(private val taxCreditService: TaxCreditService) {
         @PathVariable year: String,
         /*EMPLOYMENT_INCREASE, INTEGRATED_EMPLOYMENT*/
         @PathVariable option: String,
-    ):ResponseEntity<HttpStatus> {
+    ): ResponseEntity<HttpStatus> {
         return taxCreditService.patchItemOption(hospitalId, year, option)
+    }
+
+    @PutMapping("/{year}/{hospitalId}")
+    fun saveHospitalData(
+        @PathVariable hospitalId: String,
+        @PathVariable year: String,
+        @RequestBody itemList: MutableList<TaxCreditItemEntity>,
+    ) {
+        taxCreditService.updateHospitalItem(itemList, hospitalId, year)
+    }
+
+    @DeleteMapping("/{year}/{hospitalId}/{id}")
+    fun deleteHospitalItem(
+        @PathVariable hospitalId: String,
+        @PathVariable year: String,
+        @PathVariable id: Long,
+    ): ResponseEntity<HttpStatus> {
+        return taxCreditService.deleteHospitalItem(hospitalId, year, id)
+    }
+
+    @PutMapping("/{year}/{hospitalId}/{taxCreditPersonalId}")
+    fun savePersonalData(
+        @PathVariable hospitalId: String,
+        @PathVariable year: String,
+        @PathVariable taxCreditPersonalId: Long,
+        @RequestBody itemList: MutableList<TaxCreditPersonalItemEntity>,
+    ): ResponseEntity<HttpStatus> {
+        return taxCreditService.updatePersonalItem(hospitalId, year, taxCreditPersonalId, itemList)
+    }
+
+    @DeleteMapping("/{year}/{hospitalId}/item/{id}")
+    fun deletePersonalItem(
+        @PathVariable hospitalId: String,
+        @PathVariable year: String,
+        @PathVariable id: Long,
+    ): ResponseEntity<HttpStatus> {
+        return taxCreditService.deletePersonalItem(hospitalId, year, id)
     }
 
 
