@@ -90,6 +90,7 @@ env:dev:
     - |
       cat <<EOF | tee deploy.env
       VERSION=${VERSION}
+      PROFILE=dev
       NAMESPACE=dv-platform-dev
       EOF
   artifacts:

@@ -5,6 +5,11 @@ spring:
     config:
       uri: https://config.dev.doctorvillage.net
 
+  datasource:
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 2
+
   rabbitmq:
     host: none
     port: 5672
