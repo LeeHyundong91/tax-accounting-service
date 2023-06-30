@@ -1,24 +1,33 @@
 package net.dv.tax.dto.app
 
+import org.hibernate.annotations.Comment
+
 data class DashboardMainDto (
 
-    val currentSales: DashboardValue? = null,
+    @Comment("현재까지 집계 된 매출금액")
+    val currentSales: DashboardValue? = DashboardValue(),
 
-    val expectCost: DashboardValue? = null,
+    @Comment("예상 비용")
+    val expectCost: DashboardValue? = DashboardValue(),
 
-    val expectIncome: DashboardValue? = null,
+    @Comment("예상 소득")
+    val expectIncome: DashboardValue? = DashboardValue(),
 
-    val expectTax: DashboardValue? = null,
+    @Comment("예상 세액")
+    val expectTax: DashboardValue? = DashboardValue(),
 
 )
 
 data class DashboardValue(
 
-    val mainValueAmount: Long? = 0,
+    @Comment("메인 금액")
+    val mainValueAmount: Long? = 15406507,
 
-    val subValueAmount: Long? = 0,
+    @Comment("전년 금액")
+    val subValueAmount: Long? = 1970344,
 
-    val compareValueAmount: Long? =0,
+    @Comment("차액")
+    val compareValueAmount: Long? =123333,
 
 
 )

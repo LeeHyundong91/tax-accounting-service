@@ -37,9 +37,6 @@ class ConsultingReportService(
 
         data.purchaseTypeData =
             purchaseReportRepository.findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId, yearMonth)
-
-
-
         return data
 
     }

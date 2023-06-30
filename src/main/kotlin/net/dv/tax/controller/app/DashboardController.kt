@@ -2,8 +2,10 @@ package net.dv.tax.controller.app
 
 import mu.KotlinLogging
 import net.dv.tax.dto.app.ConsultingReportDto
+import net.dv.tax.dto.app.DashboardMainDto
 import net.dv.tax.dto.app.MonthlyReportDto
 import net.dv.tax.service.app.ConsultingReportService
+import net.dv.tax.service.app.DashboardMainService
 import net.dv.tax.service.app.SalesManagementService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class DashboardController(
     private val salesManagementService: SalesManagementService,
     private val consultingReportService: ConsultingReportService,
+    private val dashboardMainService: DashboardMainService,
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -33,8 +36,16 @@ class DashboardController(
     fun mainConsulting(
         @PathVariable hospitalId: String,
         @PathVariable yearMonth: String,
-        ): ConsultingReportDto {
+    ): ConsultingReportDto {
         return consultingReportService.mainReport(hospitalId, yearMonth)
+    }
+
+    @GetMapping("/main/{yearMonth}/{hospitalId}")
+    fun mainDashboard(
+        @PathVariable hospitalId: String,
+        @PathVariable yearMonth: String,
+    ): DashboardMainDto {
+        return dashboardMainService.dashboard(hospitalId, yearMonth)
     }
 
 
