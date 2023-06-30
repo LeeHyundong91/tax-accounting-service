@@ -149,3 +149,4 @@ interface TaxCreditPersonalRepository : JpaRepository<TaxCreditPersonalEntity, L
 
 interface TaxCreditPersonalItemRepository:JpaRepository<TaxCreditPersonalItemEntity, Long>
 
+//interface EstimatedTaxRepository:JpaRepository<EstimatedTaxEntity, Long>

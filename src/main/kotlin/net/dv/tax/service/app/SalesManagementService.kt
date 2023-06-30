@@ -18,7 +18,8 @@ class SalesManagementService(
     private val log = KotlinLogging.logger {}
 
 
-    fun getSalesManagementList(hospitalId: String, yearMonth: YearMonth): MonthlyReportDto {
+    fun getSalesManagementList(hospitalId: String, yearMonth: String): MonthlyReportDto {
+
 
         log.error { "yearMonth $yearMonth" }
 
@@ -26,9 +27,9 @@ class SalesManagementService(
 
         val currentAmount = currentMonthData.totalAmount ?: 0
         val beforeAmount =
-            salesPaymentMethodService.makeData(hospitalId, yearMonth.minusMonths(1).toString()).totalAmount ?: 0
+            salesPaymentMethodService.makeData(hospitalId, YearMonth.parse(yearMonth).minusMonths(1).toString()).totalAmount ?: 0
         val beforeYear =
-            salesPaymentMethodService.makeData(hospitalId, yearMonth.minusYears(1).toString()).totalAmount ?: 0
+            salesPaymentMethodService.makeData(hospitalId, YearMonth.parse(yearMonth).minusYears(1).toString()).totalAmount ?: 0
 
         val salesTotal = MonthlySalesTotalReportDto(
             currentMonthAmount = currentAmount,

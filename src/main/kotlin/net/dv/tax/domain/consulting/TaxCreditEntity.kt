@@ -73,8 +73,6 @@ data class TaxCreditItemEntity(
     @Comment("3년차 공제액")
     var itemValue3: Long? = 0,
 
-    var activeCategory: String? = null,
-
     )
 
 @Comment("세액공제 병원장 목록")
