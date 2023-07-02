@@ -111,7 +111,7 @@ interface TaxCreditRepository : JpaRepository<TaxCreditEntity, Long> {
     fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, yearMonth: String): TaxCreditEntity?
 }
 
-interface TaxCreditItemRepository: JpaRepository<TaxCreditItemEntity, Long>
+interface TaxCreditItemRepository : JpaRepository<TaxCreditItemEntity, Long>
 
 interface TaxCreditPersonalRepository : JpaRepository<TaxCreditPersonalEntity, Long> {
 
@@ -127,26 +127,47 @@ interface TaxCreditPersonalRepository : JpaRepository<TaxCreditPersonalEntity, L
     )
     fun directorAndStakeList(hospitalId: String): List<DirectorAndStake>
 
-    fun findAllByHospitalIdAndDirectorAndDirectorId(hospitalId: String, director:String, directorId: String): TaxCreditPersonalEntity?
+    fun findAllByHospitalIdAndDirectorAndDirectorId(
+        hospitalId: String,
+        director: String,
+        directorId: String,
+    ): TaxCreditPersonalEntity?
 
     fun findAllByHospitalIdAndResultYearMonthStartingWith(
         hospitalId: String,
         yearMonth: String,
     ): List<TaxCreditPersonalEntity>
 
-    @Query(nativeQuery = true, value = "" +
-            "select sum(LAST_YEAR_AMOUNT)       as lastYearAmount,\n" +
-            "       sum(CURRENT_ACCRUALS)       as currentAccruals,\n" +
-            "       sum(VANISHING_AMOUNT)       as vanishingAmount,\n" +
-            "       sum(CURRENT_DEDUCTION)      as currentDeduction,\n" +
-            "       sum(AMOUNT_CARRIED_FORWARD) as amountCarriedForward\n" +
-            "from tax_credit_personal_item\n" +
-            "  where TAX_CREDIT_PERSONAL_ID = ?1")
+    @Query(
+        nativeQuery = true, value = "" +
+                "select sum(LAST_YEAR_AMOUNT)       as lastYearAmount,\n" +
+                "       sum(CURRENT_ACCRUALS)       as currentAccruals,\n" +
+                "       sum(VANISHING_AMOUNT)       as vanishingAmount,\n" +
+                "       sum(CURRENT_DEDUCTION)      as currentDeduction,\n" +
+                "       sum(AMOUNT_CARRIED_FORWARD) as amountCarriedForward\n" +
+                "from tax_credit_personal_item\n" +
+                "  where TAX_CREDIT_PERSONAL_ID = ?1"
+    )
     fun personalTotalAmount(taxCreditPersonalId: Long): PersonalSum
 
 
 }
 
-interface TaxCreditPersonalItemRepository:JpaRepository<TaxCreditPersonalItemEntity, Long>
+interface TaxCreditPersonalItemRepository : JpaRepository<TaxCreditPersonalItemEntity, Long>
 
-//interface EstimatedTaxRepository:JpaRepository<EstimatedTaxEntity, Long>
+interface EstimatedTaxRepository : JpaRepository<EstimatedTaxEntity, Long> {
+    fun findTopByHospitalIdAndResultYearMonthStartingWith(hospitalId: String, yearMonth: String): EstimatedTaxEntity?
+}
+
+interface EstimatedTaxPersonalRepository : JpaRepository<EstimatedTaxPersonalEntity, Long> {
+
+    fun findAllByHospitalIdAndDirectorAndDirectorId(
+        hospitalId: String,
+        director: String,
+        directorId: String,
+    ): EstimatedTaxPersonalEntity?
+
+}
+
+interface EstimatedTaxItemRepository : JpaRepository<EstimatedTaxItemEntity, Long>
+
