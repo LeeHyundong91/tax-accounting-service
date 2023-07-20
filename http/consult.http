@@ -1,0 +1,4 @@
+GET {{host}}/v1/consulting/purchase/report/2022/cid01
+Accept: application/json
+
+###
