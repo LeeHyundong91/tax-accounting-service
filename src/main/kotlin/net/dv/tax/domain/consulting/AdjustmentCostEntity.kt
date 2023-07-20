@@ -41,8 +41,7 @@ data class AdjustmentCostEntity(
     @BatchSize(size = 10)
     @JoinColumn(name = "ADJUSTMENT_COST_ID")
     var detailList: MutableList<AdjustmentCostItemEntity> = mutableListOf(),
-
-    )
+)
 
 @Comment("결산조정비용 항목")
 @Suppress("JpaAttributeTypeInspection")
@@ -76,6 +75,4 @@ data class AdjustmentCostItemEntity(
     var endDate: String? = null,
 
     var memo: String? = null,
-
-
-    )
+)
