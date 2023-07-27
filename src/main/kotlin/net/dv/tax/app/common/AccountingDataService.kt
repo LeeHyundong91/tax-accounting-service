@@ -42,6 +42,7 @@ class AccountingDataService(
 
 
     /*PROTO TYPE*/
+    // TODO("refactoring : 리스너 이동이 필요함.")
     @RabbitListener(queues = ["tax.excel.queue"])
     fun getMessage(@Payload result: QueueDto) {
         log.error { "upload before !!" }
