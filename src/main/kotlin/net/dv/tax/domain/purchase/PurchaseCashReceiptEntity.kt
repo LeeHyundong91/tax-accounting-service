@@ -6,7 +6,7 @@ import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 
 @Entity
-@Table(name = "purchase_cash_receipt")
+@Table(name = "PURCHASE_CASH_RECEIPT")
 @Comment("현금영수증매입관리")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)
@@ -94,5 +94,4 @@ class PurchaseCashReceiptEntity(
     @Comment("작성자")
     @Column(name = "WRITER")
     var writer: String? = null,
-
-    )
+)

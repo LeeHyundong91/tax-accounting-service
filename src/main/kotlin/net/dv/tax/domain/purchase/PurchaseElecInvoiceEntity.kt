@@ -2,6 +2,8 @@ package net.dv.tax.domain.purchase
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import net.dv.tax.domain.AbstractCodeConverter
+import net.dv.tax.domain.Code
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.annotation.CreatedDate
@@ -10,8 +12,8 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "purchase_elec_invoice")
-@Comment("전자세금계산서매입관리")
+@Table(name = "PURCHASE_ELEC_INVOICE")
+@Comment("전자(세금)계산서 - 매입")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
@@ -28,6 +30,10 @@ data class PurchaseElecInvoiceEntity(
 
     @Comment("업로드 파일 ID")
     var dataFileId: Long? = null,
+
+    @Column(name = "BOOK_TYPE")
+    @Comment("계산서 유형")
+    var type: Type? = null,
 
     @Comment("발급 일자")
     @Column(name = "ISSUE_DATE")
@@ -115,4 +121,12 @@ data class PurchaseElecInvoiceEntity(
     @Column(name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
-)
+) {
+    enum class Type(override val code: String, override val label: String): Code {
+        TAX("TT", "전자세금계산서"),
+        NON_TAX("NT", "전자계산서");
+    }
+
+    @Converter(autoApply = true)
+    class TypeConvertor: AbstractCodeConverter<Type>({ cd -> Type.values().first { cd == it.code }})
+}

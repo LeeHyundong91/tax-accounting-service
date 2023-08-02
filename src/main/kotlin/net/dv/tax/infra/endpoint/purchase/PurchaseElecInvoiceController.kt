@@ -19,7 +19,7 @@ class PurchaseElecInvoiceController(
     private val log = KotlinLogging.logger {}
 
     //전자 세금계산서 매입관리 항목 조회
-    @GetMapping("{hospitalId}/list")
+    @GetMapping("/{hospitalId}/list")
     fun getPurchaseElecInvoice(@PathVariable hospitalId: String, purchaseQueryDto: PurchaseQueryDto): ResponseEntity<PurchaseElecInvoiceListDto> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")

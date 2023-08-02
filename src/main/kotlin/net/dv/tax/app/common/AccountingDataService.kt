@@ -54,6 +54,7 @@ class AccountingDataService(
     fun saveOriginData(
         hospitalId: String,
         writer: String,
+        dataCategory: String,
         multipartFiles: List<MultipartFile>,
     ): ResponseEntity<ResponseFileUploadDto> {
 
@@ -76,8 +77,8 @@ class AccountingDataService(
 
                 val dataCategoryKor = partOfName[1].trim()
 
-                val dataCategory = MenuCategoryCode.values().find { it.purchaseFileName == dataCategoryKor }?.name
-                    ?: throw RuntimeException("Invalid data category: $dataCategoryKor")
+//                val dataCategory = MenuCategoryCode.values().find { it.purchaseFileName == dataCategoryKor }?.name
+//                    ?: throw RuntimeException("Invalid data category: $dataCategoryKor")
 
                 val companyName = partOfName[2]
 

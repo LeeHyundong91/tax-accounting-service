@@ -9,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "purchase_credit_card")
+@Table(name = "PURCHASE_CREDIT_CARD")
 @Comment("신용카드매입관리")
 @Suppress("JpaAttributeTypeInspection")
 @DynamicUpdate
@@ -18,7 +18,7 @@ data class PurchaseCreditCardEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    val id: Long? = null,
 
     @Comment("병원아이디")
     @Column(name = "HOSPITAL_ID")

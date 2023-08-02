@@ -36,7 +36,7 @@ data class PurchaseCreditCardTotalSearch(
 
 data class PurchaseCreditCardDto (
 
-    val id: Int? = null,
+    val id: Long? = null,
 
     @Comment("병원아이디")
     var hospitalId: String? = null,
