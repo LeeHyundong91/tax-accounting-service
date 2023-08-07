@@ -32,7 +32,7 @@ data class ConsultingReportEntity(
 
     @Column(name = "CONSULT_SEQ")
     @Comment("리포트 차수")
-    val seq: Int? = null,
+    val seq: Int? = 4,
 
     @Embedded
     val period: Period? = null,
