@@ -28,11 +28,14 @@ data class PurchaseHandwrittenEntity(
     @Comment("매출표 유형")
     var type: Type? = null,
 
+    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
+    @Column(name = "DATA_FILE_ID")
     var dataFileId: Long? = null,
 
     @Comment("발급일자")
+    @Column(name = "ISSUE_DATE")
     val issueDate: String?,
 
     @Column(name = "SUPPLIER")
@@ -40,6 +43,7 @@ data class PurchaseHandwrittenEntity(
     val supplier: String?,
 
     @Comment("품목")
+    @Column(name = "ITEM_NAME")
     val itemName: String?,
 
     @Column(name = "SUPPLY_PRICE")
@@ -51,6 +55,7 @@ data class PurchaseHandwrittenEntity(
     var debitAccount: String? = null,
 
     @Comment("세액")
+    @Column(name = "TAX_AMOUNT")
     val taxAmount: Long? = 0,
 
     @NotNull
@@ -59,6 +64,7 @@ data class PurchaseHandwrittenEntity(
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
+    @Column(name = "WRITER")
     val writer: String? = null,
 
     @Column(name = "IS_DELETE")

@@ -26,21 +26,27 @@ data class PurchasePassbookEntity(
     var hospitalId: String? = null,
 
     @Comment("업로드 파일 ID")
+    @Column(name = "DATA_FILE_ID")
     var dataFileId: Long? = null,
 
     @Comment("거래일")
+    @Column(name = "TRANSACTION_DATE")
     val transactionDate: String? = null,
 
     @Comment("적요")
+    @Column(name = "SUMMARY")
     val summary: String? = null,
 
     @Comment("입금액")
+    @Column(name = "DEPOSIT_AMOUNT")
     val depositAmount: Long? = null,
 
     @Comment("출금액")
+    @Column(name = "WITHDRAWN_AMOUNT")
     val withdrawnAmount: Long? = null,
 
     @Comment("잔액")
+    @Column(name = "BALANCE")
     val balance: Long? = null,
 
     @Comment("등록일(업로드일시")

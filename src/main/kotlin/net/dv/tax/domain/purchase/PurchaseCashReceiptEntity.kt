@@ -18,21 +18,27 @@ class PurchaseCashReceiptEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
     @Comment("업로드 파일 ID")
+    @Column(name = "DATA_FILE_ID")
     var dataFileId: Long? = null,
 
     @Comment("일자")
+    @Column(name = "BILLING_DATE")
     var billingDate: String? = null,
 
     @Comment("회계코드")
+    @Column(name = "ACCOUNT_CODE")
     var accountCode: String? = null,
 
     @Comment("거래처")
+    @Column(name = "FRANCHISEE_NAME")
     var franchiseeName: String? = null,
 
     @Comment("구분")
+    @Column(name = "CORPORATION_TYPE")
     var corporationType: String? = null,
 
     @Column(name = "ITEM_NAME")

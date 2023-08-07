@@ -22,26 +22,34 @@ data class SalesOtherBenefitsEntity(
     val id: Long? = null,
 
     @Comment("병원 아이디")
+    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
     @Comment("기간 yyyy-MM")
+    @Column(name = "DATA_PERIOD")
     var dataPeriod: String? = null,
 
     @Comment("항목명")
+    @Column(name = "ITEM_NAME")
     var itemName: String? = null,
 
     @Comment("본인부담금")
+    @Column(name = "OWN_CHARGE")
     var ownCharge: Long? = 0,
 
     @Comment("기관부담금")
+    @Column(name = "AGENCY_EXPENSE")
     val agencyExpense: Long? = 0,
 
     @Comment("합계")
+    @Column(name = "TOTAL_AMOUNT")
     val totalAmount: Long? = 0,
 
     @Comment("삭제여부")
+    @Column(name = "IS_DELETE")
     val isDelete: Boolean? = false,
 
+    @Column(name = "WIRTER")
     var writer: String? = null,
 
     @NotNull
@@ -49,5 +57,4 @@ data class SalesOtherBenefitsEntity(
     @Column(updatable = false, name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
-
-    )
+)

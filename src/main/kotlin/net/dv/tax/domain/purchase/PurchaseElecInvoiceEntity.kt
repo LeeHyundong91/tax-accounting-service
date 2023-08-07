@@ -29,6 +29,7 @@ data class PurchaseElecInvoiceEntity(
     var hospitalId: String? = null,
 
     @Comment("업로드 파일 ID")
+    @Column(name = "DATA_FILE_ID")
     var dataFileId: Long? = null,
 
     @Column(name = "BOOK_TYPE")

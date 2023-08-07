@@ -25,39 +25,51 @@ data class PurchaseCreditCardEntity(
     var hospitalId: String? = null,
 
     @Comment("업로드 파일 ID")
+    @Column(name = "DATA_FILE_ID")
     var dataFileId: Long? = null,
 
     @Comment("일자")
+    @Column(name = "BILLING_DATE")
     var billingDate: String? = null,
 
     @Comment("코드")
+    @Column(name = "ACCOUNT_CODE")
     var accountCode: String? = null,
 
     @Comment("거래처")
+    @Column(name = "FRANCHISEE_NAME")
     var franchiseeName: String? = null,
 
     @Comment("구분")
+    @Column(name = "CORPORATION_TYPE")
     var corporationType: String? = null,
 
     @Comment("품명")
+    @Column(name = "ITEM_NAME")
     var itemName: String? = null,
 
     @Comment("공급가액")
+    @Column(name = "SUPPLY_PRICE")
     var supplyPrice: Long? = null,
 
     @Comment("세액")
+    @Column(name = "TAX_AMOUNT")
     var taxAmount: Long? = 0,
 
     @Comment("비과세")
+    @Column(name = "NOE_TAX_AMOUNT")
     var nonTaxAmount: Long? = 0,
 
     @Comment("합계")
+    @Column(name = "TOTAL_AMOUNT")
     var totalAmount: Long? = 0,
 
     @Comment("국세청(공제여부)")
+    @Column(name = "IS_DEDUCTION")
     var isDeduction: Boolean? = false,
 
     @Comment("추천유형(불공제")
+    @Column(name = "IS_RECOMMENDTED_DECDUCTION")
     var isRecommendDeduction: Boolean? = false,
 
     @Comment("전표유형1")
@@ -69,21 +81,27 @@ data class PurchaseCreditCardEntity(
     var statementType2: String? = null,
 
     @Comment("차변계정")
+    @Column(name = "DEBTOR_ACCOUNT")
     var debtorAccount: String? = null,
 
     @Comment("대변계정")
+    @Column(name = "CREDIT_ACCOUNT")
     var creditAccount: String? = null,
 
     @Comment("분개전송")
+    @Column(name = "SEPARATE_SEND")
     var separateSend: String? = null,
 
     @Comment("전표상태")
+    @Column(name = "STATEMENT_STATUS")
     var statementStatus: String? = null,
 
     @Comment("작성자")
+    @Column(name = "WRITER")
     var writer: String? = null,
 
     @Comment("삭제")
+    @Column(name = "IS_DELETE")
     var isDelete: Boolean? = false,
 
     @Comment("등록일(업로드일시")

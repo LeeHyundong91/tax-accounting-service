@@ -24,20 +24,26 @@ data class SalesAgentEntity(
     @JsonIgnore
     val id: Long? = null,
 
+    @Column(name = "RECEIVE_DATA_ID")
     var receiveDataId: Long,
 
+    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
     @Comment("기간")
+    @Column(name = "APPROVAL_YEAR_MONTH")
     val approvalYearMonth: String? = null,
 
     @Comment("건수")
+    @Column(name = "SALES_COUNT")
     val salesCount: Long? = null,
 
     @Comment("총매출액")
+    @Column(name = "TOTAL_SALES")
     val totalSales: Long? = null,
 
     @Comment("판매(결제)대행업체 상호")
+    @Column(name = "AGENT_NAME")
     val agentName: String? = null,
 
     @NotNull
@@ -46,6 +52,4 @@ data class SalesAgentEntity(
     @Column(updatable = false, name = "CREATED_AT")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime = LocalDateTime.now(),
-
-
-    )
+)

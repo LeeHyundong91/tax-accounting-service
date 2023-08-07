@@ -16,7 +16,7 @@ import java.util.*
 class EmployeeRequestEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
@@ -147,7 +147,7 @@ class EmployeeRequestEntity(
 class EmployeeEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
@@ -281,7 +281,7 @@ class EmployeeEntity(
 @EntityListeners(AuditingEntityListener::class)
 class EmployeeHistoryEntity(
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
@@ -417,7 +417,7 @@ class EmployeeHistoryEntity(
 @EntityListeners(AuditingEntityListener::class)
 class EmployeeAttachFileEntity(
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
@@ -460,7 +460,7 @@ class EmployeeAttachFileEntity(
 @EntityListeners(AuditingEntityListener::class)
 class EmployeeSalaryMngEntity(
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
@@ -508,7 +508,7 @@ class EmployeeSalaryMngEntity(
 @EntityListeners(AuditingEntityListener::class)
 class EmployeeSalaryEntity(
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
