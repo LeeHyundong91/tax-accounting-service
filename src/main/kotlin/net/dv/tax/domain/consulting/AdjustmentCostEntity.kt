@@ -32,7 +32,7 @@ data class AdjustmentCostEntity(
     @Column(name = "RESULT_YEAR_MONTH")
     var resultYearMonth: String? = null,
 
-    @Column(name = "WIRTER")
+    @Column(name = "WRITER")
     var writer: String? = null,
 
     @NotNull
@@ -63,20 +63,27 @@ data class AdjustmentCostItemEntity(
     var adjustmentCostId: Long? = null,
 
     @Comment("분류 (추가비용, 소득조정)")
+    @Column(name = "CATEGORY")
     var category: String? = null,
 
     @Comment("항목")
+    @Column(name = "ITEM_NAME")
     var itemName: String? = null,
 
     @Comment("금액")
+    @Column(name = "ITEM_VALUE")
     var itemValue: Long? = 0,
 
     @Comment("FINAL / MONTH / PERIOD")
+    @Column(name = "DISTRIBUTION")
     var distribution: String? = null,
 
+    @Column(name = "START_DATE")
     var startDate: String? = null,
 
+    @Column(name = "END_DATE")
     var endDate: String? = null,
 
+    @Column(name = "MEMO")
     var memo: String? = null,
 )

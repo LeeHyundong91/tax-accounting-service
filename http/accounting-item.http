@@ -1,0 +1,4 @@
+GET {{host}}/v1/accounting-items
+Accept: application/json
+
+###
