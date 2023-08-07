@@ -16,7 +16,7 @@ class FileUploadController(
     private val log = KotlinLogging.logger {}
 
     //파일 업로드
-    // 수정이 필요
+    // TODO 수정이 필요
     @PostMapping("/tax/file/{hospitalId}")
     fun taxFileUpload(
         files: List<MultipartFile>,
@@ -24,7 +24,7 @@ class FileUploadController(
     ): ResponseEntity<ResponseFileUploadDto> {
 
         val writer = "tester"
-        val dataCategory = "" // data category 값이 정의가 안됨
+        val dataCategory = "" // TODO data category 값이 정의가 안됨
 
         return accountingDataService.saveOriginData(hospitalId, writer, dataCategory, files)
     }
