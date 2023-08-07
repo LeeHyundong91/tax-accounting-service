@@ -8,7 +8,7 @@ import net.dv.tax.app.consulting.SalesTypeRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ConsultingReportService(
+class ConsultingReportsService(
     private val purchaseReportRepository: PurchaseReportRepository,
     private val salesTypeRepository: SalesTypeRepository,
 ) {
