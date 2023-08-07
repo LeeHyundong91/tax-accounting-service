@@ -23,12 +23,16 @@ data class AdjustmentCostEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Column(name = "CONSULTING_REPORT_ID")
     var consultingReportId: Long? = null,
 
+    @Column(name = "HOSPITAL_ID")
     var hospitalId: String? = null,
 
+    @Column(name = "RESULT_YEAR_MONTH")
     var resultYearMonth: String? = null,
 
+    @Column(name = "WIRTER")
     var writer: String? = null,
 
     @NotNull
