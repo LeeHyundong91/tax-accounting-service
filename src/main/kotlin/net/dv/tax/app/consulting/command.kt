@@ -8,6 +8,8 @@ interface ConsultingReportOperationCommand {
 
     fun delete(options: ConsultingReport.() -> Unit): ConsultingReport
 
+    fun update(options: ConsultingReport.() -> Unit): ConsultingReport
+
 }
 
 interface ConsultingReportQueryCommand {
@@ -15,7 +17,7 @@ interface ConsultingReportQueryCommand {
 
     fun search(options: ConsultingReport.() -> Unit): ConsultingReport
 
-    fun fetch(options: ConsultingReport.() -> Unit): ConsultingReport
+    fun fetch(options: ConsultingReport.() -> Unit): ConsultingReports
 
 }
 

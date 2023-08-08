@@ -56,6 +56,10 @@ class ConsultingReportService(
         }
     }
 
+    override fun update(options: ConsultingReport.() -> Unit): ConsultingReport {
+        TODO("Not yet implemented")
+    }
+
     override fun search(options: ConsultingReport.() -> Unit): ConsultingReport {
         ConsultingReport().apply(options).let { consultingReport ->
             val report = repository.findById(consultingReport.id!!).orElseThrow { IllegalArgumentException("not found report") }
@@ -63,7 +67,7 @@ class ConsultingReportService(
         }
     }
 
-    override fun fetch(options: ConsultingReport.() -> Unit): ConsultingReport {
+    override fun fetch(options: ConsultingReport.() -> Unit): ConsultingReports {
         TODO("Not yet implemented")
     }
 
