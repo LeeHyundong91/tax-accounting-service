@@ -14,6 +14,6 @@ abstract class AbstractCodeConverter<T>(val convert: (String) -> T): AttributeCo
     }
 
     override fun convertToEntityAttribute(code: String?): T? {
-        return code?.takeIf { it.isEmpty() }?.let { convert(code) }
+        return code?.takeIf { it.isNotEmpty() }?.let { convert(code) }
     }
 }

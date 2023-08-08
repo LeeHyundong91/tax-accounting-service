@@ -28,42 +28,42 @@ data class ConsultingReportEntity(
 
     @Column(name = "YEAR")
     @Comment("리포트 연도")
-    val year: Int? = null,
+    var year: Int? = null,
 
     @Column(name = "CONSULT_SEQ")
     @Comment("리포트 차수")
-    val seq: Int? = 4,
+    var seq: Int? = 4,
 
     @Embedded
-    val period: Period? = null,
+    var period: Period? = null,
 
     @Column(name = "WRITER")
     @Comment("작성자")
-    val writer: String? = null,
+    var writer: String? = null,
 
     @Column(name = "APPROVER")
     @Comment("승인자")
-    val approver: String? = null,
+    var approver: String? = null,
 
     @Column(name = "STATUS")
     @Comment("리포트 상황")
-    val status: Status = Status.WRITING,
+    var status: Status? = Status.WRITING,
 
     @Column(name = "SUBMITTED_AT")
     @Comment("승인신청일")
-    val submittedAt: LocalDateTime? = null,
+    var submittedAt: LocalDateTime? = null,
 
     @Column(name = "RESPONSE_AT")
     @Comment("승인/거절일")
-    val responseAt: LocalDateTime? = null,
+    var responseAt: LocalDateTime? = null,
 
     @Column(name = "OPENING_AT")
     @Comment("공개시작일")
-    val openingAt: LocalDateTime? = null,
+    var openingAt: LocalDateTime? = null,
 
     @Column(name = "VISIBLE_COUNT")
     @Comment("공개일수")
-    val visibleCount: Int? = 0,
+    var visibleCount: Int? = 0,
 
     @NotNull
     @CreatedDate
@@ -74,10 +74,10 @@ data class ConsultingReportEntity(
     @Embeddable
     class Period(
         @Column(name = "PERIOD_BEGIN")
-        val begin: String,
+        var begin: String,
 
         @Column(name = "PERIOD_END")
-        val end: String,
+        var end: String,
     )
 
     enum class Status(override val code: String, override val label: String) : Code {

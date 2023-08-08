@@ -6,11 +6,7 @@ interface ConsultingReportOperationCommand {
 
     fun write(options: ConsultingReport.() -> Unit): ConsultingReport
 
-    fun update(options: ConsultingReport.() -> Unit): ConsultingReport
-
     fun delete(options: ConsultingReport.() -> Unit): ConsultingReport
-
-
 
 }
 
