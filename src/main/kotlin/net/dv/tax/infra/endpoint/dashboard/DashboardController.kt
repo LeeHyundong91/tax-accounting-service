@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import net.dv.tax.app.dto.app.ConsultingReportDto
 import net.dv.tax.app.dto.app.DashboardMainDto
 import net.dv.tax.app.dto.app.MonthlyReportDto
-import net.dv.tax.app.dashboard.ConsultingReportService
+import net.dv.tax.app.dashboard.ConsultingReportsService
 import net.dv.tax.app.dashboard.DashboardMainService
 import net.dv.tax.app.dashboard.SalesManagementService
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/dashboard/report")
 class DashboardController(
     private val salesManagementService: SalesManagementService,
-    private val consultingReportService: ConsultingReportService,
+    private val consultingReportService: ConsultingReportsService,
     private val dashboardMainService: DashboardMainService,
 ) {
     private val log = KotlinLogging.logger {}
