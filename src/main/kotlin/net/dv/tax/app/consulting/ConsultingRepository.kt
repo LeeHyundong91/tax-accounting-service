@@ -174,3 +174,11 @@ interface EstimatedTaxItemRepository : JpaRepository<EstimatedTaxItemEntity, Lon
 interface ConsultingReportRepository: JpaRepository<ConsultingReportEntity, Long> {
 
 }
+
+interface ConsultingReportQueryRepository {
+
+    fun fetch(query: ConsultingReport): List<ConsultingReportEntity>
+
+    fun getCount(query: ConsultingReport): Long
+
+}

@@ -14,7 +14,7 @@ class ConsultingReportService(
     override fun write(options: ConsultingReport.() -> Unit): ConsultingReport {
         ConsultingReport().apply(options).let { consultingReport ->
             val writer = hospitalMemberRepository.findByAccountId(consultingReport.writer!!)
-            val approver = hospitalMemberRepository.findByIdAndRole(consultingReport.hospitalId!!, "tax.ACC")
+            val approver = hospitalMemberRepository.findByAccountId(consultingReport.approver!!)
 
             val reportEntity = ConsultingReportEntity(
                 hospitalId = consultingReport.hospitalId,
@@ -35,21 +35,20 @@ class ConsultingReportService(
                 createdAt = LocalDateTime.now()
             )
 
+            println(reportEntity.status)
+
             repository.save(reportEntity)
 
             return mapToValueObject(reportEntity)
         }
     }
 
-    override fun update(options: ConsultingReport.() -> Unit): ConsultingReport {
-        TODO("Not yet implemented")
-    }
-
     override fun delete(options: ConsultingReport.() -> Unit): ConsultingReport {
         ConsultingReport().apply(options).let { consultingReport ->
             val report = repository.findById(consultingReport.id!!).orElseThrow { IllegalArgumentException("not found report") }
 
-            if(report.status != ConsultingReportEntity.Status.WRITING) throw IllegalArgumentException("작성중이 아닌 리포트는 삭제 불가합니다.")
+            if(report.status != ConsultingReportEntity.Status.WRITING)
+                throw IllegalArgumentException("작성중이 아닌 리포트는 삭제 불가합니다.")
 
             repository.delete(report)
 
@@ -78,7 +77,7 @@ class ConsultingReportService(
             endPeriod = entity.period?.end,
             writer = entity.writer,
             approver = entity.approver,
-            status = entity.status.name,
+            status = entity.status?.name,
             submittedAt = entity.submittedAt,
             responseAt = entity.responseAt,
             openingAt = entity.openingAt,
