@@ -57,8 +57,65 @@ class ConsultingReportService(
     }
 
     override fun update(options: ConsultingReport.() -> Unit): ConsultingReport {
-        TODO("Not yet implemented")
+        return ConsultingReport().apply(options).let { consultingReport ->
+            val report = repository.findById(consultingReport.id!!).orElseThrow { IllegalArgumentException("not found report") }
+
+            // Early exit for pending and approved statuses
+            report.status?.let { validateReportStatus(it) }
+
+            when (report.status) {
+                ConsultingReportEntity.Status.REJECTED -> handleRejectedStatus(consultingReport, report)
+                ConsultingReportEntity.Status.WRITING -> handleWritingStatus(consultingReport, report)
+                else -> ConsultingReport()
+            }
+        }
     }
+
+    private fun validateReportStatus(status: ConsultingReportEntity.Status) {
+        when (status) {
+            ConsultingReportEntity.Status.PENDING -> throw IllegalArgumentException("승인 대기중인 작성건은 수정이 불가합니다!")
+            ConsultingReportEntity.Status.APPROVED -> throw IllegalArgumentException("이미 승인이 완료된 리포트는 수정이 불가합니다!")
+            else -> { /* No action needed */ }
+        }
+    }
+
+    private fun handleRejectedStatus(consultingReport: ConsultingReport, report: ConsultingReportEntity): ConsultingReport {
+        var changed = false
+        if (consultingReport.beginPeriod != null && report.period?.begin != consultingReport.beginPeriod) {
+            changed = true
+            report.period?.begin = consultingReport.beginPeriod!!
+        }
+        if (consultingReport.endPeriod != null && report.period?.end != consultingReport.endPeriod) {
+            changed = true
+            report.period?.end = consultingReport.endPeriod!!
+        }
+        if (consultingReport.openingAt != null && report.openingAt != consultingReport.openingAt) {
+            changed = true
+            report.openingAt = consultingReport.openingAt
+        }
+        if (consultingReport.visibleCount != null && report.visibleCount != consultingReport.visibleCount) {
+            changed = true
+            report.visibleCount = consultingReport.visibleCount
+        }
+
+        if (changed) {
+            report.submittedAt = LocalDateTime.now()
+            report.status = ConsultingReportEntity.Status.PENDING
+            repository.save(report)
+            return mapToValueObject(report)
+        }
+
+        return ConsultingReport()
+    }
+
+    private fun handleWritingStatus(consultingReport: ConsultingReport, report: ConsultingReportEntity): ConsultingReport {
+        report.approver = consultingReport.approver
+        report.status = ConsultingReportEntity.Status.PENDING
+        report.submittedAt = LocalDateTime.now()
+        repository.save(report)
+        return mapToValueObject(report)
+    }
+
 
     override fun search(options: ConsultingReport.() -> Unit): ConsultingReport {
         ConsultingReport().apply(options).let { consultingReport ->

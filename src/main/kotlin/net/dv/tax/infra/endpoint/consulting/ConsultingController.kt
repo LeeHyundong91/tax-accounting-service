@@ -34,15 +34,15 @@ class ConsultingController(
     /**
      * 응답대기에서 수정불가!
      * 작성중일때 수정가능!
-     *
+     * 작성중 -> 승인요청 + 승인관리자 선택하기
      * */
-    @PutMapping
+    @PatchMapping
     fun update(@RequestBody request: ConsultingReportDto): ResponseEntity<ConsultingReport> {
         return ResponseEntity.ok(operationCommand.update {
+            this.id = request.id
             this.year = request.year
             this.beginPeriod = request.beginPeriod
             this.endPeriod = request.endPeriod
-            this.writer = request.writer
             this.approver = request.approver
             this.openingAt = request.openingAt
             this.visibleCount = request.visibleCount
@@ -79,6 +79,7 @@ class ConsultingController(
     }
 
     data class ConsultingReportDto(
+        val id: Long? = 0,
         val size: Long? = 0,
         val offset: Long? = 30,
         val year: Int? = null,
