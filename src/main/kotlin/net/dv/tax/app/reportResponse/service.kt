@@ -23,6 +23,7 @@ class ReportResponseService(
 
             if(reportResponse.isApproved == false) {
                 consultingReport.status = ConsultingReportEntity.Status.REJECTED
+                consultingReport.responseAt = LocalDateTime.now()
 
                 val responseEntity = ReportResponseEntity(
                     report = consultingReport,
@@ -31,11 +32,14 @@ class ReportResponseService(
                     responseAt = LocalDateTime.now()
                 )
 
+                consultingReportRepository.save(consultingReport)
                 repository.save(responseEntity)
 
                 return mapToValueObject(responseEntity)
+
             } else {
                 consultingReport.status = ConsultingReportEntity.Status.APPROVED
+                consultingReport.responseAt = LocalDateTime.now()
 
                 consultingReportRepository.save(consultingReport)
 
