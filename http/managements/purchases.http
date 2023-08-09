@@ -1,0 +1,4 @@
+GET {{host}}/v1/purchase/credit-card/cid01/list
+Accept: application/json
+
+###

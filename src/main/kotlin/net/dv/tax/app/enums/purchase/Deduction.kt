@@ -15,7 +15,7 @@ enum class Deduction {
     }
 }
 
-fun getDeductionName(isDeduction: Boolean): String{
+fun getDeductionName(isDeduction: Boolean?): String{
     var deductionName = "";
 
     Deduction.values().filter {

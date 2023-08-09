@@ -1,6 +1,5 @@
 package net.dv.tax.infra.orm
 
-import com.querydsl.jpa.JPQLQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.app.purchase.PurchaseData
 import net.dv.tax.app.purchase.PurchaseJournalEntryQueryRepository

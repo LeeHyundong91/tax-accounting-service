@@ -15,7 +15,7 @@ enum class RecommendDeduction {
     }
 }
 
-fun getRecommendDeductionName(isRecommendDeduction: Boolean): String{
+fun getRecommendDeductionName(isRecommendDeduction: Boolean?): String{
     var recommendDeductionName = "";
 
     RecommendDeduction.values().filter {
