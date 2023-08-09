@@ -8,7 +8,8 @@ import java.time.LocalDateTime
 @Service
 class ConsultingReportService(
     val repository: ConsultingReportRepository,
-    val hospitalMemberRepository: VHospitalMemberRepository
+    val hospitalMemberRepository: VHospitalMemberRepository,
+    val queryRepository: ConsultingReportQueryRepository
 ): ConsultingReportOperationCommand, ConsultingReportQueryCommand {
 
     override fun write(options: ConsultingReport.() -> Unit): ConsultingReport {
@@ -125,7 +126,33 @@ class ConsultingReportService(
     }
 
     override fun fetch(options: ConsultingReport.() -> Unit): ConsultingReports {
-        TODO("Not yet implemented")
+        return ConsultingReport().apply(options).let {query ->
+            val reportList = queryRepository.fetch(query).map {
+                /*ConsultingReport(
+                    id = it.id,
+                    hospitalId = it.hospitalId,
+                    year = it.year,
+                    seq = it.seq,
+                    beginPeriod = it.period?.begin,
+                    endPeriod = it.period?.end,
+                    writer = it.writer,
+                    approver = it.approver,
+                    status = it.status?.name,
+                    submittedAt = it.submittedAt,
+                    responseAt = it.responseAt,
+                    openingAt = it.openingAt,
+                    visibleCount = it.visibleCount,
+                    createdAt = it.createdAt
+                )*/
+
+                mapToValueObject(it)
+            }
+
+            ConsultingReports(
+                reportList = reportList,
+                reportCount = queryRepository.getCount(query)
+            )
+        }
     }
 
     private fun mapToValueObject(entity: ConsultingReportEntity): ConsultingReport {
