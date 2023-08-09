@@ -121,37 +121,27 @@ class ConsultingReportService(
     override fun search(options: ConsultingReport.() -> Unit): ConsultingReport {
         ConsultingReport().apply(options).let { consultingReport ->
             val report = repository.findById(consultingReport.id!!).orElseThrow { IllegalArgumentException("not found report") }
+            countVisibleDays(report)
             return mapToValueObject(report)
         }
     }
 
     override fun fetch(options: ConsultingReport.() -> Unit): ConsultingReports {
         return ConsultingReport().apply(options).let {query ->
-            val reportList = queryRepository.fetch(query).map {
-                /*ConsultingReport(
-                    id = it.id,
-                    hospitalId = it.hospitalId,
-                    year = it.year,
-                    seq = it.seq,
-                    beginPeriod = it.period?.begin,
-                    endPeriod = it.period?.end,
-                    writer = it.writer,
-                    approver = it.approver,
-                    status = it.status?.name,
-                    submittedAt = it.submittedAt,
-                    responseAt = it.responseAt,
-                    openingAt = it.openingAt,
-                    visibleCount = it.visibleCount,
-                    createdAt = it.createdAt
-                )*/
-
-                mapToValueObject(it)
-            }
+            val reportList = queryRepository.fetch(query).map { mapToValueObject(it) }
 
             ConsultingReports(
                 reportList = reportList,
                 reportCount = queryRepository.getCount(query)
             )
+        }
+    }
+
+    //스케쥴링 필요
+    private fun countVisibleDays(report: ConsultingReportEntity) {
+        if (report.status == ConsultingReportEntity.Status.APPROVED) {
+            report.visibleCount?.minus(1)
+            repository.save(report)
         }
     }
 
