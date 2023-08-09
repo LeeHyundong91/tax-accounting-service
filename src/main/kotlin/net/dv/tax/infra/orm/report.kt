@@ -13,7 +13,7 @@ class ConsultingReportRepositoryImpl(private val factory: JPAQueryFactory): Cons
         TODO("Not yet implemented")
     }
 
-    override fun getCount(quer: ConsultingReport): Long {
+    override fun getCount(query: ConsultingReport): Long {
         TODO("Not yet implemented")
     }
 
