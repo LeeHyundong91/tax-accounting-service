@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableJpaAuditing
 @EnableFeignClients
 @EnableScheduling
+//@EnableJpaRepositories(repositoryImplementationPostfix = "d")
 class Application {
     companion object {
         const val VERSION: String = "v1"

@@ -1,11 +1,11 @@
 package net.dv.tax.app.consulting
 
-import net.dv.tax.domain.consulting.ExpectedIncomeEntity
-import net.dv.tax.domain.consulting.ExpectedIncomeItemEntity
-import net.dv.tax.domain.consulting.ExpectedIncomeMonthlyItemEntity
 import net.dv.tax.app.enums.consulting.AdjustmentCostItem
 import net.dv.tax.app.enums.consulting.ExpectedIncomeCategory
 import net.dv.tax.app.enums.consulting.ExpectedIncomeItem
+import net.dv.tax.domain.consulting.ExpectedIncomeEntity
+import net.dv.tax.domain.consulting.ExpectedIncomeItemEntity
+import net.dv.tax.domain.consulting.ExpectedIncomeMonthlyItemEntity
 import org.springframework.stereotype.Service
 
 @Service

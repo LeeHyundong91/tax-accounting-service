@@ -1,9 +1,9 @@
 package net.dv.tax.app.consulting
 
-import net.dv.tax.domain.consulting.*
 import net.dv.tax.app.dto.consulting.DirectorAndStake
 import net.dv.tax.app.dto.consulting.PersonalSum
 import net.dv.tax.app.dto.consulting.SgaExpense
+import net.dv.tax.domain.consulting.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -171,3 +171,14 @@ interface EstimatedTaxPersonalRepository : JpaRepository<EstimatedTaxPersonalEnt
 
 interface EstimatedTaxItemRepository : JpaRepository<EstimatedTaxItemEntity, Long>
 
+interface ConsultingReportRepository: JpaRepository<ConsultingReportEntity, Long> {
+
+}
+
+interface ConsultingReportQueryRepository {
+
+    fun fetch(query: ConsultingReport): List<ConsultingReportEntity>
+
+    fun getCount(query: ConsultingReport): Long
+
+}
