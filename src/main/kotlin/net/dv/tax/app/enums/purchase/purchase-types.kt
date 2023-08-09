@@ -10,5 +10,9 @@ enum class PurchaseType(override val code: String,
     TAX_INVOICE("TI", "전자세금계산서"),
     INVOICE("II", "전자계산서"),
     HANDWRITTEN_INVOICE("HI", "수기세금계산서"),
-    BASIC_RECEIPT("BR", "간이영수증"),
+    BASIC_RECEIPT("BR", "간이영수증"),;
+
+    companion object {
+        fun of(type: String): PurchaseType = values().first { it.code == type }
+    }
 }

@@ -1,4 +1,0 @@
-GET {{host}}/v1/purchase/confirmations/types
-Accept: application/json
-
-###
