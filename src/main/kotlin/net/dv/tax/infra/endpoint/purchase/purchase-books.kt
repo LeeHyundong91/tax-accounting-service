@@ -31,9 +31,9 @@ class PurchaseBooksEndpoints(
                              query: PurchaseQueryDto): ResponseEntity<PurchaseCreditCardListDto> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
-        val res =  purchaseCreditCardService.getPurchaseCreditCard(hospitalId, query)
+//        val res =  purchaseCreditCardService.getPurchaseCreditCard(hospitalId, query)
 
-//        val re = command.creditCard(hospitalId, query)
+        val res = command.creditCard(hospitalId, query)
 
         return ResponseEntity.ok(res)
     }

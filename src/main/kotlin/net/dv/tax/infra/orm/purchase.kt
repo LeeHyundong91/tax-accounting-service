@@ -9,6 +9,7 @@ import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotal
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotalSearch
 import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.Deduction
+import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.app.purchase.*
 import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.purchase.JournalEntryEntity
@@ -25,7 +26,53 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
 
     override fun purchaseBooks(hospitalId: String, query: PurchaseQueryDto): List<PurchaseCreditCardDto> {
         val realOffset = query.offset!! * query.size!!;
-        TODO()
+        val predicates = BooleanBuilder()
+        predicates.and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
+
+        //공제 불공제 전체
+        when(query.deduction){
+            1L -> predicates.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_1.isDeduction))
+            2L -> predicates.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_2.isDeduction))
+        }
+
+        return factory
+            .select(Projections.fields(
+                PurchaseCreditCardDto::class.java,
+                purchaseCreditCardEntity.id,
+                purchaseCreditCardEntity.hospitalId,
+                purchaseCreditCardEntity.billingDate,
+                purchaseCreditCardEntity.accountCode,
+                purchaseCreditCardEntity.franchiseeName,
+                purchaseCreditCardEntity.corporationType,
+                purchaseCreditCardEntity.itemName,
+                purchaseCreditCardEntity.supplyPrice,
+                purchaseCreditCardEntity.taxAmount,
+                purchaseCreditCardEntity.nonTaxAmount,
+                purchaseCreditCardEntity.totalAmount,
+                purchaseCreditCardEntity.isDeduction,
+                purchaseCreditCardEntity.isRecommendDeduction,
+                purchaseCreditCardEntity.statementType1,
+                purchaseCreditCardEntity.statementType2,
+                purchaseCreditCardEntity.debtorAccount,
+                purchaseCreditCardEntity.creditAccount,
+                purchaseCreditCardEntity.separateSend,
+                purchaseCreditCardEntity.statementStatus,
+                purchaseCreditCardEntity.writer,
+                purchaseCreditCardEntity.createdAt,
+                journalEntryEntity.requestedAt,
+                journalEntryEntity.committedAt,
+            ))
+            .from(purchaseCreditCardEntity)
+            .leftJoin(journalEntryEntity)
+            .on(
+                purchaseCreditCardEntity.id.eq(journalEntryEntity.purchaseId),
+                journalEntryEntity.purchaseType.eq(PurchaseType.CREDIT_CARD.code)
+            )
+            .where(predicates)
+            .orderBy(purchaseCreditCardEntity.billingDate.desc())
+            .offset(realOffset)
+            .limit(query.size)
+            .fetch()
     }
 
     override fun purchaseCreditCardList(

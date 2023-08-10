@@ -30,7 +30,7 @@ class PurchaseManagementService(
      * 신용카드 매입 목록 조회
      */
     override fun creditCard(hospitalId: String, query: PurchaseQueryDto): PurchaseCreditCardListDto {
-        val creditCardList = getPurchaseCreditCardList(hospitalId, query, false)
+        val creditCardList = creditCardRepository.purchaseBooks(hospitalId, query)
         val totalCount = creditCardRepository.purchaseCreditCardListCnt(hospitalId, query)
         val purchaseCreditcardTotal =
             creditCardRepository.purchaseCreditCardTotal(hospitalId, query)
