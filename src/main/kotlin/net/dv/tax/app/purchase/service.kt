@@ -88,7 +88,7 @@ class PurchaseManagementService(
                     "Sample!!!",
                     it.requestNote!!,
                     it.checkExpense!!,
-                    it.accountingItem!!,
+                    it.accountingItem,
                     it.status?.name,
                     "",
                     it.committer,

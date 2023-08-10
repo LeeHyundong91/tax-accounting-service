@@ -8,7 +8,7 @@ Accept: application/json
 #    INVOICE("II", "전자계산서"),
 #    HANDWRITTEN_INVOICE("HI", "수기세금계산서"),
 #    BASIC_RECEIPT("BR", "간이영수증"),;
-GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330
+GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/5633
 Accept: application/json
 
 
@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 
-### 계정분계처리 확인
+### 계정분계요청 처리
 PUT {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330
 Content-Type: application/json
 
@@ -33,7 +33,7 @@ Content-Type: application/json
   "committer": "committer-id"
 }
 
-### 계정과목 분계 처리 히스토리
+### 계정과목 분계 처리 내역
 GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330/history
 Accept: application/json
 

@@ -12,7 +12,7 @@ interface JournalEntry {
     var merchant: String
     var note: String
     var checkExpense: Boolean
-    var accountingItem: String
+    var accountingItem: String?
     var status: String?
     var requester: String?
     var committer: String?

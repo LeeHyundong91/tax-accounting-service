@@ -18,7 +18,7 @@ data class JournalEntryReqDto(
     override var merchant: String = "",
     override var note: String,
     override var checkExpense: Boolean,
-    override var accountingItem: String = "",
+    override var accountingItem: String? = null,
     override var status: String? = null,
     override var requester: String? = null,
     override var committer: String? = null,
