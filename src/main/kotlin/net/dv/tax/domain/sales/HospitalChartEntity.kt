@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "hospital_chart")
+@Table(name = "HOSPITAL_CHART")
 @Comment("병원차트 매출목록")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate

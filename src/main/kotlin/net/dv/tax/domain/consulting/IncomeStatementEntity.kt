@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Comment("연환산 손익계산서")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "income_statement")
+@Table(name = "INCOME_STATEMENT")
 @DynamicUpdate
 data class IncomeStatementEntity(
 
@@ -50,7 +50,7 @@ data class IncomeStatementEntity(
 @Comment("연환산 손익계산서 항목")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "income_statement_item")
+@Table(name = "INCOME_STATEMENT_ITEM")
 @DynamicUpdate
 data class IncomeStatementItemEntity(
 

@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Comment("매출 누계 매출유형별 현황")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "sales_type")
+@Table(name = "SALES_TYPE")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesTypeEntity(
@@ -54,7 +54,7 @@ data class SalesTypeEntity(
 @Comment("매출 누계 매출유형별 현황 아이템")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "sales_type_item")
+@Table(name = "SALES_TYPE_ITEM")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesTypeItemEntity(

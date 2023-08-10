@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Comment("판매대행 매출")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "sales_agent")
+@Table(name = "SALES_AGENT")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesAgentEntity(

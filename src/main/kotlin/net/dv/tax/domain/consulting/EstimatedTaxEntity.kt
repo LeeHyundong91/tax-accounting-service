@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Comment("예상세액")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "estimated_tax")
+@Table(name = "ESTIMATED_TAX")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class EstimatedTaxEntity(
@@ -49,7 +49,7 @@ data class EstimatedTaxEntity(
 @Comment("예상세액 병원장")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "estimated_tax_personal")
+@Table(name = "ESTIMATED_TAX_PERSONAL")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class EstimatedTaxPersonalEntity(
@@ -83,7 +83,7 @@ data class EstimatedTaxPersonalEntity(
 @Comment("예상세액 항목")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "estimated_tax_item")
+@Table(name = "ESTIMATED_TAX_ITEM")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class EstimatedTaxItemEntity(

@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "sales_vaccine")
+@Table(name = "SALES_VACCINE")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesVaccineEntity(

@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Comment("매출명세서 보험청구분")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "insurance_claim")
+@Table(name = "INSURANCE_CLAIM")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class InsuranceClaimEntity(
@@ -52,7 +52,7 @@ data class InsuranceClaimEntity(
 @Comment("매출명세서 보험청구분 항목")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "insurance_claim_item")
+@Table(name = "INSURANCE_CLAIM_ITEM")
 @EntityListeners(AuditingEntityListener::class)
 data class InsuranceClaimItemEntity(
 

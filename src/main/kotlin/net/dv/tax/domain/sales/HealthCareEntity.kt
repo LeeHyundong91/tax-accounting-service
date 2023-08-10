@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Comment("건강검진 매출목록")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "health_care")
+@Table(name = "HEALTH_CARE")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class HealthCareEntity(

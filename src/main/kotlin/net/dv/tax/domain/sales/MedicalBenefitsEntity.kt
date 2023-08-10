@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 @Comment("요양급여매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "medical_benefits")
+@Table(name = "MEDICAL_BENEFITS")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class MedicalBenefitsEntity(

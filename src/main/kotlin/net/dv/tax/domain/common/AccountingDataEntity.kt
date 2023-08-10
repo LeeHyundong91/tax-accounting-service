@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "tax_and_employee_data")
+@Table(name = "TAX_AND_EMPLOYEE_DATA")
 @Comment("세무 노무 파일 관리")
 @DynamicUpdate
 data class AccountingDataEntity(

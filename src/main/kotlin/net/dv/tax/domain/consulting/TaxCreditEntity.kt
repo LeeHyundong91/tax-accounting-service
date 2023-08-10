@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Comment("세액공제")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "tax_credit")
+@Table(name = "TAX_CREDIT")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class TaxCreditEntity(
@@ -48,7 +48,7 @@ data class TaxCreditEntity(
 @Comment("세액공제 목록")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "tax_credit_item")
+@Table(name = "TAX_CREDIT_ITEM")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class TaxCreditItemEntity(
@@ -78,7 +78,7 @@ data class TaxCreditItemEntity(
 @Comment("세액공제 병원장 목록")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "tax_credit_personal")
+@Table(name = "TAX_CREDIT_PERSONAL")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class TaxCreditPersonalEntity(
@@ -112,7 +112,7 @@ data class TaxCreditPersonalEntity(
 @Comment("세액공제 개인 목록")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "tax_credit_personal_item")
+@Table(name = "TAX_CREDIT_PERSONAL_ITEM")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class TaxCreditPersonalItemEntity(

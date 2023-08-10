@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "sales_other_benefits")
+@Table(name = "SALES_OTHER_BENEFITS")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 @Comment("기타급여 매출")

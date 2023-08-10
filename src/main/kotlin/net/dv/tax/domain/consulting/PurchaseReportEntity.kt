@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Comment("컨설팅 매입관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "purchase_report")
+@Table(name = "PURCHASE_REPORT")
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener::class)
 data class PurchaseReportEntity(
@@ -71,7 +71,7 @@ data class PurchaseReportEntity(
 @Comment("컨설팅 매입 항목")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "purchase_report_item")
+@Table(name = "PURCHASE_REPORT_ITEM")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class PurchaseReportItemEntity(

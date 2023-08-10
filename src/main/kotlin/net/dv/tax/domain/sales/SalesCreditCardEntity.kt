@@ -15,7 +15,7 @@ import java.util.*
 @Entity
 @Comment("신용카드매출관리")
 @Suppress("JpaAttributeTypeInspection")
-@Table(name = "sales_credit_card")
+@Table(name = "SALES_CREDIT_CARD")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesCreditCardEntity(

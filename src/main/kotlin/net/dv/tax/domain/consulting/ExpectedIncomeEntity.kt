@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Comment("예상손익")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "expected_income")
+@Table(name = "EXPECTED_INCOME")
 @DynamicUpdate
 data class ExpectedIncomeEntity(
 
@@ -59,7 +59,7 @@ data class ExpectedIncomeEntity(
 
 @Comment("예상손익 항목")
 @Entity
-@Table(name = "expected_income_item")
+@Table(name = "EXPECTED_INCOME_ITEM")
 @DynamicUpdate
 data class ExpectedIncomeItemEntity(
     @Id
@@ -83,7 +83,7 @@ data class ExpectedIncomeItemEntity(
 
 @Comment("예상손익 개월별 항목")
 @Entity
-@Table(name = "expected_income_monthly_item")
+@Table(name = "EXPECTED_INCOME_MONTHLY_ITEM")
 @DynamicUpdate
 data class ExpectedIncomeMonthlyItemEntity(
     @Id

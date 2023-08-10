@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Comment("자동차보험 매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "car_insurance")
+@Table(name = "CAR_INSURANCE")
 @EntityListeners(AuditingEntityListener::class)
 data class CarInsuranceEntity(
 

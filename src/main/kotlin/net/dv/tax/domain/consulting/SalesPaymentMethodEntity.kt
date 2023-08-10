@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Comment("매출누계 결제수단별 현황")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "sales_payment_method")
+@Table(name = "SALES_PAYMENT_METHOD")
 @EntityListeners(AuditingEntityListener::class)
 @DynamicUpdate
 data class SalesPaymentMethodEntity(

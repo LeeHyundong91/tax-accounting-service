@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Comment("고용산재매출관리")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "employee_industry")
+@Table(name = "EMPLOYEE_INDUSTRY")
 @EntityListeners(AuditingEntityListener::class)
 data class EmployeeIndustryEntity(
 

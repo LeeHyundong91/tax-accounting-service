@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 @Comment("매출명세서 환자결제분")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "sales_patient_payment")
+@Table(name = "SALES_PATIENT_PAYMENT")
 @EntityListeners(AuditingEntityListener::class)
 data class PatientPaymentEntity(
 

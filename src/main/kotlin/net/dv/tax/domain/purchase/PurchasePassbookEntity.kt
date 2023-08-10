@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
-@Table(name = "purchase_passbook")
+@Table(name = "PURCHASE_PASSBOOK")
 @Comment("통장매입관리")
 @Suppress("JpaAttributeTypeInspection")
 @EntityListeners(AuditingEntityListener::class)

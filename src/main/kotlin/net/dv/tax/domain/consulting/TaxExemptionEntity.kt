@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Comment("과/면세비율 메인")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "tax_exemption")
+@Table(name = "TAX_EXEMPTION")
 @DynamicUpdate
 data class TaxExemptionEntity(
 
@@ -68,7 +68,7 @@ data class TaxExemptionEntity(
 @Comment("과/면세비율 항목")
 @Suppress("JpaAttributeTypeInspection")
 @Entity
-@Table(name = "tax_exemption_item")
+@Table(name = "TAX_EXEMPTION_ITEM")
 @DynamicUpdate
 data class TaxExemptionItemEntity(
 
