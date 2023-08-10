@@ -1,5 +1,6 @@
 package net.dv.tax.app.consulting
 
+import net.dv.tax.infra.endpoint.consulting.ConsultingController
 import java.time.LocalDateTime
 
 interface ConsultingReportOperationCommand {
@@ -17,7 +18,7 @@ interface ConsultingReportQueryCommand {
 
     fun search(options: ConsultingReport.() -> Unit): ConsultingReport
 
-    fun fetch(options: ConsultingReport.() -> Unit): ConsultingReports
+    fun fetch(options: ConsultingController.ConsultingReportDto.() -> Unit): ConsultingReports
 
 }
 
@@ -36,9 +37,6 @@ data class ConsultingReport(
     var openingAt: LocalDateTime? = null,
     var visibleCount: Int? = null,
     var createdAt: LocalDateTime? = null,
-
-    var size: Long = 0,
-    var offset: Long = 30
 )
 
 data class ConsultingReports(

@@ -1,18 +1,19 @@
 package net.dv.tax.infra.orm
 
 import com.querydsl.core.BooleanBuilder
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
-import net.dv.tax.app.consulting.ConsultingReport
 import net.dv.tax.app.consulting.ConsultingReportQueryRepository
 import net.dv.tax.domain.consulting.ConsultingReportEntity
 import net.dv.tax.domain.consulting.QConsultingReportEntity.consultingReportEntity
+import net.dv.tax.infra.endpoint.consulting.ConsultingController
 import org.springframework.stereotype.Component
 
 @Component
 class ConsultingReportRepositoryImpl(private val factory: JPAQueryFactory): ConsultingReportQueryRepository {
 
-    override fun fetch(query: ConsultingReport): List<ConsultingReportEntity> {
-        val offset = query.offset * query.size
+    override fun fetch(query: ConsultingController.ConsultingReportDto): List<ConsultingReportEntity> {
+        val offset = query.offset!!* query.size!!
 
         var builder = getReportBuilder(query)
 
@@ -22,11 +23,11 @@ class ConsultingReportRepositoryImpl(private val factory: JPAQueryFactory): Cons
             .where(builder)
             .orderBy(consultingReportEntity.year.desc())
             .offset(offset)
-            .limit(query.size)
+            .limit(query.size!!)
             .fetch()
     }
 
-    override fun getCount(query: ConsultingReport): Long {
+    override fun getCount(query: ConsultingController.ConsultingReportDto): Long {
         var builder = getReportBuilder(query)
 
         return factory
@@ -36,7 +37,7 @@ class ConsultingReportRepositoryImpl(private val factory: JPAQueryFactory): Cons
             .fetchFirst()
     }
 
-    fun getReportBuilder(query: ConsultingReport): BooleanBuilder {
+    fun getReportBuilder(query: ConsultingController.ConsultingReportDto): BooleanBuilder {
         val builder = BooleanBuilder()
 
         //병원
@@ -63,8 +64,15 @@ class ConsultingReportRepositoryImpl(private val factory: JPAQueryFactory): Cons
             val beginMonth = query.beginPeriod
             val endMonth = query.endPeriod
 
-            builder.and(consultingReportEntity.period.begin.goe(beginMonth))
-            builder.and(consultingReportEntity.period.end.loe(endMonth))
+            builder.and(
+                Expressions.stringTemplate("cast({0} as int)", consultingReportEntity.period.begin)
+                    .goe(beginMonth)
+                    .and(
+                        Expressions.stringTemplate("cast({0} as int)", consultingReportEntity.period.end)
+                            .loe(endMonth)
+                    )
+            )
+
         }
 
         query.year?.let {
