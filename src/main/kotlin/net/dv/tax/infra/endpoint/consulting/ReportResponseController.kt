@@ -14,7 +14,6 @@ class ReportResponseController(
     val queryCommand: ReportResponseQueryCommand
 ) {
 
-    //응답하기
     @PostMapping
     fun response(@RequestBody request: ReportResponseDto): ResponseEntity<ReportResponse> {
         return ResponseEntity.ok(operationCommand.response {
@@ -25,7 +24,6 @@ class ReportResponseController(
         })
     }
 
-    //리포트에 붙어있는 승인거절 이유 조회
     @GetMapping
     fun fetch(request: ReportResponseDto): ResponseEntity<List<ReportResponse>> {
         return ResponseEntity.ok(queryCommand.fetch {

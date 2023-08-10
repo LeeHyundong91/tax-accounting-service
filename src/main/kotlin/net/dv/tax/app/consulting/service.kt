@@ -8,7 +8,8 @@ import java.time.LocalDateTime
 @Service
 class ConsultingReportService(
     val repository: ConsultingReportRepository,
-    val hospitalMemberRepository: VHospitalMemberRepository
+    val hospitalMemberRepository: VHospitalMemberRepository,
+    val queryRepository: ConsultingReportQueryRepository
 ): ConsultingReportOperationCommand, ConsultingReportQueryCommand {
 
     override fun write(options: ConsultingReport.() -> Unit): ConsultingReport {
@@ -120,12 +121,28 @@ class ConsultingReportService(
     override fun search(options: ConsultingReport.() -> Unit): ConsultingReport {
         ConsultingReport().apply(options).let { consultingReport ->
             val report = repository.findById(consultingReport.id!!).orElseThrow { IllegalArgumentException("not found report") }
+            countVisibleDays(report)
             return mapToValueObject(report)
         }
     }
 
     override fun fetch(options: ConsultingReport.() -> Unit): ConsultingReports {
-        TODO("Not yet implemented")
+        return ConsultingReport().apply(options).let {query ->
+            val reportList = queryRepository.fetch(query).map { mapToValueObject(it) }
+
+            ConsultingReports(
+                reportList = reportList,
+                reportCount = queryRepository.getCount(query)
+            )
+        }
+    }
+
+    //스케쥴링 필요
+    private fun countVisibleDays(report: ConsultingReportEntity) {
+        if (report.status == ConsultingReportEntity.Status.APPROVED) {
+            report.visibleCount?.minus(1)
+            repository.save(report)
+        }
     }
 
     private fun mapToValueObject(entity: ConsultingReportEntity): ConsultingReport {

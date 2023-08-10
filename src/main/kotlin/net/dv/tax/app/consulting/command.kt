@@ -37,8 +37,8 @@ data class ConsultingReport(
     var visibleCount: Int? = null,
     var createdAt: LocalDateTime? = null,
 
-    var size: Long? = 0,
-    var offset: Long? = 30
+    var size: Long = 0,
+    var offset: Long = 30
 )
 
 data class ConsultingReports(

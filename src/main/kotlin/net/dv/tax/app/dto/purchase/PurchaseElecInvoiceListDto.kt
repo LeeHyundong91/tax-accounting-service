@@ -1,5 +1,6 @@
 package net.dv.tax.app.dto.purchase
 
+import net.dv.tax.app.purchase.JournalEntryDto
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 

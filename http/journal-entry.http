@@ -1,0 +1,43 @@
+GET {{host}}/v1/purchase/confirmations/types
+Accept: application/json
+
+### 계정 분계 상세 정보 조회
+#    CREDIT_CARD("CC", "신용카드"),
+#    CASH_RECEIPT("CR", "현금영수증"),
+#    TAX_INVOICE("TI", "전자세금계산서"),
+#    INVOICE("II", "전자계산서"),
+#    HANDWRITTEN_INVOICE("HI", "수기세금계산서"),
+#    BASIC_RECEIPT("BR", "간이영수증"),;
+GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330
+Accept: application/json
+
+
+### 계정분계처리 요청
+POST {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330
+Content-Type: application/json
+
+{
+  "note": "근처 백화점에서 사무용품 구매했음. 수정",
+  "checkExpense": true,
+  "requester": "requester-id"
+}
+
+
+### 계정분계처리 확인
+PUT {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330
+Content-Type: application/json
+
+{
+  "note": "병원장님과 유선상으로 재확인 하여 계정과면 분개함",
+  "accountingItem": "342",
+  "committer": "committer-id"
+}
+
+### 계정과목 분계 처리 히스토리
+GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330/history
+Accept: application/json
+
+
+
+
+
