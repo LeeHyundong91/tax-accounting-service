@@ -31,11 +31,6 @@ class ConsultingController(
         })
     }
 
-    /**
-     * 응답대기에서 수정불가!
-     * 작성중일때 수정가능!
-     * 작성중 -> 승인요청 + 승인관리자 선택하기
-     * */
     @PatchMapping
     fun update(@RequestBody request: ConsultingReportDto): ResponseEntity<ConsultingReport> {
         return ResponseEntity.ok(operationCommand.update {
@@ -51,11 +46,12 @@ class ConsultingController(
 
     //세무담당자 목록 조회하기
     @GetMapping("/fetch")
-    fun fetch(query: ConsultingReport): ResponseEntity<ConsultingReports> {
+    fun fetch(query: ConsultingReportDto): ResponseEntity<ConsultingReports> {
         return ResponseEntity.ok(queryCommand.fetch {
             this.size = query.size
             this.offset = query.offset
             this.year = query.year
+            this.hospitalId = query.hospitalId
             this.seq = query.seq
             this.beginPeriod = query.beginPeriod
             this.endPeriod = query.endPeriod
@@ -80,20 +76,21 @@ class ConsultingController(
 
     data class ConsultingReportDto(
         val id: Long? = 0,
-        val size: Long? = 0,
-        val offset: Long? = 30,
-        val year: Int? = null,
-        val seq: Int? = null,
-        val beginPeriod: String? = null,
-        val endPeriod: String? = null,
-        val writer: String? = null,
-        val approver: String? = null,
-        val reason: String? = null,
-        val status: String? = null,
-        val submittedAt: LocalDateTime? = null,
-        val responseAt: LocalDateTime? = null,
-        val openingAt: LocalDateTime? = null,
-        val visibleCount: Int? = null,
-        val createdAt: LocalDateTime? = null,
+        var size: Long? = 0,
+        var offset: Long? = 30,
+        var hospitalId: String? = null,
+        var year: Int? = null,
+        var seq: Int? = null,
+        var beginPeriod: String? = null,
+        var endPeriod: String? = null,
+        var writer: String? = null,
+        var approver: String? = null,
+        var reason: String? = null,
+        var status: String? = null,
+        var submittedAt: LocalDateTime? = null,
+        var responseAt: LocalDateTime? = null,
+        var openingAt: LocalDateTime? = null,
+        var visibleCount: Int? = null,
+        var createdAt: LocalDateTime? = null,
     )
 }

@@ -4,6 +4,7 @@ import net.dv.tax.app.dto.consulting.DirectorAndStake
 import net.dv.tax.app.dto.consulting.PersonalSum
 import net.dv.tax.app.dto.consulting.SgaExpense
 import net.dv.tax.domain.consulting.*
+import net.dv.tax.infra.endpoint.consulting.ConsultingController
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -177,8 +178,8 @@ interface ConsultingReportRepository: JpaRepository<ConsultingReportEntity, Long
 
 interface ConsultingReportQueryRepository {
 
-    fun fetch(query: ConsultingReport): List<ConsultingReportEntity>
+    fun fetch(query: ConsultingController.ConsultingReportDto): List<ConsultingReportEntity>
 
-    fun getCount(query: ConsultingReport): Long
+    fun getCount(query: ConsultingController.ConsultingReportDto): Long
 
 }
