@@ -1,5 +1,6 @@
 package net.dv.tax.infra.endpoint.employee
 
+import net.dv.access.Jwt
 import net.dv.tax.Application
 import net.dv.tax.app.dto.employee.*
 import net.dv.tax.app.employee.EmployeeService
@@ -69,7 +70,9 @@ class EmployeeController(
 
     //직원 신규 등록
     @PostMapping("insert")
-    fun registerEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {
+    fun registerEmployee(
+        @Jwt("subject") accountId: String?,
+        @RequestBody data: EmployeeDto): ResponseEntity<Int> {
 
         var res = employeeService.registerEmployee(data)
         return ResponseEntity.ok(res)
