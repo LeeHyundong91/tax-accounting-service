@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.0.0"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.jetbrains.kotlin.plugin.noarg") version "1.8.0"
+    id("maven-publish")
     kotlin("jvm") version "1.8.0"
     kotlin("kapt") version "1.8.0"
     kotlin("plugin.spring") version "1.8.0"
@@ -30,6 +31,16 @@ repositories {
     mavenCentral()
     maven { url = uri("https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates") }
     maven { url = uri("https://repo.spring.io/milestone") }
+    maven {
+        url = uri("https://git.sugarbricks.co.kr/api/v4/projects/82/packages/maven")
+        credentials(HttpHeaderCredentials::class) {
+            name = "Deploy-Token"
+            value = properties["gitlab-deploy-token"] as String
+        }
+        authentication {
+            create<HttpHeaderAuthentication>("header")
+        }
+    }
 }
 
 configurations {
@@ -74,6 +85,9 @@ dependencies {
 
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+
+    /* dr-village common modules*/
+    implementation("net.dv:access-core:1.0.0-SNAPSHOT")
 
     /*AWS*/
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
