@@ -47,15 +47,9 @@ class PurchaseManagementService(
     private fun cashReceiptBooks(hospitalId: String, query: PurchaseQueryDto): PurchaseBooks<CashReceiptBook> {
         val list = cashReceiptRepository.purchaseBooks(hospitalId, query)
         val summary = cashReceiptRepository.summary(hospitalId, query)
-//        val summary = cashReceiptRepository.purchaseCashReceiptTotal(hospitalId, query)
         val count = cashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, query)
 
-//        return PurchaseCashReceiptListDto(
-//            listPurchaseCashReceipt = CashReceiptList,
-//            purchaseCashReceiptTotal = purchaseCashReceiptTotal,
-//            totalCount = totalCount
-//        )
-        return PurchaseBooks<CashReceiptBook>(list = list, summary = summary, total = count)
+        return PurchaseBooks(list = list, summary = summary, total = count)
     }
 
     /**

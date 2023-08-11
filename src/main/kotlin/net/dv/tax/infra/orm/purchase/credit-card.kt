@@ -26,8 +26,8 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
 
         //공제 불공제 전체
         when(query.deduction){
-            1L -> predicates.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_1.isDeduction))
-            2L -> predicates.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_2.isDeduction))
+            1L -> predicates.and(purchaseCreditCardEntity.isDeduction.eq(true))
+            2L -> predicates.and(purchaseCreditCardEntity.isDeduction.eq(false))
         }
 
         return factory

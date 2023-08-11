@@ -1,6 +1,7 @@
 package net.dv.tax.app.enums.purchase
 
 //연봉 세후, 세전
+// TODO 사용하는 위치를 찾아서 대체할 필요가 있음. 대체가 완료되면 삭제
 enum class RecommendDeduction {
 
     RecommendDeduction_1(true, "불공제"),

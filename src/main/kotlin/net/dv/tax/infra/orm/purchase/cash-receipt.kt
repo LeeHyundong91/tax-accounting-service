@@ -24,8 +24,8 @@ class PurchaseCashReceiptRepositoryImpl(private val factory: JPAQueryFactory): P
             and(purchaseCashReceiptEntity.hospitalId.eq(hospitalId))
             //공제 불공제 전체
             when (query.deduction) {
-                1L -> and(purchaseCashReceiptEntity.isDeduction.eq(Deduction.Deduction_1.isDeduction))
-                2L -> and(purchaseCashReceiptEntity.isDeduction.eq(Deduction.Deduction_2.isDeduction))
+                1L -> and(purchaseCashReceiptEntity.isDeduction.eq(true))
+                2L -> and(purchaseCashReceiptEntity.isDeduction.eq(false))
             }
         }
 
@@ -78,8 +78,8 @@ class PurchaseCashReceiptRepositoryImpl(private val factory: JPAQueryFactory): P
             and(purchaseCashReceiptEntity.hospitalId.eq(hospitalId))
             //공제 불공제 전체
             when (query.deduction) {
-                1L -> and(purchaseCashReceiptEntity.isDeduction.eq(Deduction.Deduction_1.isDeduction))
-                2L -> and(purchaseCashReceiptEntity.isDeduction.eq(Deduction.Deduction_2.isDeduction))
+                1L -> and(purchaseCashReceiptEntity.isDeduction.eq(true))
+                2L -> and(purchaseCashReceiptEntity.isDeduction.eq(false))
             }
         }
         val deduction = factory
@@ -236,10 +236,10 @@ data class CashReceiptBookDto(
     @Comment("세액") override var taxAmount: Long = 0
     @Comment("봉사료") override var serviceCharge: Long = 0
     @Comment("합계") override var totalAmount: Long = 0
-    @Comment("국세청(공제여부)") override var isDeduction: Boolean? = null
-    @Comment("국세청(공제여부)명") override var deductionName: String? = null
-    @Comment("추천유형(불공제)") override var isRecommendDeduction: Boolean? = null
-    @Comment("추천유형(불공제)명") override var recommendDeductionName: String? = null
+    @get:Comment("국세청(공제여부)명") override val deductionName: String
+        get() = _deduction?.takeIf { it }?.let { "공제" }?: "불공제"
+    @get:Comment("추천유형(불공제)명") override val recommendDeductionName: String
+        get() = _recommendedDeduction?.takeIf { it }?.let { "불공제" } ?: ""
     @Comment("전표유형 1") override var statementType1: String? = null
     @Comment("전표유형 2") override var statementType2: String? = null
     @Comment("차변계정")
@@ -256,6 +256,9 @@ data class CashReceiptBookDto(
 
     override var requestedAt: LocalDateTime? = null
     override var committedAt: LocalDateTime? = null
+
+    private var _deduction: Boolean? = null
+    private var _recommendedDeduction: Boolean? = null
     private var _status: JournalEntryEntity.Status? = null
     private var _accountingItem: String? = null
 }

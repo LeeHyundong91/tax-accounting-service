@@ -11,7 +11,7 @@ interface PurchaseQueryCommand {
 
 interface JournalEntryCommand {
     fun get(purchase: PurchaseBook): JournalEntry
-    fun request(purchase: PurchaseBook, data: JournalEntry): JournalEntry
-    fun confirm(purchase: PurchaseBook, data: JournalEntry): JournalEntry
+    fun request(purchase: PurchaseBook, je: JournalEntry): JournalEntry
+    fun confirm(purchase: PurchaseBook, je: JournalEntry): JournalEntry
     fun history(purchase: PurchaseBookDto): List<JournalEntryHistoryDto>
 }
