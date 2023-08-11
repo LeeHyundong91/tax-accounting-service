@@ -29,46 +29,53 @@ class EmployeeService(
     private val employeeSalaryMngRepository: EmployeeSalaryMngRepository,
     private val encrypt: Encrypt,
 ) {
-
+    fun _parseLocalDate(dateString: String): LocalDate {
+        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    }
     //직원 요청 사항을 등록 한다.
     fun registerEmployeeRequest(employeeRequestDto: EmployeeRequestDto): Int {
 
         employeeRequestDto?.also { employeeRequest ->
 
-            var resignationAt: String? = null
-            employeeRequest.resignationAt?.also {
-                if (it.length > 0) resignationAt = it
-            }
+//            var resignationAt: String? = null
+//            employeeRequest.resignationAt?.also {
+//                if (it.length > 0) resignationAt = it
+//            }
+            var entity = EmployeeRequestEntity()
 
-            var saveEmployeeRequestEntity = EmployeeRequestEntity(
-                encryptResidentNumber = encrypt.encodeToBase64(employeeRequest.residentNumber.toString()),
-                residentNumber = employeeRequest.residentNumber,
-                hospitalId = employeeRequest.hospitalId!!,
-                hospitalName = employeeRequest.hospitalName!!,
-                employeeCode = employeeRequest.employeeCode,
-                name = employeeRequest.name,
-                employment = employeeRequest.employment!!,
-                annualType = employeeRequest.annualType,
-                annualIncome = employeeRequest.annualIncome,
-                position = employeeRequest.position,
-                joinAt = employeeRequest.joinAt,
-                email = employeeRequest.email,
-                jobClass = employeeRequest.jobClass,
-                reason = employeeRequest.reason,
-                resignationAt = resignationAt,
-                resignationContents = employeeRequest.resignationContents,
-                mobilePhoneNumber = employeeRequest.mobilePhoneNumber,
-                office = employeeRequest.office,
-                job = employeeRequest.job,
-                careerNumber = employeeRequest.careerNumber,
-                dependentCnt = employeeRequest.dependentCnt,
-                address = employeeRequest.address,
-                attachFileYn = employeeRequest.attachFileYn,
-                //등록시에는 무조건 P
-                requestState = RequestState.RequestState_P.requestStateCode
-            )
-
-            employeeRequestRepository.save(saveEmployeeRequestEntity)
+            entity.encryptResidentNumber = encrypt.encodeToBase64(employeeRequest.residentNumber.toString())
+            entity.residentNumber = employeeRequest.residentNumber
+            entity.hospitalId = employeeRequest.hospitalId
+            entity.hospitalName = employeeRequest.hospitalName
+            entity.employeeCode = employeeRequest.employeeCode
+            entity.name = employeeRequest.name
+            entity.careerBreakYn = employeeRequest.careerBreakYn
+            entity.spec = employeeRequest.spec
+            entity.academicHistory = employeeRequest.academicHistory
+            entity.contractDuration = employeeRequest.contractDuration
+            entity.employment = employeeRequest.employment
+            entity.annualType = employeeRequest.annualType
+            entity.annualIncome = employeeRequest.annualIncome
+            entity.position = employeeRequest.position
+            entity.joinAt = _parseLocalDate(employeeRequest.joinAt.toString())
+            entity.email = employeeRequest.email
+            entity.jobClass = employeeRequest.jobClass
+            entity.reason = employeeRequest.reason
+            entity.enlistmentAt = _parseLocalDate(employeeRequest.enlistmentAt.toString())
+            entity.dischargeAt = _parseLocalDate(employeeRequest.dischargeAt.toString())
+            entity.workRenewalAt = _parseLocalDate(employeeRequest.workRenewalAt.toString())
+            entity.resignationAt = _parseLocalDate(employeeRequest.resignationAt.toString())
+            entity.resignationContents = employeeRequest.resignationContents
+            entity.mobilePhoneNumber = employeeRequest.mobilePhoneNumber
+            entity.office = employeeRequest.office
+            entity.job = employeeRequest.job
+            entity.careerNumber = employeeRequest.careerNumber
+            entity.dependentCnt = employeeRequest.dependentCnt
+            entity.address = employeeRequest.address
+            entity.attachFileYn = employeeRequest.attachFileYn
+            //등록시에는 무조건 P
+            entity.requestState = RequestState.RequestState_P.requestStateCode
+            employeeRequestRepository.save(entity)
         }
 
         return HttpStatus.OK.value()
@@ -82,22 +89,37 @@ class EmployeeService(
 
         //리스트
         val employeeRequestList = employeeRequestRepository.employeeRequestList(hospitalId, employeeQueryDto).map {
-            EmployeeRequestDto(
-                id = it.id!!,
-                residentNumber = it.residentNumber,
-                name = it.name,
-                employment = it.employment,
-                annualType = it.annualType,
-                annualIncome = it.annualIncome,
-                position = it.position ?: "",
-                joinAt = it.joinAt,
-                email = it.email ?: "",
-                jobClass = getJobClassName(it.jobClass),
-                reason = it.reason ?: "",
-                createdAt = it.createdAt!!,
-                requestStateCode = it.requestState,
-                requestStateName = getRequestStateName(it.requestState),
-            )
+            val entity = EmployeeRequestDto()
+
+            entity.id = it.id!!
+            entity.residentNumber = it.residentNumber
+            entity.name = it.name
+            entity.careerBreakYn = it.careerBreakYn
+            entity.spec = it.spec
+            entity.academicHistory = it.academicHistory
+            entity.contractDuration = it.contractDuration
+            entity.employment = it.employment
+            entity.annualType = it.annualType
+            entity.annualIncome = it.annualIncome
+            entity.position = it.position ?: ""
+            entity.joinAt = it.joinAt.toString()
+            entity.address = it.address
+            entity.email = it.email ?: ""
+            entity.jobClass = getJobClassName(it.jobClass)
+            entity.reason = it.reason ?: ""
+            entity.job = it.job
+            entity.dependentCnt = it.dependentCnt
+            entity.enlistmentAt = it.enlistmentAt.toString()
+            entity.careerNumber = it.careerNumber
+            entity.dischargeAt = it.dischargeAt.toString()
+            entity.workRenewalAt = it.workRenewalAt.toString()
+            entity.resignationAt = it.resignationAt.toString()
+            entity.resignationContents = it.resignationContents
+            entity.createdAt = it.createdAt!!
+            entity.requestStateCode = it.requestState
+            entity.requestStateName = getRequestStateName(it.requestState)
+
+            entity
         }
 
         return EmployeeRequestReturnDto(
@@ -139,34 +161,34 @@ class EmployeeService(
 
         //현재 등록 된 사용자 인지 확인한다.
         var resultEmployee = employeeRepository.findByHospitalIdAndResidentNumber(
-            employeeRequest.hospitalId, employeeRequest.residentNumber!!
+            employeeRequest.hospitalId!!, employeeRequest.residentNumber!!
         )
 
 
-        var employeeDto = EmployeeDto(
-            residentNumber = employeeRequest.residentNumber,
-            hospitalId = employeeRequest.hospitalId,
-            hospitalName = employeeRequest.hospitalName,
-            employeeCode = employeeRequest.employeeCode,
-            name = employeeRequest.name,
-            employment = employeeRequest.employment,
-            annualType = employeeRequest.annualType,
-            annualIncome = employeeRequest.annualIncome,
-            position = employeeRequest.position,
-            joinAt = employeeRequest.joinAt.toString().substring(0, 10),
-            email = employeeRequest.email,
-            jobClass = employeeRequest.jobClass,
-            reason = employeeRequest.reason,
-            resignationAt = employeeRequest.resignationAt,
-            resignationContents = employeeRequest.resignationContents,
-            mobilePhoneNumber = employeeRequest.mobilePhoneNumber,
-            office = employeeRequest.office,
-            job = employeeRequest.job,
-            careerNumber = employeeRequest.careerNumber,
-            dependentCnt = employeeRequest.dependentCnt,
-            address = employeeRequest.address,
-            attachFileYn = employeeRequest.attachFileYn
-        )
+        var employeeDto = EmployeeDto()
+
+        employeeDto.residentNumber = employeeRequest.residentNumber
+        employeeDto.hospitalId = employeeRequest.hospitalId
+        employeeDto.hospitalName = employeeRequest.hospitalName
+        employeeDto.employeeCode = employeeRequest.employeeCode
+        employeeDto.name = employeeRequest.name
+        employeeDto.employment = employeeRequest.employment
+        employeeDto.annualType = employeeRequest.annualType
+        employeeDto.annualIncome = employeeRequest.annualIncome
+        employeeDto.position = employeeRequest.position
+        employeeDto.joinAt = employeeRequest.joinAt.toString().substring(0, 10)
+        employeeDto.email = employeeRequest.email
+        employeeDto.jobClass = employeeRequest.jobClass!!
+        employeeDto.reason = employeeRequest.reason
+        employeeDto.resignationAt = employeeRequest.resignationAt.toString().substring(0, 10)
+        employeeDto.resignationContents = employeeRequest.resignationContents
+        employeeDto.mobilePhoneNumber = employeeRequest.mobilePhoneNumber
+        employeeDto.office = employeeRequest.office
+        employeeDto.job = employeeRequest.job
+        employeeDto.careerNumber = employeeRequest.careerNumber
+        employeeDto.dependentCnt = employeeRequest.dependentCnt
+        employeeDto.address = employeeRequest.address
+        employeeDto.attachFileYn = employeeRequest.attachFileYn
 
         // 등록된 사용자 일경우
         if (resultEmployee != null) {
@@ -205,55 +227,54 @@ class EmployeeService(
         employeeRepository.findByHospitalIdAndResidentNumberAndJobClass(
             employeeDto.hospitalId!!,
             employeeDto.residentNumber!!,
-            employeeDto.jobClass
+            employeeDto.jobClass!!
         )?.also {
             throw Exception("이미 등록되어 있습니다.")
         }
 
         employeeDto?.also { employee ->
 
-            val joinAt = LocalDate.parse(employee.joinAt, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            var resignationAt: String? = null
-            employee.resignationAt?.also {
-                if (it.length > 0) resignationAt = it
-            }
+//            var resignationAt: String? = null
+//            employee.resignationAt?.also {
+//                if (it.length > 0) resignationAt = it
+//            }
 
-            var saveEmployeeEntity = EmployeeEntity(
-                encryptResidentNumber = encrypt.encodeToBase64(employee.residentNumber.toString()),
-                residentNumber = employee.residentNumber,
-                hospitalId = employee.hospitalId!!,
-                hospitalName = employee.hospitalName!!,
-                employeeCode = employee.employeeCode,
-                name = employee.name,
-                employment = employee.employment,
-                annualType = employee.annualType,
-                annualIncome = employee.annualIncome,
-                position = employee.position,
-                joinAt = joinAt,
-                email = employee.email,
-                jobClass = employee.jobClass,
-                reason = employee.reason,
-                resignationAt = resignationAt,
-                resignationContents = employee.resignationContents,
-                mobilePhoneNumber = employee.mobilePhoneNumber,
-                office = employee.office,
-                job = employee.job,
-                careerNumber = employee.careerNumber,
-                dependentCnt = employee.dependentCnt,
-                address = employee.address,
-                attachFileYn = employee.attachFileYn,
-                apprAt = LocalDateTime.now(),
-                taxRate = employee.taxRate
-            )
-            employeeRepository.save(saveEmployeeEntity)
+            var entity = EmployeeEntity()
+            entity.encryptResidentNumber = encrypt.encodeToBase64(employee.residentNumber.toString())
+            entity.residentNumber = employee.residentNumber
+            entity.hospitalId = employee.hospitalId
+            entity.hospitalName = employee.hospitalName
+            entity.employeeCode = employee.employeeCode
+            entity.name = employee.name
+            entity.employment = employee.employment
+            entity.annualType = employee.annualType
+            entity.annualIncome = employee.annualIncome
+            entity.position = employee.position
+            entity.joinAt = _parseLocalDate(employee.joinAt.toString())
+            entity.email = employee.email
+            entity.jobClass = employee.jobClass
+            entity.reason = employee.reason
+            entity.resignationAt = _parseLocalDate(employee.resignationAt.toString())
+            entity.resignationContents = employee.resignationContents
+            entity.mobilePhoneNumber = employee.mobilePhoneNumber
+            entity.office = employee.office
+            entity.job = employee.job
+            entity.careerNumber = employee.careerNumber
+            entity.dependentCnt = employee.dependentCnt
+            entity.address = employee.address
+            entity.attachFileYn = employee.attachFileYn
+            entity.apprAt = LocalDateTime.now()
+            entity.taxRate = employee.taxRate
+
+            employeeRepository.save(entity)
 
             //이력 등록
-            registerEmployeeHistory(saveEmployeeEntity.id!!);
+            registerEmployeeHistory(entity.id!!);
 
             //파일 목록이 있으면
             employeeDto.fileList?.also {
                 it.forEach {
-                    it.employeeId = saveEmployeeEntity.id!!
+                    it.employeeId = entity.id!!
                     saveFile(it)
                 }
             }
@@ -273,12 +294,7 @@ class EmployeeService(
             //변경 내용으로 덮기,
             employeeEntity?.also { employee ->
 
-                val joinAt = LocalDate.parse(
-                    employeeDto.joinAt, DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                )
-
                 employee.encryptResidentNumber = encrypt.encodeToBase64(employeeDto.residentNumber.toString())
-
 
                 //퇴직일 경우 주민등록 번호 및 이름 공백 처리.
                 if (employeeDto.jobClass.equals(JobClass.JobClass_R.jobClassCode)) {
@@ -293,7 +309,7 @@ class EmployeeService(
                 employee.annualType = employeeDto.annualType
                 employee.annualIncome = employeeDto.annualIncome
                 employee.position = employeeDto.position
-                employee.joinAt = joinAt
+                employee.joinAt = _parseLocalDate(employeeDto.joinAt.toString())
                 employee.email = employeeDto.email
                 employee.jobClass = employeeDto.jobClass
                 employee.reason = employeeDto.reason
@@ -307,12 +323,7 @@ class EmployeeService(
                 employee.apprAt = LocalDateTime.now()
                 employee.attachFileYn = employeeDto.attachFileYn
                 employee.taxRate = employeeDto.taxRate
-
-                employeeDto.resignationAt?.also {
-                    if (employeeDto.resignationAt!!.length > 0) {
-                        employee.resignationAt = employeeDto.resignationAt
-                    }
-                }
+                employee.resignationAt = _parseLocalDate(employeeDto.resignationAt.toString())
 
                 //저장
                 employeeRepository.save(employee)
@@ -376,39 +387,40 @@ class EmployeeService(
         employeeRepository.findById(employeeId.toInt())?.map { employeeEntity ->
 
             employeeEntity?.also {
-                var saveEmployeeHistoryEntity = EmployeeHistoryEntity(
-                    encryptResidentNumber = employeeEntity.encryptResidentNumber,
-                    hospitalId = employeeEntity.hospitalId,
-                    hospitalName = employeeEntity.hospitalName,
-                    employeeCode = employeeEntity.employeeCode,
-                    employment = employeeEntity.employment,
-                    annualType = employeeEntity.annualType,
-                    annualIncome = employeeEntity.annualIncome,
-                    position = employeeEntity.position,
-                    joinAt = employeeEntity.joinAt,
-                    email = employeeEntity.email,
-                    jobClass = employeeEntity.jobClass,
-                    reason = employeeEntity.reason,
-                    resignationAt = employeeEntity.resignationAt,
-                    resignationContents = employeeEntity.resignationContents,
-                    mobilePhoneNumber = employeeEntity.mobilePhoneNumber,
-                    office = employeeEntity.office,
-                    job = employeeEntity.job,
-                    careerNumber = employeeEntity.careerNumber,
-                    dependentCnt = employeeEntity.dependentCnt,
-                    address = employeeEntity.address,
-                    apprAt = employeeEntity.apprAt,
-                    attachFileYn = employeeEntity.attachFileYn,
-                    employee = employeeEntity
-                )
+                var entity = EmployeeHistoryEntity()
+
+                entity.encryptResidentNumber = employeeEntity.encryptResidentNumber
+                entity.hospitalId = employeeEntity.hospitalId
+                entity.hospitalName = employeeEntity.hospitalName
+                entity.employeeCode = employeeEntity.employeeCode
+                entity.employment = employeeEntity.employment
+                entity.annualType = employeeEntity.annualType
+                entity.annualIncome = employeeEntity.annualIncome
+                entity.position = employeeEntity.position
+                entity.joinAt = employeeEntity.joinAt
+                entity.email = employeeEntity.email
+                entity.jobClass = employeeEntity.jobClass
+                entity.reason = employeeEntity.reason
+                entity.resignationAt = employeeEntity.resignationAt
+                entity.resignationContents = employeeEntity.resignationContents
+                entity.mobilePhoneNumber = employeeEntity.mobilePhoneNumber
+                entity.office = employeeEntity.office
+                entity.job = employeeEntity.job
+                entity.careerNumber = employeeEntity.careerNumber
+                entity.dependentCnt = employeeEntity.dependentCnt
+                entity.address = employeeEntity.address
+                entity.apprAt = employeeEntity.apprAt
+                entity.attachFileYn = employeeEntity.attachFileYn
+                entity.employee = employeeEntity
+
                 //퇴직이 아니면 이름과 주민번호 등록
                 if (!employeeEntity.jobClass.equals(JobClass.JobClass_R.jobClassCode)) {
-                    saveEmployeeHistoryEntity.name = employeeEntity.name
-                    saveEmployeeHistoryEntity.residentNumber = employeeEntity.residentNumber
+                    entity.name = employeeEntity.name
+                    entity.residentNumber = employeeEntity.residentNumber
                 }
 
 
-                employeeHistoryRepository.save(saveEmployeeHistoryEntity);
+                employeeHistoryRepository.save(entity);
             }
         }
     }
@@ -418,21 +430,23 @@ class EmployeeService(
 
         val employeeListCnt = employeeRepository.employeeListCnt(hospitalId, employeeQueryDto)
         val employeeList = employeeRepository.employeeList(hospitalId, employeeQueryDto).map {
-            EmployeeDto(
-                id = it.id!!,
-                residentNumber = it.residentNumber,
-                name = it.name,
-                employment = it.employment,
-                annualType = it.annualType,
-                annualIncome = it.annualIncome,
-                position = it.position ?: "",
-                joinAt = it.joinAt.toString(),
-                email = it.email ?: "",
-                jobClass = getJobClassName(it.jobClass),
-                reason = it.reason ?: "",
-                mobilePhoneNumber = it.mobilePhoneNumber,
-                resignationAt = it.resignationAt
-            )
+            val employeeDto = EmployeeDto()
+
+            employeeDto.id = it.id!!
+            employeeDto.residentNumber = it.residentNumber
+            employeeDto.name = it.name
+            employeeDto.employment = it.employment
+            employeeDto.annualType = it.annualType
+            employeeDto.annualIncome = it.annualIncome
+            employeeDto.position = it.position ?: ""
+            employeeDto.joinAt = it.joinAt.toString()
+            employeeDto.email = it.email ?: ""
+            employeeDto.jobClass = getJobClassName(it.jobClass)
+            employeeDto.reason = it.reason ?: ""
+            employeeDto.mobilePhoneNumber = it.mobilePhoneNumber
+            employeeDto.resignationAt = it.resignationAt.toString()
+
+            employeeDto
         }
 
         return EmployeeReturnDto(
@@ -444,41 +458,46 @@ class EmployeeService(
 
     fun getEmployee(employeeId: String): EmployeeDetailDto? {
 
-        var employeeDto: EmployeeDto? = null
+        var employeeDto: EmployeeDto = EmployeeDto()
 
-        employeeRepository.findById(employeeId.toInt()).map { employeeEntity ->
-            employeeEntity?.also {
-                employeeDto = EmployeeDto(
-                    residentNumber = employeeEntity.residentNumber,
-                    hospitalId = employeeEntity.hospitalId,
-                    hospitalName = employeeEntity.hospitalName,
-                    employeeCode = employeeEntity.employeeCode,
-                    name = employeeEntity.name!!,
-                    employment = employeeEntity.employment,
-                    annualType = employeeEntity.annualType,
-                    annualIncome = employeeEntity.annualIncome,
-                    position = employeeEntity.position,
-                    joinAt = employeeEntity.joinAt.toString(),
-                    email = employeeEntity.email,
-                    jobClass = employeeEntity.jobClass,
-                    reason = employeeEntity.reason,
-                    resignationAt = employeeEntity.resignationAt,
-                    resignationContents = employeeEntity.resignationContents,
-                    mobilePhoneNumber = employeeEntity.mobilePhoneNumber,
-                    office = employeeEntity.office,
-                    job = employeeEntity.job,
-                    careerNumber = employeeEntity.careerNumber,
-                    dependentCnt = employeeEntity.dependentCnt,
-                    address = employeeEntity.address,
-                    apprAt = employeeEntity.apprAt,
-                    attachFileYn = employeeEntity.attachFileYn,
-                    id = employeeEntity.id!!,
-                    writerId = employeeEntity.writerId,
-                    writerName = employeeEntity.writerName,
-                    taxRate = employeeEntity.taxRate,
-                    createdAt = employeeEntity.createdAt,
-                    updatedAt = employeeEntity.updatedAt
-                )
+        employeeRepository.findById(employeeId.toInt()).map { it ->
+            it?.also {
+                employeeDto.residentNumber = it.residentNumber
+                employeeDto.hospitalId = it.hospitalId
+                employeeDto.hospitalName = it.hospitalName
+                employeeDto.employeeCode = it.employeeCode
+                employeeDto.name = it.name!!
+                employeeDto.careerBreakYn = it.careerBreakYn
+                employeeDto.spec = it.spec
+                employeeDto.academicHistory = it.academicHistory
+                employeeDto.contractDuration = it.contractDuration
+                employeeDto.employment = it.employment
+                employeeDto.annualType = it.annualType
+                employeeDto.annualIncome = it.annualIncome
+                employeeDto.position = it.position
+                employeeDto.joinAt = it.joinAt?.toString()
+                employeeDto.email = it.email
+                employeeDto.jobClass = it.jobClass.toString()
+                employeeDto.reason = it.reason
+                employeeDto.enlistmentAt = it.enlistmentAt.toString()
+                employeeDto.dischargeAt = it.dischargeAt.toString()
+                employeeDto.workRenewalAt = it.workRenewalAt.toString()
+                employeeDto.resignationAt = it.resignationAt.toString()
+                employeeDto.resignationContents = it.resignationContents
+                employeeDto.mobilePhoneNumber = it.mobilePhoneNumber
+                employeeDto.office = it.office
+                employeeDto.job = it.job
+                employeeDto.careerNumber = it.careerNumber
+                employeeDto.dependentCnt = it.dependentCnt
+                employeeDto.address = it.address
+                employeeDto.apprAt = it.apprAt
+                employeeDto.attachFileYn = it.attachFileYn
+                employeeDto.id = it.id!!
+                employeeDto.writerId = it.writerId
+                employeeDto.writerName = it.writerName
+                employeeDto.taxRate = it.taxRate
+                employeeDto.createdAt = it.createdAt
+                employeeDto.updatedAt = it.updatedAt
             }
         }
 
@@ -699,23 +718,23 @@ class EmployeeService(
                         employeeRepository.findByHospitalIdAndEmployeeCode(hospitalId, row.getCell(1).rawValue)
 
                     if (checkList.isNullOrEmpty()) {
-                        val data = EmployeeEntity(
-                            hospitalId = hospitalId,
-                            hospitalName = hospitalName,
-                            employeeCode = row.getCell(1).rawValue,
-                            name = defaultName,
-                            encryptResidentNumber = encrypt.encodeToBase64(row.getCell(4).rawValue),
-                            residentNumber = row.getCell(4).rawValue,
-                            jobClass = JobClass.JobClass_W.jobClassCode,
-                            joinAt = joinAt,
-                            mobilePhoneNumber = row.getCell(12).rawValue,
-                            email = row.getCell(13).rawValue,
-                            address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue,
-                            filePath = filePath,
-                            office = row.getCell(8).rawValue,
-                            position = row.getCell(6).rawValue
-                        )
-                        dataList.add(data)
+                        val entity = EmployeeEntity()
+
+                        entity.hospitalId = hospitalId
+                        entity.hospitalName = hospitalName
+                        entity.employeeCode = row.getCell(1).rawValue
+                        entity.name = defaultName
+                        entity.encryptResidentNumber = encrypt.encodeToBase64(row.getCell(4).rawValue)
+                        entity.residentNumber = row.getCell(4).rawValue
+                        entity.jobClass = JobClass.JobClass_W.jobClassCode
+                        entity.joinAt = joinAt
+                        entity.mobilePhoneNumber = row.getCell(12).rawValue
+                        entity.email = row.getCell(13).rawValue
+                        entity.address = row.getCell(10).rawValue + " " + row.getCell(11).rawValue
+                        entity.filePath = filePath
+                        entity.office = row.getCell(8).rawValue
+                        entity.position = row.getCell(6).rawValue
+                        dataList.add(entity)
                     }
                 }
             }

@@ -16,7 +16,7 @@ enum class RequestState {
     }
 }
 
-fun getRequestStateName(requestStateCode: String): String{
+fun getRequestStateName(requestStateCode: String?): String{
     var requestStateName = "";
 
     RequestState.values().filter {
