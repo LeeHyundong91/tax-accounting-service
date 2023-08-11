@@ -2,10 +2,9 @@ package net.dv.tax.infra.endpoint.purchase
 
 import mu.KotlinLogging
 import net.dv.tax.Application
-import net.dv.tax.app.dto.purchase.PurchaseCashReceiptListDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardListDto
 import net.dv.tax.app.dto.purchase.PurchaseElecInvoiceListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
+import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.app.purchase.*
 import net.dv.tax.domain.purchase.PurchaseHandwrittenEntity
 import org.springframework.data.domain.Pageable
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/${Application.VERSION}/purchase")
 class PurchaseBooksEndpoints(
-    private val purchaseCashReceiptService: PurchaseCashReceiptService,
-    private val purchaseCreditCardService: PurchaseCreditCardService,
     private val purchaseElecInvoiceService: PurchaseElecInvoiceService,
     private val handwrittenService: PurchaseHandwrittenService,
     private val command: PurchaseQueryCommand,
@@ -28,11 +25,11 @@ class PurchaseBooksEndpoints(
     /** 신용카드매입관리 항목 조회 */
     @GetMapping("/credit-card/{hospitalId}/list", "/credit-card/{hospitalId}")
     fun getCreditCardInvoice(@PathVariable hospitalId: String,
-                             query: PurchaseQueryDto): ResponseEntity<PurchaseCreditCardListDto> {
+                             query: PurchaseQueryDto
+    ): ResponseEntity<PurchaseCreditCardListDto> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
 //        val res =  purchaseCreditCardService.getPurchaseCreditCard(hospitalId, query)
-
         val res = command.creditCard(hospitalId, query)
 
         return ResponseEntity.ok(res)
@@ -41,10 +38,12 @@ class PurchaseBooksEndpoints(
     /** 매입 현금 영수증 항목 조회 */
     @GetMapping("/cash-receipt/{hospitalId}/list", "/cash-receipt/{hospitalId}")
     fun getCashReceiptInvoice(@PathVariable hospitalId: String,
-                              purchaseQueryDto: PurchaseQueryDto): ResponseEntity<PurchaseCashReceiptListDto> {
+                              query: PurchaseQueryDto
+    ): ResponseEntity<PurchaseBooks<*>> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
-        val res =  purchaseCashReceiptService.getPurchaseCashReceipt(hospitalId, purchaseQueryDto)
+//        val res =  purchaseCashReceiptService.getPurchaseCashReceipt(hospitalId, query)
+        val res = command.purchaseBooks(PurchaseType.CASH_RECEIPT, hospitalId, query)
 
         return ResponseEntity.ok(res)
     }
@@ -53,7 +52,8 @@ class PurchaseBooksEndpoints(
     @GetMapping("/elec-invoice/{hospitalId}/list", "/e-invoice/{bookType}/{hospitalId}")
     fun getPurchaseInvoice(@PathVariable hospitalId: String,
                            @PathVariable bookType: String?,
-                           purchaseQueryDto: PurchaseQueryDto): ResponseEntity<PurchaseElecInvoiceListDto> {
+                           purchaseQueryDto: PurchaseQueryDto
+    ): ResponseEntity<PurchaseElecInvoiceListDto> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
         val res = purchaseElecInvoiceService.getPurchaseElecInvoice(hospitalId, purchaseQueryDto)

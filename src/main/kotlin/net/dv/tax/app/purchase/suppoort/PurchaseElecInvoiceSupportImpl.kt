@@ -4,7 +4,7 @@ import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.domain.employee.EmployeeEntity
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
+import net.dv.tax.app.purchase.PurchaseQueryDto
 import net.dv.tax.domain.purchase.PurchaseElecInvoiceEntity
 import net.dv.tax.domain.purchase.QPurchaseElecInvoiceEntity.purchaseElecInvoiceEntity
 import net.dv.tax.app.dto.purchase.PurchaseElecInvoiceTotal

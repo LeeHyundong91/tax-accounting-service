@@ -3,7 +3,6 @@ package net.dv.tax.app.purchase
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.app.dto.MenuCategoryCode
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.getDeductionName
 import net.dv.tax.app.enums.purchase.getRecommendDeductionName
 import net.dv.tax.utils.ExcelComponent

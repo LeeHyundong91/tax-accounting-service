@@ -3,7 +3,7 @@ package net.dv.tax.infra.endpoint.purchase
 import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import net.dv.tax.Application
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
+import net.dv.tax.app.purchase.PurchaseQueryDto
 import net.dv.tax.app.purchase.PurchaseExcelDownloadService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

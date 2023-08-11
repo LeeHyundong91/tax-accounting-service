@@ -1,4 +1,7 @@
+### 신용카드 매입 자료 목록 조회
 GET {{host}}/v1/purchase/credit-card/cid01/list
 Accept: application/json
 
-###
+### 현금영수증 매입 자료 목록 조회
+GET {{host}}/v1/purchase/cash-receipt/cid01/list
+Accept: application/json

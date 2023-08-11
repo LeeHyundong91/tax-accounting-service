@@ -3,11 +3,12 @@ package net.dv.tax.app.purchase
 import net.dv.tax.app.enums.purchase.PurchaseType
 import java.time.LocalDateTime
 
-interface JournalEntryDto {
-    var status: String?
-    var requestedAt: LocalDateTime?
-    var committedAt: LocalDateTime?
-}
+
+data class PurchaseBooks<T>(
+    val list: List<T>,
+    val summary: BookSummary,
+    val total: Long,
+)
 
 data class PurchaseBookDto(
     override val id: Long,
@@ -22,7 +23,14 @@ data class JournalEntryReqDto(
     override var status: String? = null,
     override var requester: String? = null,
     override var committer: String? = null,
-) : JournalEntry
+) : JournalEntry {
+    override var requestedAt: LocalDateTime?
+        get() = TODO("Not yet implemented")
+        set(value) {}
+    override var committedAt: LocalDateTime?
+        get() = TODO("Not yet implemented")
+        set(value) {}
+}
 
 data class JournalEntryHistoryDto(
     val writer: String,

@@ -5,7 +5,6 @@ import net.dv.tax.domain.purchase.PurchaseCashReceiptEntity
 import net.dv.tax.app.dto.purchase.ExcelRequiredDto
 import net.dv.tax.app.dto.purchase.PurchaseCashReceiptDto
 import net.dv.tax.app.dto.purchase.PurchaseCashReceiptListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.getDeductionName
 import net.dv.tax.app.enums.purchase.getRecommendDeductionName
 import net.dv.tax.app.common.SendQueueService

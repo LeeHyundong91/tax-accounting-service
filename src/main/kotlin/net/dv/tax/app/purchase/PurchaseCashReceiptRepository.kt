@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 
-interface PurchaseCashReceiptRepository: JpaRepository<PurchaseCashReceiptEntity?, Int>,
-    JpaSpecificationExecutor<PurchaseCashReceiptEntity?>, PurchaseCashReceiptSupport {
-}
+//interface PurchaseCashReceiptRepository: JpaRepository<PurchaseCashReceiptEntity?, Int>,
+//    JpaSpecificationExecutor<PurchaseCashReceiptEntity?>, PurchaseCashReceiptSupport {
+//}

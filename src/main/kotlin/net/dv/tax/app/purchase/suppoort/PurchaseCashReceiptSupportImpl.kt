@@ -8,7 +8,7 @@ import net.dv.tax.domain.purchase.PurchaseCashReceiptEntity
 import net.dv.tax.domain.purchase.QPurchaseCashReceiptEntity.purchaseCashReceiptEntity
 import net.dv.tax.app.dto.purchase.PurchaseCashReceiptTotal
 import net.dv.tax.app.dto.purchase.PurchaseCashReceiptTotalSearch
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
+import net.dv.tax.app.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.Deduction
 import net.dv.tax.app.common.CustomQuerydslRepositorySupport
 import org.springframework.stereotype.Repository

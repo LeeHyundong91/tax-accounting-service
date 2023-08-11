@@ -1,14 +1,10 @@
 package net.dv.tax.app.purchase
 
-import net.dv.tax.app.dto.purchase.PurchaseCreditCardDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
-import net.dv.tax.app.enums.purchase.getDeductionName
-import net.dv.tax.app.enums.purchase.getRecommendDeductionName
+import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
 import org.springframework.stereotype.Service
-import java.lang.RuntimeException
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -17,6 +13,7 @@ import java.time.ZonedDateTime
 @Service
 class PurchaseManagementService(
     private val creditCardRepository: PurchaseCreditCardRepository,
+    private val cashReceiptRepository: PurchaseCashReceiptRepository,
     private val journalEntryRepository: PurchaseJournalEntryRepository,
     private val journalEntryHistoryRepository: PurchaseJournalEntryHistoryRepository,
 ): PurchaseQueryCommand, JournalEntryCommand {
@@ -30,52 +27,35 @@ class PurchaseManagementService(
      * 신용카드 매입 목록 조회
      */
     override fun creditCard(hospitalId: String, query: PurchaseQueryDto): PurchaseCreditCardListDto {
-        val creditCardList = creditCardRepository.purchaseBooks(hospitalId, query)
+        val books = creditCardRepository.purchaseBooks(hospitalId, query)
         val totalCount = creditCardRepository.purchaseCreditCardListCnt(hospitalId, query)
-        val purchaseCreditcardTotal =
-            creditCardRepository.purchaseCreditCardTotal(hospitalId, query)
+        val summary = creditCardRepository.purchaseCreditCardTotal(hospitalId, query)
 
         return PurchaseCreditCardListDto(
-            listPurchaseCreditCard = creditCardList,
-            purchaseCreditCardTotal = purchaseCreditcardTotal,
+            listPurchaseCreditCard = books,
+            purchaseCreditCardTotal = summary,
             totalCount = totalCount
         )
     }
 
-    private fun getPurchaseCreditCardList(
-        hospitalId: String,
-        purchaseQueryDto: PurchaseQueryDto,
-        isExcel: Boolean,
-    ): List<PurchaseCreditCardDto> {
+    override fun purchaseBooks(type: PurchaseType,
+                               hospitalId: String,
+                               query: PurchaseQueryDto): PurchaseBooks<*> {
+        return cashReceiptBooks(hospitalId, query)
+    }
 
-        return creditCardRepository.purchaseCreditCardList(hospitalId, purchaseQueryDto, isExcel)
-            .map { purchaseCreditCard ->
-                PurchaseCreditCardDto(
-                    id = purchaseCreditCard.id,
-                    hospitalId = purchaseCreditCard.hospitalId,
-                    dataFileId = purchaseCreditCard.dataFileId,
-                    billingDate = purchaseCreditCard.billingDate,
-                    accountCode = purchaseCreditCard.accountCode,
-                    franchiseeName = purchaseCreditCard.franchiseeName,
-                    corporationType = purchaseCreditCard.corporationType,
-                    itemName = purchaseCreditCard.itemName,
-                    supplyPrice = purchaseCreditCard.supplyPrice,
-                    taxAmount = purchaseCreditCard.taxAmount,
-                    nonTaxAmount = purchaseCreditCard.nonTaxAmount,
-                    totalAmount = purchaseCreditCard.totalAmount,
-                    deductionName = getDeductionName(purchaseCreditCard.isDeduction),
-                    recommendDeductionName = getRecommendDeductionName(purchaseCreditCard.isRecommendDeduction),
-                    statementType1 = purchaseCreditCard.statementType1,
-                    statementType2 = purchaseCreditCard.statementType2,
-                    debtorAccount = purchaseCreditCard.debtorAccount,
-                    creditAccount = purchaseCreditCard.creditAccount,
-                    separateSend = purchaseCreditCard.separateSend,
-                    statementStatus = purchaseCreditCard.statementStatus,
-                    writer = purchaseCreditCard.writer,
-                    isDelete = purchaseCreditCard.isDelete,
-                    createdAt = purchaseCreditCard.createdAt,
-                )
-            }
+    private fun cashReceiptBooks(hospitalId: String, query: PurchaseQueryDto): PurchaseBooks<CashReceiptBook> {
+        val list = cashReceiptRepository.purchaseBooks(hospitalId, query)
+        val summary = cashReceiptRepository.summary(hospitalId, query)
+//        val summary = cashReceiptRepository.purchaseCashReceiptTotal(hospitalId, query)
+        val count = cashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, query)
+
+//        return PurchaseCashReceiptListDto(
+//            listPurchaseCashReceipt = CashReceiptList,
+//            purchaseCashReceiptTotal = purchaseCashReceiptTotal,
+//            totalCount = totalCount
+//        )
+        return PurchaseBooks<CashReceiptBook>(list = list, summary = summary, total = count)
     }
 
     /**

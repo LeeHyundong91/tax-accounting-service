@@ -1,4 +1,4 @@
-package net.dv.tax.infra.orm
+package net.dv.tax.infra.orm.purchase
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Projections
@@ -7,15 +7,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotal
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotalSearch
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.Deduction
 import net.dv.tax.app.enums.purchase.PurchaseType
-import net.dv.tax.app.purchase.*
-import net.dv.tax.domain.purchase.JournalEntryEntity
-import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
+import net.dv.tax.app.purchase.PurchaseCreditCardQuery
+import net.dv.tax.app.purchase.PurchaseQueryDto
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.domain.purchase.QJournalEntryEntity.journalEntryEntity
-import net.dv.tax.domain.purchase.QJournalEntryHistoryEntity.journalEntryHistoryEntity
 import net.dv.tax.domain.purchase.QPurchaseCreditCardEntity.purchaseCreditCardEntity
 import org.springframework.stereotype.Repository
 
@@ -174,49 +171,5 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
         }
 
         return builder
-    }
-}
-
-
-@Repository
-class PurchaseJournalEntryRepositoryImpl(
-    private val factory: JPAQueryFactory
-): PurchaseJournalEntryQuery {
-    override fun search(): List<PurchaseData> {
-        val cc = factory
-            .from(purchaseCreditCardEntity)
-            .where(purchaseCreditCardEntity.hospitalId.eq("test-id"))
-
-        val cr = factory
-            .from(purchaseCreditCardEntity)
-
-        return listOf()
-    }
-
-    override fun find(purchase: PurchaseBook): JournalEntryEntity? {
-        return factory
-            .select(journalEntryEntity)
-            .from(journalEntryEntity)
-            .where(
-                journalEntryEntity.purchaseId.eq(purchase.id),
-                journalEntryEntity.purchaseType.eq(purchase.type.code)
-            )
-            .fetchOne()
-    }
-}
-
-@Repository
-class PurchaseJournalEntryHistoryRepositoryImpl(
-    private val factory: JPAQueryFactory
-): PurchaseJournalEntryHistoryQuery {
-    override fun find(purchase: PurchaseBook): List<JournalEntryHistoryEntity> {
-        return factory
-            .select(journalEntryHistoryEntity)
-            .from(journalEntryHistoryEntity)
-            .where(
-                journalEntryHistoryEntity.purchaseId.eq(purchase.id),
-                journalEntryHistoryEntity.purchaseType.eq(purchase.type.code)
-            )
-            .fetch()
     }
 }

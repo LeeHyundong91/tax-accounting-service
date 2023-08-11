@@ -1,5 +1,5 @@
 package net.dv.tax.app.dto.purchase
-import net.dv.tax.app.purchase.JournalEntryDto
+import net.dv.tax.app.purchase.JournalEntryStatus
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 
@@ -109,7 +109,7 @@ data class PurchaseCashReceiptDto (
 
     @Comment("작성자")
     var writer: String? = null,
-): JournalEntryDto {
+): JournalEntryStatus {
     override var status: String? = null
     override var requestedAt: LocalDateTime? = null
     override var committedAt: LocalDateTime? = null

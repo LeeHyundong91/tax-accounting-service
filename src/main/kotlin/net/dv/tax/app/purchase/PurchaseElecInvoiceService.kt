@@ -5,7 +5,6 @@ import net.dv.tax.domain.purchase.PurchaseElecInvoiceEntity
 import net.dv.tax.app.dto.purchase.ExcelRequiredDto
 import net.dv.tax.app.dto.purchase.PurchaseElecInvoiceDto
 import net.dv.tax.app.dto.purchase.PurchaseElecInvoiceListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.common.SendQueueService
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service

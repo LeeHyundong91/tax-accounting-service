@@ -7,7 +7,6 @@ import net.dv.tax.app.dto.QueueDto
 import net.dv.tax.app.dto.purchase.ExcelRequiredDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.getDeductionName
 import net.dv.tax.app.enums.purchase.getRecommendDeductionName
 import net.dv.tax.app.common.SendQueueService

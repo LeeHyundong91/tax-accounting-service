@@ -1,5 +1,5 @@
 package net.dv.tax.app.dto.purchase
-import net.dv.tax.app.purchase.JournalEntryDto
+import net.dv.tax.app.purchase.JournalEntryStatus
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
@@ -111,7 +111,7 @@ data class PurchaseCreditCardDto (
 
     @Comment("등록일(업로드일시")
     val createdAt: LocalDateTime? = null,
-): JournalEntryDto {
+): JournalEntryStatus {
     var jstatus: JournalEntryEntity.Status? = null
 
     override var status: String? = null
