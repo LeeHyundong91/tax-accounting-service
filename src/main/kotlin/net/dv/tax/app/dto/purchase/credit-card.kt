@@ -114,7 +114,8 @@ data class PurchaseCreditCardDto (
 ): JournalEntryDto {
     var jstatus: JournalEntryEntity.Status? = null
 
-    override var status: String? = jstatus?.name
+    override var status: String? = null
+        get() = jstatus?.name ?: field
     override var requestedAt: LocalDateTime? = null
     override var committedAt: LocalDateTime? = null
 }
