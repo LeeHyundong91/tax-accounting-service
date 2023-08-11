@@ -60,6 +60,13 @@ class EmployeeController(
         return ResponseEntity.ok(res)
     }
 
+//    @GetMapping("/")
+//    fun getEmployeeByGuest(@RequestParam email: String): ResponseEntity<EmployeeReturnDto> {
+
+//        var res = employeeService.getEmployee(employeeId)
+//        return ResponseEntity.ok()
+//    }
+
     //직원 신규 등록
     @PostMapping("insert")
     fun registerEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {

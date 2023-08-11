@@ -9,17 +9,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-@Entity
-@Comment("노무직원요청관리")
-@Table(name = "EMPLOYEE_REQUEST")
+
+@MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-class EmployeeRequestEntity(
-
-    @Id
-    @Column(name = "ID", insertable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
-
+open class BaseEntity(
     @Comment("주민번호 암호화")
     @Column(name = "ENCRYPT_RESIDENT_NUMBER")
     @GenericGenerator(name = "keyGenerator", strategy = "net.dv.company.domain.ResidentNumberGenerator")
@@ -32,11 +25,11 @@ class EmployeeRequestEntity(
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
-    var hospitalId: String,
+    var hospitalId: String? = null,
 
     @Comment("병원명")
     @Column(name = "HOSPITAL_NAME")
-    var hospitalName: String,
+    var hospitalName: String? = null,
 
     @Comment("사원번호")
     @Column(name = "EMPLOYEE_CODE")
@@ -88,7 +81,7 @@ class EmployeeRequestEntity(
 
     @Comment("재직구분 재직:W/휴직:L/퇴사:R")
     @Column(name = "JOB_CLASS")
-    var jobClass: String,
+    var jobClass: String? = null,
 
     @Comment("사유")
     @Column(name = "REASON")
@@ -110,13 +103,9 @@ class EmployeeRequestEntity(
     @Column(name = "CREATED_AT")
     var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-    @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
-    @Column(name = "REQUEST_STATE")
-    var requestState: String,
-
     @Comment("퇴직일")
     @Column(name = "RESIGNATION_AT")
-    var resignationAt: String? = null,
+    var resignationAt: LocalDate? = null,
 
     @Comment("퇴직사유")
     @Column(name = "RESIGNATION_CONTENTS")
@@ -165,8 +154,24 @@ class EmployeeRequestEntity(
     @Comment("작성자 명")
     @Column(name = "WRITER_NAME")
     var writerName: String? = null,
-
 )
+
+@Entity
+@Comment("노무직원요청관리")
+@Table(name = "EMPLOYEE_REQUEST")
+@EntityListeners(AuditingEntityListener::class)
+class EmployeeRequestEntity(
+
+    @Id
+    @Column(name = "ID", insertable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
+
+    @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
+    @Column(name = "REQUEST_STATE")
+    var requestState: String? = null,
+
+) : BaseEntity()
 
 @Entity
 @Comment("노무직원관리")
@@ -179,153 +184,18 @@ class EmployeeEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Comment("주민번호 암호화")
-    @Column(name = "ENCRYPT_RESIDENT_NUMBER")
-    @GenericGenerator(name = "keyGenerator", strategy = "net.dv.company.domain.ResidentNumberGenerator")
-    @GeneratedValue(generator = "keyGenerator")
-    var encryptResidentNumber: String? = null,
-
-    @Comment("주민번호")
-    @Column(name = "RESIDENT_NUMBER")
-    var residentNumber: String? = null,
-
-    @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
-    var hospitalId: String,
-
-    @Comment("병원명")
-    @Column(name = "HOSPITAL_NAME")
-    var hospitalName: String,
-
-    @Comment("사원번호")
-    @Column(name = "EMPLOYEE_CODE")
-    var employeeCode: String? = null,
-
-    @Comment("이름")
-    @Column(name = "NAME")
-    var name: String? = null,
-
-    @Comment("경력 단절 여부")
-    @Column(name = "CAREER_BREAK_YN")
-    var careerBreakYn: String? = "N",
-
-    @Comment("기능 및 자격")
-    @Column(name = "SPEC")
-    var spec: String? = null,
-
-    @Comment("최종 학력")
-    @Column(name = "ACADEMIC_HISTORY")
-    var academicHistory: String? = null,
-
-    @Comment("계약 기간")
-    @Column(name = "CONTRACT_DURATION")
-    var contarctDuration:Int? = null,
-
-    @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
-    @Column(name = "EMPLOYMENT")
-    var employment: String? = null,
-
-    @Comment("세전/세후")
-    @Column(name = "ANNUAL_TYPE")
-    var annualType: String? = null,
-
-    @Comment("연봉")
-    @Column(name = "ANNUAL_INCOME")
-    var annualIncome: String? = null,
-
-    @Comment("직위")
-    @Column(name = "POSITION")
-    var position: String? = null,
-
-    @Comment("입사일")
-    @Column(name = "JOIN_AT")
-    var joinAt: LocalDate,
-
-    @Comment("이메일")
-    @Column(name = "EMAIL")
-    var email: String? = null,
-
-    @Comment("재직구분 재직:W/휴직:L/퇴사:R")
-    @Column(name = "JOB_CLASS")
-    var jobClass: String,
-
-    @Comment("사유")
-    @Column(name = "REASON")
-    var reason: String? = null,
-
-    @Comment("입대날짜")
-    @Column(name = "ENLISTMENT_AT")
-    var enlistmentAt: LocalDateTime? = null,
-
-    @Comment("전역날짜")
-    @Column(name = "DISCHARGE_AT")
-    var dischargeAt: LocalDateTime? = null,
-
-    @Comment("신청일")
-    @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime? = LocalDateTime.now(),
-
-    @Comment("퇴직일")
-    @Column(name = "RESIGNATION_AT")
-    var resignationAt: String? = null,
-
-    @Comment("퇴직사유")
-    @Column(name = "RESIGNATION_CONTENTS")
-    var resignationContents: String? = null,
-
-    @Comment("휴대전화번호")
-    @Column(name = "MOBILE_PHONE_NUMBER")
-    var mobilePhoneNumber: String? = null,
-
-    @Comment("직책")
-    @Column(name = "OFFICE")
-    var office: String? = null,
-
-    @Comment("직무")
-    @Column(name = "JOB")
-    var job: String? = null,
-
-    @Comment("경력연차")
-    @Column(name = "CAREER_NUMBER")
-    var careerNumber: String? = null,
-
-    @Comment("부양가족 수")
-    @Column(name = "DEPENDENT_CNT")
-    var dependentCnt: String? = null,
-
-    @Comment("주소")
-    @Column(name = "ADDRESS")
-    var address: String? = null,
-
-    @Comment("승인일")
-    @Column(name = "APPR_AT")
-    var apprAt: LocalDateTime? = null,
-
-    @Comment("첨부파일 여부")
-    @Column(name = "ATTACH_FILE_YN")
-    var attachFileYn: String? = "N",
-
-    @Comment("최종수정일")
-    @Column(name = "UPDATED_AT")
-    var updatedAt: LocalDateTime? = null,
-
     @Comment("엑셀 업로드시 등록된 파이 ㄹ경로")
     @Column(name = "FILE_PATH")
     var filePath: String? = null,
 
-    @Comment("작성자 ID")
-    @Column(name = "WRITER_ID")
-    var writerId: String? = null,
-
-    @Comment("작성자 명")
-    @Column(name = "WRITER_NAME")
-    var writerName: String? = null,
-
     @Comment("세율")
     @Column(name = "TAX_RATE")
-    var taxRate: String? = null
+    var taxRate: String? = null,
 
-    )
+    @Comment("유저아이디")
+    @Column(name = "ACCOUNT_ID")
+    var accountId: String? = null,
+): BaseEntity()
 
 @Entity
 @Comment("노무직원관리 이력")
@@ -337,155 +207,17 @@ class EmployeeHistoryEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Comment("주민번호 암호화")
-    @Column(name = "ENCRYPT_RESIDENT_NUMBER")
-    val encryptResidentNumber: String? = null,
-
-    @Comment("주민번호")
-    @Column(name = "RESIDENT_NUMBER")
-    var residentNumber: String? = null,
-
-    @Comment("병원 아이디")
-    @Column(name = "HOSPITAL_ID")
-    var hospitalId: String,
-
-    @Comment("병원명")
-    @Column(name = "HOSPITAL_NAME")
-    var hospitalName: String,
-
-    @Comment("사원번호")
-    @Column(name = "EMPLOYEE_CODE")
-    var employeeCode: String? = null,
-
-    @Comment("이름")
-    @Column(name = "NAME")
-    var name: String? = null,
-
-    @Comment("경력 단절 여부")
-    @Column(name = "CAREER_BREAK_YN")
-    var careerBreakYn: String? = "N",
-
-    @Comment("기능 및 자격")
-    @Column(name = "SPEC")
-    var spec: String? = null,
-
-    @Comment("최종 학력")
-    @Column(name = "ACADEMIC_HISTORY")
-    var academicHistory: String? = null,
-
-    @Comment("계약 기간")
-    @Column(name = "CONTRACT_DURATION")
-    var contarctDuration:Int? = null,
-
-    @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
-    @Column(name = "EMPLOYMENT")
-    var employment: String? = null,
-
-    @Comment("세전/세후")
-    @Column(name = "ANNUAL_TYPE")
-    var annualType: String? = null,
-
-    @Comment("연봉")
-    @Column(name = "ANNUAL_INCOME")
-    var annualIncome: String? = null,
-
-    @Comment("직위")
-    @Column(name = "POSITION")
-    var position: String? = null,
-
-    @Comment("입사일")
-    @Column(name = "JOIN_AT")
-    var joinAt: LocalDate,
-
-    @Comment("이메일")
-    @Column(name = "EMAIL")
-    var email: String? = null,
-
-    @Comment("재직구분 재직:W/휴직:L/퇴사:R")
-    @Column(name = "JOB_CLASS")
-    var jobClass: String,
-
-    @Comment("사유")
-    @Column(name = "REASON")
-    var reason: String? = null,
-
-    @Comment("입대날짜")
-    @Column(name = "ENLISTMENT_AT")
-    var enlistmentAt: LocalDateTime? = null,
-
-    @Comment("전역날짜")
-    @Column(name = "DISCHARGE_AT")
-    var dischargeAt: LocalDateTime? = null,
-
-    @Comment("신청일")
-    @Column(name = "CREATED_AT")
-    var createdAt: LocalDateTime? = LocalDateTime.now(),
-
-    @Comment("퇴직일")
-    @Column(name = "RESIGNATION_AT")
-    var resignationAt: String? = null,
-
-    @Comment("퇴직사유")
-    @Column(name = "RESIGNATION_CONTENTS")
-    var resignationContents: String? = null,
-
-    @Comment("휴대전화번호")
-    @Column(name = "MOBILE_PHONE_NUMBER")
-    var mobilePhoneNumber: String? = null,
-
-    @Comment("직책")
-    @Column(name = "OFFICE")
-    var office: String? = null,
-
-    @Comment("직무")
-    @Column(name = "JOB")
-    var job: String? = null,
-
-    @Comment("경력연차")
-    @Column(name = "CAREER_NUMBER")
-    var careerNumber: String? = null,
-
-    @Comment("부양가족 수")
-    @Column(name = "DEPENDENT_CNT")
-    var dependentCnt: String? = null,
-
-    @Comment("주소")
-    @Column(name = "ADDRESS")
-    var address: String? = null,
-
-    @Comment("승인일")
-    @Column(name = "APPR_AT")
-    var apprAt: LocalDateTime? = null,
-
-    @Comment("첨부파일 여부")
-    @Column(name = "ATTACH_FILE_YN")
-    var attachFileYn: String? = "N",
-
-    @Comment("최종수정일")
-    @Column(name = "UPDATED_AT")
-    var updatedAt: LocalDateTime? = null,
-
     @Comment("이력 생성일")
     @Column(name = "HISTORY_CREATED_AT")
     var historyCreatedAt: LocalDateTime? = LocalDateTime.now(),
 
     @ManyToOne
     @JoinColumn(name = "EMPLOYEE_ID")
-    val employee: EmployeeEntity? = null,
+    var employee: EmployeeEntity? = null,
+) : BaseEntity()
 
-    @Comment("작성자 ID")
-    @Column(name = "WRITER_ID")
-    var writerId: String? = null,
 
-    @Comment("작성자 명")
-    @Column(name = "WRITER_NAME")
-    var writerName: String? = null,
 
-    @Comment("세율")
-    @Column(name = "TAX_RATE")
-    var taxRate: String? = null
-
-)
 
 @Entity
 @Comment("노무직원관리파일")
