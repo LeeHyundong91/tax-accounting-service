@@ -46,6 +46,22 @@ class EmployeeRequestEntity(
     @Column(name = "NAME")
     var name: String? = null,
 
+    @Comment("경력 단절 여부")
+    @Column(name = "CAREER_BREAK_YN")
+    var careerBreakYn: String? = "N",
+
+    @Comment("기능 및 자격")
+    @Column(name = "SPEC")
+    var spec: String? = null,
+
+    @Comment("최종 학력")
+    @Column(name = "ACADEMIC_HISTORY")
+    var academicHistory: String? = null,
+
+    @Comment("계약 기간")
+    @Column(name = "CONTRACT_DURATION")
+    var contractDuration:Int? = null,
+
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
     var employment: String? = null,
@@ -77,6 +93,18 @@ class EmployeeRequestEntity(
     @Comment("사유")
     @Column(name = "REASON")
     var reason: String? = null,
+
+    @Comment("입대날짜")
+    @Column(name = "ENLISTMENT_AT")
+    var enlistmentAt: LocalDate? = null,
+
+    @Comment("전역날짜")
+    @Column(name = "DISCHARGE_AT")
+    var dischargeAt: LocalDate? = null,
+
+    @Comment("근로계약갱신일")
+    @Column(name = "WORK_RENEWAL_AT")
+    var workRenewalAt: LocalDate? = null,
 
     @Comment("신청일")
     @Column(name = "CREATED_AT")
@@ -177,6 +205,22 @@ class EmployeeEntity(
     @Column(name = "NAME")
     var name: String? = null,
 
+    @Comment("경력 단절 여부")
+    @Column(name = "CAREER_BREAK_YN")
+    var careerBreakYn: String? = "N",
+
+    @Comment("기능 및 자격")
+    @Column(name = "SPEC")
+    var spec: String? = null,
+
+    @Comment("최종 학력")
+    @Column(name = "ACADEMIC_HISTORY")
+    var academicHistory: String? = null,
+
+    @Comment("계약 기간")
+    @Column(name = "CONTRACT_DURATION")
+    var contarctDuration:Int? = null,
+
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
     var employment: String? = null,
@@ -208,6 +252,14 @@ class EmployeeEntity(
     @Comment("사유")
     @Column(name = "REASON")
     var reason: String? = null,
+
+    @Comment("입대날짜")
+    @Column(name = "ENLISTMENT_AT")
+    var enlistmentAt: LocalDateTime? = null,
+
+    @Comment("전역날짜")
+    @Column(name = "DISCHARGE_AT")
+    var dischargeAt: LocalDateTime? = null,
 
     @Comment("신청일")
     @Column(name = "CREATED_AT")
@@ -309,6 +361,22 @@ class EmployeeHistoryEntity(
     @Column(name = "NAME")
     var name: String? = null,
 
+    @Comment("경력 단절 여부")
+    @Column(name = "CAREER_BREAK_YN")
+    var careerBreakYn: String? = "N",
+
+    @Comment("기능 및 자격")
+    @Column(name = "SPEC")
+    var spec: String? = null,
+
+    @Comment("최종 학력")
+    @Column(name = "ACADEMIC_HISTORY")
+    var academicHistory: String? = null,
+
+    @Comment("계약 기간")
+    @Column(name = "CONTRACT_DURATION")
+    var contarctDuration:Int? = null,
+
     @Comment("고용 유형 기간제: /정규:/계약:/프리랜서: ")
     @Column(name = "EMPLOYMENT")
     var employment: String? = null,
@@ -340,6 +408,14 @@ class EmployeeHistoryEntity(
     @Comment("사유")
     @Column(name = "REASON")
     var reason: String? = null,
+
+    @Comment("입대날짜")
+    @Column(name = "ENLISTMENT_AT")
+    var enlistmentAt: LocalDateTime? = null,
+
+    @Comment("전역날짜")
+    @Column(name = "DISCHARGE_AT")
+    var dischargeAt: LocalDateTime? = null,
 
     @Comment("신청일")
     @Column(name = "CREATED_AT")

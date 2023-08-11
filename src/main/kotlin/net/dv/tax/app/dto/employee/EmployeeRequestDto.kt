@@ -18,6 +18,14 @@ data class EmployeeRequestDto(
 
     var name: String? = null,
 
+    var careerBreakYn: String? = "N",
+
+    var spec: String? = null,
+
+    var academicHistory: String? = null,
+
+    var contractDuration: Int? = null,
+
     var employment: String? = null,
 
     var annualType: String? = null,
@@ -33,6 +41,12 @@ data class EmployeeRequestDto(
     var jobClass: String,
 
     var reason: String? = null,
+
+    var enlistmentAt: LocalDate? = null,
+
+    var dischargeAt: LocalDate? = null,
+
+    var workRenewalAt: LocalDate? = null,
 
     var createdAt: LocalDateTime? = LocalDateTime.now(),
 
