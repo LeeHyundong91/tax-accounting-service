@@ -2,8 +2,8 @@ package net.dv.tax.infra.orm
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.jpa.impl.JPAQueryFactory
-import net.dv.tax.app.common.CustomQuerydslRepositorySupport
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotal
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotalSearch
@@ -11,21 +11,19 @@ import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.Deduction
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.app.purchase.*
-import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.domain.purchase.QJournalEntryEntity.journalEntryEntity
 import net.dv.tax.domain.purchase.QJournalEntryHistoryEntity.journalEntryHistoryEntity
 import net.dv.tax.domain.purchase.QPurchaseCreditCardEntity.purchaseCreditCardEntity
-import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
 
 @Repository
 class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : PurchaseCreditCardQuery {
 
     override fun purchaseBooks(hospitalId: String, query: PurchaseQueryDto): List<PurchaseCreditCardDto> {
-        val realOffset = query.offset!! * query.size!!;
+        val realOffset = query.offset!! * query.size!!
         val predicates = BooleanBuilder()
         predicates.and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
 
@@ -53,12 +51,16 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
                 purchaseCreditCardEntity.isRecommendDeduction,
                 purchaseCreditCardEntity.statementType1,
                 purchaseCreditCardEntity.statementType2,
-                purchaseCreditCardEntity.debtorAccount,
+                CaseBuilder()
+                    .`when`(journalEntryEntity.accountingItem.isNotNull).then(journalEntryEntity.accountingItem)
+                    .otherwise(purchaseCreditCardEntity.debtorAccount)
+                    .`as`("debtorAccount"),
                 purchaseCreditCardEntity.creditAccount,
                 purchaseCreditCardEntity.separateSend,
                 purchaseCreditCardEntity.statementStatus,
                 purchaseCreditCardEntity.writer,
                 purchaseCreditCardEntity.createdAt,
+                journalEntryEntity.status.`as`("jstatus"),
                 journalEntryEntity.requestedAt,
                 journalEntryEntity.committedAt,
             ))
@@ -81,11 +83,11 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
         isExcel: Boolean
     ): List<PurchaseCreditCardEntity> {
 
-        val realOffset = purchaseQueryDto.offset!! * purchaseQueryDto.size!!;
+        val realOffset = purchaseQueryDto.offset!! * purchaseQueryDto.size!!
 
         val builder = getBuilder( hospitalId, purchaseQueryDto)
 
-        var res: List<PurchaseCreditCardEntity>
+        val res: List<PurchaseCreditCardEntity>
 
         if( isExcel ) {
             res = factory
@@ -123,7 +125,7 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
         purchaseQueryDto: PurchaseQueryDto
     ): PurchaseCreditCardTotal {
         val builder = getBuilder( hospitalId, purchaseQueryDto)
-        var total = factory
+        val total = factory
             .select(
                 Projections.constructor(
                     PurchaseCreditCardTotalSearch::class.java,
@@ -137,7 +139,7 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
             .where(purchaseCreditCardEntity.isDeduction.eq(true))
             .fetchFirst()
 
-        var nonTotal = factory
+        val nonTotal = factory
             .select(
                 Projections.constructor(
                     PurchaseCreditCardTotalSearch::class.java,
@@ -169,7 +171,6 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
         when(purchaseQueryDto.deduction){
             1L -> builder.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_1.isDeduction))
             2L -> builder.and(purchaseCreditCardEntity.isDeduction.eq(Deduction.Deduction_2.isDeduction))
-            else -> null
         }
 
         return builder
