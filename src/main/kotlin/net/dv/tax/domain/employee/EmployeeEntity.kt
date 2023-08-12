@@ -165,7 +165,7 @@ class EmployeeRequestEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @Comment("요청상태  대기:P/완료:C/완료 및 요청목록삭제:D")
     @Column(name = "REQUEST_STATE")
@@ -182,7 +182,7 @@ class EmployeeEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @Comment("엑셀 업로드시 등록된 파이 ㄹ경로")
     @Column(name = "FILE_PATH")
@@ -205,7 +205,7 @@ class EmployeeHistoryEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @Comment("이력 생성일")
     @Column(name = "HISTORY_CREATED_AT")

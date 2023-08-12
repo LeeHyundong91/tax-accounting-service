@@ -87,6 +87,7 @@ dependencies {
 
     /* dr-village common modules*/
     implementation("net.dv:access-core:1.0.0-SNAPSHOT")
+    implementation("net.dv:steward-api:1.0.0-SNAPSHOT")
 
     /*AWS*/
     implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
