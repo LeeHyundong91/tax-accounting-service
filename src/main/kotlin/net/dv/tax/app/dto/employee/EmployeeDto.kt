@@ -67,7 +67,10 @@ fun EmployeeEntity.toEmployeeDto(): EmployeeDto {
     dto.enlistmentAt = this.enlistmentAt?.toString()
     dto.dischargeAt = this.dischargeAt?.toString()
     dto.workRenewalAt = this.workRenewalAt?.toString()
+    dto.leaveStartAt = this.leaveStartAt?.toString()
+    dto.leaveEndAt = this.leaveEndAt?.toString()
     dto.resignationAt = this.resignationAt?.toString()
+
     dto.apprAt = this.apprAt?.toString()
 
     return dto
@@ -79,6 +82,8 @@ fun EmployeeEntity.updateFromDto(dto: EmployeeDto): EmployeeEntity {
     this.enlistmentAt = parseLocalDate(dto.enlistmentAt)
     this.dischargeAt = parseLocalDate(dto.dischargeAt)
     this.workRenewalAt = parseLocalDate(dto.workRenewalAt)
+    this.leaveStartAt = parseLocalDate(dto.leaveStartAt)
+    this.leaveEndAt = parseLocalDate(dto.leaveEndAt)
     this.resignationAt = parseLocalDate(dto.resignationAt)
     this.updatedAt = LocalDateTime.now()
 

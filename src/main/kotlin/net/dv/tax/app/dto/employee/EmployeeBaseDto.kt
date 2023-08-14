@@ -25,6 +25,8 @@ open class EmployeeBaseDto (
     var enlistmentAt: String? = null,
     var dischargeAt: String? = null,
     var workRenewalAt: String? = null,
+    var leaveStartAt: String? = null,
+    var leaveEndAt: String? = null,
     var resignationAt: String? = null,
     var apprAt: String? = null,
     var resignationContents: String? = null,

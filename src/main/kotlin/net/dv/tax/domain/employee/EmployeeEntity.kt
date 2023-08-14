@@ -103,6 +103,14 @@ open class BaseEntity(
     @Column(name = "CREATED_AT")
     var createdAt: LocalDateTime? = LocalDateTime.now(),
 
+    @Comment("휴직 시작일")
+    @Column(name = "LEAVE_START_AT")
+    var leaveStartAt: LocalDate? = null,
+
+    @Comment("휴직 종료일")
+    @Column(name = "LEAVE_END_AT")
+    var leaveEndAt: LocalDate? = null,
+
     @Comment("퇴직일")
     @Column(name = "RESIGNATION_AT")
     var resignationAt: LocalDate? = null,
