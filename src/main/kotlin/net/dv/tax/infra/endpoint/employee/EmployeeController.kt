@@ -1,8 +1,10 @@
 package net.dv.tax.infra.endpoint.employee
 
+import net.dv.access.Jwt
 import net.dv.tax.Application
 import net.dv.tax.app.dto.employee.*
 import net.dv.tax.app.employee.EmployeeService
+import net.dv.tax.app.enums.employee.RequestState
 import net.dv.tax.utils.AwsS3Service
 import net.dv.tax.utils.ExcelComponent
 import org.hibernate.boot.model.naming.IllegalIdentifierException
@@ -28,6 +30,9 @@ class EmployeeController(
     //직원 요청 등록
     @PostMapping("request/insert")
     fun registerEmployeeRequest(@RequestBody data: EmployeeRequestDto): ResponseEntity<Int> {
+
+        data.requestStateCode = RequestState.RequestState_P.requestStateCode
+
         var res = employeeService.registerEmployeeRequest(data);
         return ResponseEntity.ok(res)
     }
@@ -60,11 +65,28 @@ class EmployeeController(
         return ResponseEntity.ok(res)
     }
 
+    @GetMapping("")
+    fun getEmployeeByGuest(
+        @RequestParam accountId: String?,
+        @RequestParam name: String,
+        @RequestParam hospitalId: String?,
+        @RequestParam email: String): ResponseEntity<EmployeeDto> {
+
+        val data = EmployeeDto()
+        data.accountId = accountId
+        data.email = email
+        data.name = name
+        data.hospitalId = hospitalId
+        val res = employeeService.getEmployeeByGuest(data)
+        return ResponseEntity.ok(res)
+    }
+
     //직원 신규 등록
     @PostMapping("insert")
-    fun registerEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {
+    fun registerEmployee(
+        @RequestBody data: EmployeeDto): ResponseEntity<Int> {
 
-        var res = employeeService.registerEmployee(data)
+        val res = employeeService.registerEmployee(data)
         return ResponseEntity.ok(res)
     }
 

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface EmployeeRepository: JpaRepository<EmployeeEntity?, Int>,
     EmployeeSupport {
-
     fun findByHospitalIdAndResidentNumber(
         hospitalId: String,
         residentNumber: String
@@ -25,6 +24,15 @@ interface EmployeeRepository: JpaRepository<EmployeeEntity?, Int>,
         employeeCode: String
     ): List<EmployeeEntity>
 
+    fun findByAccountIdAndHospitalId(
+        accountId: String,
+        hospitalId: String
+    ): EmployeeEntity?
+
+    fun findByNameAndEmail(
+        name: String,
+        email: String
+    ): EmployeeEntity?
 }
 
 interface EmployeeAttachFileRepository: JpaRepository<EmployeeAttachFileEntity?, Int>

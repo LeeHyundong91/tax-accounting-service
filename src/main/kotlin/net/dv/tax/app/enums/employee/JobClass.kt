@@ -16,7 +16,7 @@ enum class JobClass {
     }
 }
 
-fun getJobClassName(jobClassCode: String): String{
+fun getJobClassName(jobClassCode: String?): String{
 
     var jobClassName = "";
 

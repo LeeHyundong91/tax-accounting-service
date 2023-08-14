@@ -7,3 +7,8 @@ data class ResponseFileUploadDto(
     var result: Any? = null,
 
     )
+
+data class ResponseEmployeeFileUploadDto(
+    var fileName: String,
+    var filePath: String
+)
