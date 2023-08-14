@@ -31,8 +31,22 @@ fun <T : Any, R : Any> T.copyCommonPropertiesTo(target: R) {
     for (sourceProp in sourceProperties) {
         val targetProp = targetProperties.find { it.name == sourceProp.name && it.returnType == sourceProp.returnType }
         if (targetProp != null) {
-            val value = sourceProp.get(this)
-            targetProp.setter.call(target, value)
+            val srcValue = sourceProp.get(this)
+            val tarValue = targetProp.get(target)
+            targetProp.setter.call(target, srcValue)
+        }
+    }
+}
+
+fun <T : Any, R : Any> T.updateCommonPropertiesTo(target: R) {
+    val sourceProperties = this::class.members.filterIsInstance<KProperty1<T, *>>()
+    val targetProperties = target::class.members.filterIsInstance<KMutableProperty1<R, *>>()
+
+    for (sourceProp in sourceProperties) {
+        val targetProp = targetProperties.find { it.name == sourceProp.name && it.returnType == sourceProp.returnType }
+        val srcValue = sourceProp.get(this)
+        if (targetProp != null && srcValue != null) {
+            targetProp.setter.call(target, srcValue)
         }
     }
 }
@@ -60,7 +74,7 @@ fun EmployeeEntity.toEmployeeDto(): EmployeeDto {
 }
 
 fun EmployeeEntity.updateFromDto(dto: EmployeeDto): EmployeeEntity {
-    dto.copyCommonPropertiesTo(this)
+    dto.updateCommonPropertiesTo(this)
     this.joinAt = parseLocalDate(dto.joinAt)
     this.enlistmentAt = parseLocalDate(dto.enlistmentAt)
     this.dischargeAt = parseLocalDate(dto.dischargeAt)

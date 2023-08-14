@@ -1,6 +1,6 @@
 package net.dv.tax.app.consulting
 
-import net.dv.tax.app.employee.VHospitalMemberRepository
+import net.dv.tax.app.common.VHospitalMemberRepository
 import net.dv.tax.domain.consulting.ConsultingReportEntity
 import net.dv.tax.infra.endpoint.consulting.ConsultingController
 import org.springframework.stereotype.Service

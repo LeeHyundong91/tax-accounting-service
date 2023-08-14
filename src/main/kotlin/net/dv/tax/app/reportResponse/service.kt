@@ -1,7 +1,7 @@
 package net.dv.tax.app.reportResponse
 
+import net.dv.tax.app.common.VHospitalMemberRepository
 import net.dv.tax.app.consulting.ConsultingReportRepository
-import net.dv.tax.app.employee.VHospitalMemberRepository
 import net.dv.tax.domain.consulting.ConsultingReportEntity
 import net.dv.tax.domain.consulting.ReportResponseEntity
 import org.springframework.stereotype.Service

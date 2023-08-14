@@ -53,8 +53,3 @@ interface EmployeeJobRepository: JpaRepository<EmployeeJobEntity, Int> {
     """, nativeQuery = true)
     fun findBySubject(subject: Int): List<EmployeeJobEntity>
 }
-
-interface VHospitalRepository: JpaRepository<VHospital, String> {
-
-}
-

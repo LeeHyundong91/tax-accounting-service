@@ -2,6 +2,8 @@ package net.dv.tax.app.employee
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import net.dv.tax.app.common.VAccountRepository
+import net.dv.tax.app.common.VHospitalRepository
 import net.dv.tax.domain.employee.*
 import net.dv.tax.app.dto.employee.*
 
@@ -36,6 +38,7 @@ class EmployeeService(
     private val employeeSalaryMngRepository: EmployeeSalaryMngRepository,
     private val employeeJobRepository: EmployeeJobRepository,
     private val vHospitalRepository: VHospitalRepository,
+    private val vAccountRepository: VAccountRepository,
     private val encrypt: Encrypt,
 ) {
     //직원 요청 사항을 등록 한다.
@@ -220,25 +223,35 @@ class EmployeeService(
     @Transactional
     fun updateEmployee(employeeDto: EmployeeDto): Int {
 
-        //기존의 정보 테이블을 조회 한다.
-        employeeRepository.findById(employeeDto.id!!.toInt()).map { employeeEntity ->
 
-            val employee = employeeEntity?.updateFromDto(employeeDto)
-            //저장
-            val updatedEmployee = employeeRepository.save(employee!!)
+        val account = vAccountRepository.findOneByAccountId(employeeDto.accountId!!)
 
-            //이력 등록
-            registerEmployeeHistory(updatedEmployee.id!!);
-
-            //파일 목록이 있으면
-            employeeDto.fileList?.also {
-                it.forEach {
-                    it.employeeId = updatedEmployee.id!!
-                    saveFile(it)
-                }
-            }
+        require ( account != null ) {
+            "Account is not exists"
         }
 
+        val employeeEntity = employeeRepository.findByNameAndEmail(employeeDto.name!!, employeeDto.email!!)
+
+        require (employeeEntity != null) {
+            "Employee is not exists"
+        }
+
+
+        val employee = employeeEntity.updateFromDto(employeeDto)
+
+        employeeDto.accountId = account.accountId
+        //저장
+        val updatedEmployee = employeeRepository.save(employee)
+
+        registerEmployeeHistory(updatedEmployee.id!!);
+
+        employeeDto.fileList?.also {
+            it.forEach { it ->
+                it.employeeId = updatedEmployee.id!!
+                saveFile(it)
+            }
+        }
+        
         return HttpStatus.OK.value()
     }
 

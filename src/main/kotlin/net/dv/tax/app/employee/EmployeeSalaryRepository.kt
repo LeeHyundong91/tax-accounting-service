@@ -25,13 +25,4 @@ interface EmployeeSalaryMngRepository : JpaRepository<EmployeeSalaryMngEntity?, 
     EmployeeSalaryMngSupport{
 }
 
-interface VHospitalMemberRepository: JpaRepository<VHospitalMember, String> {
-
-    fun findByAccountId(accountId: String): VHospitalMember
-
-    fun findByAccountIdAndRole(id: String, role: String): VHospitalMember
-
-}
-
-
 

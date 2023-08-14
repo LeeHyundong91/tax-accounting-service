@@ -93,9 +93,17 @@ class EmployeeController(
 
     //직원 수정
     @PutMapping("update")
-    fun updateEmployee(@RequestBody data: EmployeeDto): ResponseEntity<Int> {
+    fun updateEmployee(
+        @Jwt("email") email: String?,
+        @Jwt("sub") accountId: String?,
+        @Jwt("name") name: String?,
+        @RequestBody data: EmployeeDto): ResponseEntity<Int> {
 
-        var res = employeeService.updateEmployee(data)
+        data.email = email
+        data.name = name
+        data.accountId = accountId
+
+        val res = employeeService.updateEmployee(data)
         return ResponseEntity.ok(res)
     }
 
