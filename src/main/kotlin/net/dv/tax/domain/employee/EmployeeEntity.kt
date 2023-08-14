@@ -179,6 +179,9 @@ class EmployeeRequestEntity(
     @Column(name = "REQUEST_STATE")
     var requestState: String? = null,
 
+    @Comment("요청 사유")
+    @Column(name = "REQUEST_REASON")
+    var requestReason: String? = null,
 ) : BaseEntity()
 
 @Entity

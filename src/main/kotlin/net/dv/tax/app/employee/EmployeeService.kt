@@ -60,32 +60,38 @@ class EmployeeService(
         val employeeRequestList = employeeRequestRepository.employeeRequestList(hospitalId, employeeQueryDto).map {
             val entity = EmployeeRequestDto()
 
-            entity.id = it.id!!
-            entity.residentNumber = it.residentNumber
-            entity.name = it.name
-            entity.careerBreakYn = it.careerBreakYn
-            entity.spec = it.spec
-            entity.academicHistory = it.academicHistory
-            entity.contractDuration = it.contractDuration
-            entity.employment = it.employment
-            entity.annualType = it.annualType
-            entity.annualIncome = it.annualIncome
-            entity.position = it.position ?: ""
+            it.copyCommonPropertiesTo(entity)
+
+//            entity.copyCommonPropertiesTo(it)
+//
+//            entity.id = it.id!!
+//            entity.residentNumber = it.residentNumber
+//            entity.name = it.name
+//            entity.careerBreakYn = it.careerBreakYn
+//            entity.spec = it.spec
+//            entity.academicHistory = it.academicHistory
+//            entity.contractDuration = it.contractDuration
+//            entity.employment = it.employment
+//            entity.annualType = it.annualType
+//            entity.annualIncome = it.annualIncome
+//            entity.position = it.position ?: ""
             entity.joinAt = it.joinAt?.toString()
-            entity.address = it.address
-            entity.email = it.email ?: ""
-            entity.jobClass = getJobClassName(it.jobClass)
-            entity.reason = it.reason ?: ""
-            entity.job = it.job
-            entity.dependentCnt = it.dependentCnt
+//            entity.address = it.address
+//            entity.email = it.email ?: ""
+//            entity.jobClass = getJobClassName(it.jobClass)
+//            entity.reason = it.reason ?: ""
+//            entity.job = it.job
+//            entity.dependentCnt = it.dependentCnt
             entity.enlistmentAt = it.enlistmentAt?.toString()
-            entity.careerNumber = it.careerNumber
             entity.dischargeAt = it.dischargeAt?.toString()
             entity.workRenewalAt = it.workRenewalAt?.toString()
             entity.resignationAt = it.resignationAt?.toString()
-            entity.resignationContents = it.resignationContents
-            entity.createdAt = it.createdAt!!
-            entity.requestStateCode = it.requestState
+            entity.leaveStartAt = it.leaveStartAt?.toString()
+            entity.leaveEndAt = it.leaveEndAt?.toString()
+//            entity.resignationContents = it.resignationContents
+//            entity.createdAt = it.createdAt!!
+            entity.requestState = it.requestState
+            entity.requestReason = it.requestReason
             entity.requestStateName = getRequestStateName(it.requestState)
 
             entity
@@ -136,28 +142,31 @@ class EmployeeService(
 
         var employeeDto = EmployeeDto()
 
-        employeeDto.residentNumber = employeeRequest.residentNumber
-        employeeDto.hospitalId = employeeRequest.hospitalId
-        employeeDto.hospitalName = employeeRequest.hospitalName
-        employeeDto.employeeCode = employeeRequest.employeeCode
-        employeeDto.name = employeeRequest.name
-        employeeDto.employment = employeeRequest.employment
-        employeeDto.annualType = employeeRequest.annualType
-        employeeDto.annualIncome = employeeRequest.annualIncome
-        employeeDto.position = employeeRequest.position
-        employeeDto.joinAt = employeeRequest.joinAt?.toString()?.substring(0, 10)
-        employeeDto.email = employeeRequest.email
-        employeeDto.jobClass = employeeRequest.jobClass!!
-        employeeDto.reason = employeeRequest.reason
-        employeeDto.resignationAt = employeeRequest.resignationAt?.toString()?.substring(0, 10)
-        employeeDto.resignationContents = employeeRequest.resignationContents
-        employeeDto.mobilePhoneNumber = employeeRequest.mobilePhoneNumber
-        employeeDto.office = employeeRequest.office
-        employeeDto.job = employeeRequest.job
-        employeeDto.careerNumber = employeeRequest.careerNumber
-        employeeDto.dependentCnt = employeeRequest.dependentCnt
-        employeeDto.address = employeeRequest.address
-        employeeDto.attachFileYn = employeeRequest.attachFileYn
+
+        employeeRequest.toEmployeeDto(employeeDto)
+
+//        employeeDto.residentNumber = employeeRequest.residentNumber
+//        employeeDto.hospitalId = employeeRequest.hospitalId
+//        employeeDto.hospitalName = employeeRequest.hospitalName
+//        employeeDto.employeeCode = employeeRequest.employeeCode
+//        employeeDto.name = employeeRequest.name
+//        employeeDto.employment = employeeRequest.employment
+//        employeeDto.annualType = employeeRequest.annualType
+//        employeeDto.annualIncome = employeeRequest.annualIncome
+//        employeeDto.position = employeeRequest.position
+//        employeeDto.joinAt = employeeRequest.joinAt?.toString()?.substring(0, 10)
+//        employeeDto.email = employeeRequest.email
+//        employeeDto.jobClass = employeeRequest.jobClass!!
+//        employeeDto.reason = employeeRequest.reason
+//        employeeDto.resignationAt = employeeRequest.resignationAt?.toString()?.substring(0, 10)
+//        employeeDto.resignationContents = employeeRequest.resignationContents
+//        employeeDto.mobilePhoneNumber = employeeRequest.mobilePhoneNumber
+//        employeeDto.office = employeeRequest.office
+//        employeeDto.job = employeeRequest.job
+//        employeeDto.careerNumber = employeeRequest.careerNumber
+//        employeeDto.dependentCnt = employeeRequest.dependentCnt
+//        employeeDto.address = employeeRequest.address
+//        employeeDto.attachFileYn = employeeRequest.attachFileYn
 
         // 등록된 사용자 일경우
         if (resultEmployee != null) {
@@ -223,23 +232,24 @@ class EmployeeService(
     @Transactional
     fun updateEmployee(employeeDto: EmployeeDto): Int {
 
+        var employeeEntity: EmployeeEntity
+        if (employeeDto.id == null) {
+            employeeEntity = employeeRepository.findByNameAndEmail(employeeDto.name!!, employeeDto.email!!)!!
 
-        val account = vAccountRepository.findOneByAccountId(employeeDto.accountId!!)
-
-        require ( account != null ) {
-            "Account is not exists"
+        } else {
+            employeeEntity = employeeRepository.findByIdOrNull(employeeDto.id!!.toInt())!!
         }
-
-        val employeeEntity = employeeRepository.findByNameAndEmail(employeeDto.name!!, employeeDto.email!!)
 
         require (employeeEntity != null) {
             "Employee is not exists"
         }
 
-
         val employee = employeeEntity.updateFromDto(employeeDto)
 
-        employeeDto.accountId = account.accountId
+        if (employeeDto.accountId != null) {
+            val account = vAccountRepository.findOneByAccountId(employeeDto.accountId!!)
+            employeeDto.accountId = account?.accountId
+        }
         //저장
         val updatedEmployee = employeeRepository.save(employee)
 

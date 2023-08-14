@@ -31,7 +31,7 @@ class EmployeeController(
     @PostMapping("request/insert")
     fun registerEmployeeRequest(@RequestBody data: EmployeeRequestDto): ResponseEntity<Int> {
 
-        data.requestStateCode = RequestState.RequestState_P.requestStateCode
+//        data.requestStateCode = RequestState.RequestState_P.requestStateCode
 
         var res = employeeService.registerEmployeeRequest(data);
         return ResponseEntity.ok(res)
