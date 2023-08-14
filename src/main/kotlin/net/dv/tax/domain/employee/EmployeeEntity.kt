@@ -393,3 +393,33 @@ class EmployeeSalaryEntity(
     @JoinColumn(name = "SALARY_MNG_ID")
     var employeeSalaryMng: EmployeeSalaryMngEntity? = null
 )
+
+@Entity
+@Comment("노무직무")
+@Table(name = "`EMPLOYEE_JOB")
+@EntityListeners(AuditingEntityListener::class)
+class EmployeeJobEntity(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID", insertable = false, updatable = false)
+    @Comment("아이디")
+    val id: Int? = null,
+
+    @Comment("병원코드")
+    @Column(name = "SUBJECT")
+    var subject: Int? = null,
+
+    @Comment("직무명")
+    @Column(name = "NAME")
+    var name: String? = null,
+
+    @Comment("공통 직무 여부")
+    @Column(name = "COMMON")
+    var common: String? = null,
+
+    @Comment("등록일")
+    @Column(name = "CREATED_AT")
+    var createdAt: LocalDateTime? = LocalDateTime.now()
+)
+
+

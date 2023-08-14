@@ -12,9 +12,13 @@ import kotlin.reflect.KProperty1
 data class EmployeeDto(
     var createdAt: LocalDateTime? = null,
     var updatedAt: LocalDateTime? = null,
-    var fileList: List<EmployeeAttachFileDto>? = null,
+    var fileList: List<EmployeeAttachFileDto>? = mutableListOf(),
     var taxRate: String? = null,
     var accountId: String? = null,
+
+    // 프론트를 위한 코드
+    var jobList: List<String>? = mutableListOf(),
+    var academicHistoryList: List<String>? = mutableListOf()
 ) : EmployeeBaseDto()
 
 

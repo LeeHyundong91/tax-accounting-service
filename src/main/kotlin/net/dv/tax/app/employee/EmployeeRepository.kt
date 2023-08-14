@@ -4,7 +4,10 @@ import net.dv.tax.domain.employee.EmployeeAttachFileEntity
 import net.dv.tax.domain.employee.EmployeeEntity
 import net.dv.tax.domain.employee.EmployeeHistoryEntity
 import net.dv.tax.app.employee.support.EmployeeSupport
+import net.dv.tax.domain.employee.EmployeeJobEntity
+import net.dv.tax.domain.view.VHospital
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 
 interface EmployeeRepository: JpaRepository<EmployeeEntity?, Int>,
     EmployeeSupport {
@@ -39,3 +42,19 @@ interface EmployeeAttachFileRepository: JpaRepository<EmployeeAttachFileEntity?,
 
 
 interface EmployeeHistoryRepository : JpaRepository<EmployeeHistoryEntity?, Int>
+
+
+interface EmployeeJobRepository: JpaRepository<EmployeeJobEntity, Int> {
+    @Query(value = """
+        (SELECT * FROM EMPLOYEE_JOB WHERE COMMON = 'Y')
+        UNION
+        (SELECT * FROM EMPLOYEE_JOB WHERE SUBJECT = :subject)
+        ORDER BY SUBJECT DESC, ID ASC
+    """, nativeQuery = true)
+    fun findBySubject(subject: Int): List<EmployeeJobEntity>
+}
+
+interface VHospitalRepository: JpaRepository<VHospital, String> {
+
+}
+

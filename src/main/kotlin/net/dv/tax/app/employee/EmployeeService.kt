@@ -9,6 +9,7 @@ import net.dv.tax.app.enums.employee.*
 import net.dv.tax.utils.Encrypt
 import org.dhatim.fastexcel.reader.Row
 import org.joda.time.IllegalInstantException
+import org.springframework.data.repository.findByIdOrNull
 
 import org.springframework.http.HttpStatus
 
@@ -33,6 +34,8 @@ class EmployeeService(
     private val employeeAttachFileRepository: EmployeeAttachFileRepository,
     private val employeeSalaryRepository: EmployeeSalaryRepository,
     private val employeeSalaryMngRepository: EmployeeSalaryMngRepository,
+    private val employeeJobRepository: EmployeeJobRepository,
+    private val vHospitalRepository: VHospitalRepository,
     private val encrypt: Encrypt,
 ) {
     //직원 요청 사항을 등록 한다.
@@ -748,7 +751,27 @@ class EmployeeService(
             throw Exception("이미 근로자 명부가 작성되었습니다. \n (등록일자 : ${it.createdAt})")
         }
 
+        val hospital = vHospitalRepository.findByIdOrNull(data.hospitalId!!)
+
+        require (hospital != null) {
+            "Hospital is not exits"
+        }
+
+        val subject = hospital.subject.takeIf { it == 17 || it == 18 } ?: 0
         val entity = employeeRepository.findByNameAndEmail(data.name!!, data.email!!)
-        return entity?.toEmployeeDto() ?: EmployeeDto()
+        val jobList: List<String> = employeeJobRepository.findBySubject(subject!!).map { it.name!! }
+
+        val resultDto = entity?.toEmployeeDto() ?: EmployeeDto()
+        resultDto.jobList = jobList
+        resultDto.academicHistoryList = arrayListOf(
+            "무졸",
+            "초졸",
+            "중졸",
+            "고졸",
+            "초대졸",
+            "대졸",
+            "대학원졸 이상"
+        )
+        return resultDto
     }
 }

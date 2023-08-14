@@ -65,12 +65,13 @@ class EmployeeController(
         return ResponseEntity.ok(res)
     }
 
+    // 직원 정보 등록폼 기본정보 조회
     @GetMapping("")
     fun getEmployeeByGuest(
-        @RequestParam accountId: String?,
-        @RequestParam name: String,
+        @Jwt("sub") accountId: String?,
+        @Jwt("name") name: String?,
         @RequestParam hospitalId: String?,
-        @RequestParam email: String): ResponseEntity<EmployeeDto> {
+        @Jwt("email") email: String?): ResponseEntity<EmployeeDto> {
 
         val data = EmployeeDto()
         data.accountId = accountId
