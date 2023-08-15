@@ -25,11 +25,9 @@ class PurchaseBooksEndpoints(
     /** 신용카드매입관리 항목 조회 */
     @GetMapping("/credit-card/{hospitalId}/list", "/credit-card/{hospitalId}")
     fun getCreditCardInvoice(@PathVariable hospitalId: String,
-                             query: PurchaseQueryDto
-    ): ResponseEntity<PurchaseCreditCardListDto> {
+                             query: PurchaseQueryDto): ResponseEntity<PurchaseCreditCardListDto> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
-//        val res =  purchaseCreditCardService.getPurchaseCreditCard(hospitalId, query)
         val res = command.creditCard(hospitalId, query)
 
         return ResponseEntity.ok(res)
@@ -38,11 +36,9 @@ class PurchaseBooksEndpoints(
     /** 매입 현금 영수증 항목 조회 */
     @GetMapping("/cash-receipt/{hospitalId}/list", "/cash-receipt/{hospitalId}")
     fun getCashReceiptInvoice(@PathVariable hospitalId: String,
-                              query: PurchaseQueryDto
-    ): ResponseEntity<PurchaseBooks<*>> {
+                              query: PurchaseQueryDto): ResponseEntity<PurchaseBooks<*>> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
-//        val res =  purchaseCashReceiptService.getPurchaseCashReceipt(hospitalId, query)
         val res = command.purchaseBooks(PurchaseType.CASH_RECEIPT, hospitalId, query)
 
         return ResponseEntity.ok(res)
@@ -52,11 +48,11 @@ class PurchaseBooksEndpoints(
     @GetMapping("/elec-invoice/{hospitalId}/list", "/e-invoice/{bookType}/{hospitalId}")
     fun getPurchaseInvoice(@PathVariable hospitalId: String,
                            @PathVariable bookType: String?,
-                           purchaseQueryDto: PurchaseQueryDto
-    ): ResponseEntity<PurchaseElecInvoiceListDto> {
+                           purchaseQueryDto: PurchaseQueryDto ): ResponseEntity<PurchaseElecInvoiceListDto> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
         val res = purchaseElecInvoiceService.getPurchaseElecInvoice(hospitalId, purchaseQueryDto)
+        val re = command.purchaseBooks(PurchaseType.)
         return ResponseEntity.ok(res)
     }
 

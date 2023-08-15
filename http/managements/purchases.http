@@ -5,3 +5,17 @@ Accept: application/json
 ### 현금영수증 매입 자료 목록 조회
 GET {{host}}/v1/purchase/cash-receipt/cid01/list
 Accept: application/json
+
+### 전자세금 계산서 자료 목록 조회
+GET {{host}}/v1/purchase/e-invoice/{bookType}/{hospitalId}
+Accept: application/json
+
+### 전자계산서 자료 목록 조회
+GET {{host}}/v1/purchase/e-invoice/{bookType}/{hospitalId}
+Accept: application/json
+
+### 수기 세금 계산서 자료 목록 조회
+GET {{host}}/v1/purchase/cash-receipt/cid01/list
+Accept: application/json
+
+### 간이 영수증 자료 목록 조회
