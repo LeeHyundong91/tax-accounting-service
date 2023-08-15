@@ -22,7 +22,7 @@ data class PurchaseElecInvoiceEntity(
     @Id
     @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    val id: Long? = null,
 
     @Comment("병원 아이디")
     @Column(name = "HOSPITAL_ID")
@@ -124,8 +124,13 @@ data class PurchaseElecInvoiceEntity(
     val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
     enum class Type(override val code: String, override val label: String): Code {
-        TAX("TT", "전자세금계산서"),
-        NON_TAX("NT", "전자계산서");
+        TAX("TI", "전자세금계산서"),
+        NON_TAX("EI", "전자계산서");
+
+        companion object {
+            operator fun get(cd: String): Type = values()
+                .first { it.name == cd.uppercase() || it.code == cd.uppercase() }
+        }
     }
 
     @Converter(autoApply = true)

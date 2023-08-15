@@ -1,16 +1,14 @@
 package net.dv.tax.app.purchase
 
 import mu.KotlinLogging
-import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
+import net.dv.tax.app.common.SendQueueService
 import net.dv.tax.app.dto.MenuCategoryCode
 import net.dv.tax.app.dto.QueueDto
 import net.dv.tax.app.dto.purchase.ExcelRequiredDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardDto
-import net.dv.tax.app.dto.purchase.PurchaseCreditCardListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.getDeductionName
 import net.dv.tax.app.enums.purchase.getRecommendDeductionName
-import net.dv.tax.app.common.SendQueueService
+import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
 
@@ -97,19 +95,20 @@ class PurchaseCreditCardService(
         sendQueueService.sandMessage(QueueDto(menu = MenuCategoryCode.CREDIT_CARD.name, creditCard = dataList))
     }
 
-    fun getPurchaseCreditCard(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCreditCardListDto {
-
-        var creditCardList = getPurchaseCreditCardList(hospitalId, purchaseQueryDto, false)
-        var totalCount = purchaseCreditCardRepository.purchaseCreditCardListCnt(hospitalId, purchaseQueryDto)
-        var purchaseCreditcardTotal =
-            purchaseCreditCardRepository.purchaseCreditCardTotal(hospitalId, purchaseQueryDto)
-
-        return PurchaseCreditCardListDto(
-            listPurchaseCreditCard = creditCardList,
-            purchaseCreditCardTotal = purchaseCreditcardTotal,
-            totalCount = totalCount
-        )
-    }
+//    TODO(" 정리작업이 필요함 ")
+//    fun getPurchaseCreditCard(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCreditCardListDto {
+//
+//        var creditCardList = getPurchaseCreditCardList(hospitalId, purchaseQueryDto, false)
+//        var totalCount = purchaseCreditCardRepository.purchaseCreditCardListCnt(hospitalId, purchaseQueryDto)
+//        var purchaseCreditcardTotal =
+//            purchaseCreditCardRepository.purchaseCreditCardTotal(hospitalId, purchaseQueryDto)
+//
+//        return PurchaseCreditCardListDto(
+//            listPurchaseCreditCard = creditCardList,
+//            purchaseCreditCardTotal = purchaseCreditcardTotal,
+//            totalCount = totalCount
+//        )
+//    }
 
 
     fun getPurchaseCreditCardList(

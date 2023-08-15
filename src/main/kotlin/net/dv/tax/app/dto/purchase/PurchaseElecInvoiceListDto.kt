@@ -1,20 +1,9 @@
 package net.dv.tax.app.dto.purchase
 
-import net.dv.tax.app.purchase.JournalEntryDto
+import net.dv.tax.app.purchase.JournalEntryStatus
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 
-data class PurchaseElecInvoiceListDto (
-    
-    //list 데이터
-    var listPurchaseElecInvoice: List<PurchaseElecInvoiceDto>,
-
-    //합계 정보
-    var purchaseElecInvoiceTotal: PurchaseElecInvoiceTotal,
-
-    //총게시물 수
-    var totalCount: Long? = null
-)
 
 //합계 항목
 data class PurchaseElecInvoiceTotal(
@@ -25,7 +14,7 @@ data class PurchaseElecInvoiceTotal(
 
 data class PurchaseElecInvoiceDto (
 
-    val id: Int? = null,
+    val id: Long? = null,
 
     @Comment("병원 아이디")
     var hospitalId: String? = null,
@@ -86,7 +75,7 @@ data class PurchaseElecInvoiceDto (
 
     @Comment("작성자")
     var writer: String? = null,
-): JournalEntryDto {
+): JournalEntryStatus {
     override var status: String? = null
     override var requestedAt: LocalDateTime? = null
     override var committedAt: LocalDateTime? = null

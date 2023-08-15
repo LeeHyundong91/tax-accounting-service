@@ -1,5 +1,6 @@
 package net.dv.tax.app.common
 
+import net.dv.tax.app.AccountingItem
 import org.springframework.stereotype.Service
 
 

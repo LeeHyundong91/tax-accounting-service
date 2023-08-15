@@ -1,7 +1,7 @@
 package net.dv.tax.infra.endpoint
 
 import net.dv.tax.Application
-import net.dv.tax.app.common.AccountingItem
+import net.dv.tax.app.AccountingItem
 import net.dv.tax.app.common.AccountingItemCommand
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

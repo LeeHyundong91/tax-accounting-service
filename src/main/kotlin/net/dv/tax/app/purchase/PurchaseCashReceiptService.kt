@@ -4,8 +4,6 @@ import mu.KotlinLogging
 import net.dv.tax.domain.purchase.PurchaseCashReceiptEntity
 import net.dv.tax.app.dto.purchase.ExcelRequiredDto
 import net.dv.tax.app.dto.purchase.PurchaseCashReceiptDto
-import net.dv.tax.app.dto.purchase.PurchaseCashReceiptListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
 import net.dv.tax.app.enums.purchase.getDeductionName
 import net.dv.tax.app.enums.purchase.getRecommendDeductionName
 import net.dv.tax.app.common.SendQueueService
@@ -87,19 +85,20 @@ class PurchaseCashReceiptService(
         purchaseCashReceiptRepository.saveAll(dataList)
     }
 
-    fun getPurchaseCashReceipt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
-
-        var CashReceiptList = getPurchaseCashReceiptList(hospitalId, purchaseQueryDto, false)
-        var totalCount = purchaseCashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, purchaseQueryDto)
-        var purchaseCashReceiptTotal =
-            purchaseCashReceiptRepository.purchaseCashReceiptTotal(hospitalId, purchaseQueryDto)
-
-        return PurchaseCashReceiptListDto(
-            listPurchaseCashReceipt = CashReceiptList,
-            purchaseCashReceiptTotal = purchaseCashReceiptTotal,
-            totalCount = totalCount
-        )
-    }
+//    TODO(정리작업이 필요함)
+//    fun getPurchaseCashReceipt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseCashReceiptListDto {
+//
+//        var CashReceiptList = getPurchaseCashReceiptList(hospitalId, purchaseQueryDto, false)
+//        var totalCount = purchaseCashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, purchaseQueryDto)
+//        var purchaseCashReceiptTotal =
+//            purchaseCashReceiptRepository.purchaseCashReceiptTotal(hospitalId, purchaseQueryDto)
+//
+//        return PurchaseCashReceiptListDto(
+//            listPurchaseCashReceipt = CashReceiptList,
+//            purchaseCashReceiptTotal = purchaseCashReceiptTotal,
+//            totalCount = totalCount
+//        )
+//    }
 
     fun getPurchaseCashReceiptList(
         hospitalId: String,

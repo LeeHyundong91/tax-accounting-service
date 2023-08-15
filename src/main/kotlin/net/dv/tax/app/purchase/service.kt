@@ -1,14 +1,12 @@
 package net.dv.tax.app.purchase
 
-import net.dv.tax.app.dto.purchase.PurchaseCreditCardDto
-import net.dv.tax.app.dto.purchase.PurchaseCreditCardListDto
-import net.dv.tax.app.dto.purchase.PurchaseQueryDto
-import net.dv.tax.app.enums.purchase.getDeductionName
-import net.dv.tax.app.enums.purchase.getRecommendDeductionName
+import com.amazonaws.services.kms.model.UnsupportedOperationException
+import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.lang.RuntimeException
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -17,6 +15,8 @@ import java.time.ZonedDateTime
 @Service
 class PurchaseManagementService(
     private val creditCardRepository: PurchaseCreditCardRepository,
+    private val cashReceiptRepository: PurchaseCashReceiptRepository,
+    private val invoiceRepository: PurchaseElecInvoiceRepository,
     private val journalEntryRepository: PurchaseJournalEntryRepository,
     private val journalEntryHistoryRepository: PurchaseJournalEntryHistoryRepository,
 ): PurchaseQueryCommand, JournalEntryCommand {
@@ -25,57 +25,42 @@ class PurchaseManagementService(
     /**
      * PurchaseQueryCommand member methods...
      */
-
-    /**
-     * 신용카드 매입 목록 조회
-     */
-    override fun creditCard(hospitalId: String, query: PurchaseQueryDto): PurchaseCreditCardListDto {
-        val creditCardList = creditCardRepository.purchaseBooks(hospitalId, query)
-        val totalCount = creditCardRepository.purchaseCreditCardListCnt(hospitalId, query)
-        val purchaseCreditcardTotal =
-            creditCardRepository.purchaseCreditCardTotal(hospitalId, query)
-
-        return PurchaseCreditCardListDto(
-            listPurchaseCreditCard = creditCardList,
-            purchaseCreditCardTotal = purchaseCreditcardTotal,
-            totalCount = totalCount
-        )
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> purchaseBooks(type: PurchaseType,
+                                   hospitalId: String,
+                                   query: PurchaseQueryDto): PurchaseBooks<T> {
+        return when(type) {
+            PurchaseType.CREDIT_CARD -> creditCard(hospitalId, query)
+            PurchaseType.CASH_RECEIPT -> cashReceiptBooks(hospitalId, query)
+            PurchaseType.TAX_INVOICE,
+            PurchaseType.INVOICE -> eInvoiceBooks(hospitalId, type, query)
+            PurchaseType.HANDWRITTEN_INVOICE -> empty()
+            PurchaseType.BASIC_RECEIPT -> empty()
+        } as PurchaseBooks<T>
     }
 
-    private fun getPurchaseCreditCardList(
-        hospitalId: String,
-        purchaseQueryDto: PurchaseQueryDto,
-        isExcel: Boolean,
-    ): List<PurchaseCreditCardDto> {
+    /** 신용카드 매입 목록 조회 */
+    private fun creditCard(hospitalId: String, query: PurchaseQueryDto): PurchaseBooks<CreditCardBook> {
+        val list = creditCardRepository.purchaseBooks(hospitalId, query)
+        val summary = creditCardRepository.summary(hospitalId, query)
+        val count = creditCardRepository.purchaseCreditCardListCnt(hospitalId, query)
 
-        return creditCardRepository.purchaseCreditCardList(hospitalId, purchaseQueryDto, isExcel)
-            .map { purchaseCreditCard ->
-                PurchaseCreditCardDto(
-                    id = purchaseCreditCard.id,
-                    hospitalId = purchaseCreditCard.hospitalId,
-                    dataFileId = purchaseCreditCard.dataFileId,
-                    billingDate = purchaseCreditCard.billingDate,
-                    accountCode = purchaseCreditCard.accountCode,
-                    franchiseeName = purchaseCreditCard.franchiseeName,
-                    corporationType = purchaseCreditCard.corporationType,
-                    itemName = purchaseCreditCard.itemName,
-                    supplyPrice = purchaseCreditCard.supplyPrice,
-                    taxAmount = purchaseCreditCard.taxAmount,
-                    nonTaxAmount = purchaseCreditCard.nonTaxAmount,
-                    totalAmount = purchaseCreditCard.totalAmount,
-                    deductionName = getDeductionName(purchaseCreditCard.isDeduction),
-                    recommendDeductionName = getRecommendDeductionName(purchaseCreditCard.isRecommendDeduction),
-                    statementType1 = purchaseCreditCard.statementType1,
-                    statementType2 = purchaseCreditCard.statementType2,
-                    debtorAccount = purchaseCreditCard.debtorAccount,
-                    creditAccount = purchaseCreditCard.creditAccount,
-                    separateSend = purchaseCreditCard.separateSend,
-                    statementStatus = purchaseCreditCard.statementStatus,
-                    writer = purchaseCreditCard.writer,
-                    isDelete = purchaseCreditCard.isDelete,
-                    createdAt = purchaseCreditCard.createdAt,
-                )
-            }
+        return PurchaseBooks(list, summary, count)
+    }
+
+    private fun cashReceiptBooks(hospitalId: String, query: PurchaseQueryDto): PurchaseBooks<CashReceiptBook> {
+        val list = cashReceiptRepository.purchaseBooks(hospitalId, query)
+        val summary = cashReceiptRepository.summary(hospitalId, query)
+        val count = cashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, query)
+
+        return PurchaseBooks(list = list, summary = summary, total = count)
+    }
+
+    private fun eInvoiceBooks(hospitalId: String, bookType: PurchaseType, query: PurchaseQueryDto): PurchaseBooks<ETaxInvoiceBook> {
+        val list = invoiceRepository.purchaseBooks(hospitalId, bookType.code, query)
+        val summary = invoiceRepository.summary(hospitalId, bookType.code, query)
+        val count = invoiceRepository.bookCount(hospitalId, bookType.code, query)
+        return PurchaseBooks(list, summary, count)
     }
 
     /**
@@ -180,4 +165,16 @@ class PurchaseManagementService(
                 )
             }
     }
+
+    override fun processingState(type: PurchaseType, hospitalId: String, pageable: Pageable): Page<out JournalEntryStatus> {
+        return when(type) {
+            PurchaseType.CREDIT_CARD -> creditCardRepository.journalEntryProcessing(hospitalId, pageable)
+            PurchaseType.CASH_RECEIPT -> cashReceiptRepository.journalEntryProcessing(hospitalId, pageable)
+            PurchaseType.TAX_INVOICE,
+            PurchaseType.INVOICE -> invoiceRepository.journalEntryProcessing(hospitalId, type.code, pageable)
+            else -> empty()
+        }
+    }
+
+    private fun empty(): Nothing = throw UnsupportedOperationException("empty")
 }
