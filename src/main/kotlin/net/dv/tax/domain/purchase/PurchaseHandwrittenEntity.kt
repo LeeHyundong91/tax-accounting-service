@@ -72,8 +72,8 @@ data class PurchaseHandwrittenEntity(
 ) {
     enum class Type(override val code: String,
                     override val label: String): Code {
+        TAX_INVOICE("HI", "수기세금계산서"),
         BASIC_RECEIPT("BR", "간이영수증"),
-        TAX_INVOICE("TI", "수기세금계산서"),
     }
 
     @Converter(autoApply = true)

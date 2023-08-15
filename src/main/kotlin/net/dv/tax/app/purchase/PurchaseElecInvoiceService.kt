@@ -1,11 +1,9 @@
 package net.dv.tax.app.purchase
 
 import mu.KotlinLogging
-import net.dv.tax.domain.purchase.PurchaseElecInvoiceEntity
 import net.dv.tax.app.dto.purchase.ExcelRequiredDto
 import net.dv.tax.app.dto.purchase.PurchaseElecInvoiceDto
-import net.dv.tax.app.dto.purchase.PurchaseElecInvoiceListDto
-import net.dv.tax.app.common.SendQueueService
+import net.dv.tax.domain.purchase.PurchaseElecInvoiceEntity
 import org.dhatim.fastexcel.reader.Row
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -13,13 +11,13 @@ import java.time.LocalDate
 @Service
 class PurchaseElecInvoiceService(
     private val purchaseElecInvoiceRepository: PurchaseElecInvoiceRepository,
-    private val sendQueueService: SendQueueService,
 ) {
     private val log = KotlinLogging.logger {}
 
-    fun saveElecInvoiceList(elecInvoiceList: List<PurchaseElecInvoiceEntity>) {
-        purchaseElecInvoiceRepository.saveAll(elecInvoiceList)
-    }
+//    TODO(자료정리 필요)
+//    fun saveElecInvoiceList(elecInvoiceList: List<PurchaseElecInvoiceEntity>) {
+//        purchaseElecInvoiceRepository.saveAll(elecInvoiceList)
+//    }
 
     /**
      * TODO Only Use Single Upload Excel File
@@ -73,19 +71,20 @@ class PurchaseElecInvoiceService(
 
     }
 
-    fun getPurchaseElecInvoice(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseElecInvoiceListDto {
-
-        var elecInvoiceList = getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto, false)
-        var totalCount = purchaseElecInvoiceRepository.purchaseElecInvoiceListCnt(hospitalId, purchaseQueryDto)
-        var purchaseElecInvoiceTotal =
-            purchaseElecInvoiceRepository.purchaseElecInvoiceTotal(hospitalId, purchaseQueryDto)
-
-        return PurchaseElecInvoiceListDto(
-            listPurchaseElecInvoice = elecInvoiceList,
-            totalCount = totalCount,
-            purchaseElecInvoiceTotal = purchaseElecInvoiceTotal
-        )
-    }
+//    TODO(정리작업 필요)
+//    fun getPurchaseElecInvoice(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseElecInvoiceListDto {
+//
+//        var elecInvoiceList = getPurchaseElecInvoiceList(hospitalId, purchaseQueryDto, false)
+//        var totalCount = purchaseElecInvoiceRepository.purchaseElecInvoiceListCnt(hospitalId, purchaseQueryDto)
+//        var purchaseElecInvoiceTotal =
+//            purchaseElecInvoiceRepository.purchaseElecInvoiceTotal(hospitalId, purchaseQueryDto)
+//
+//        return PurchaseElecInvoiceListDto(
+//            listPurchaseElecInvoice = elecInvoiceList,
+//            totalCount = totalCount,
+//            purchaseElecInvoiceTotal = purchaseElecInvoiceTotal
+//        )
+//    }
 
     fun getPurchaseElecInvoiceList(
         hospitalId: String,

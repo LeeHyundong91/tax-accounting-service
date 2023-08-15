@@ -4,17 +4,6 @@ import net.dv.tax.domain.purchase.JournalEntryEntity
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 
-data class PurchaseCreditCardListDto (
-    
-    //list 데이터
-    var listPurchaseCreditCard: List<PurchaseCreditCardDto>,
-
-    //합계 정보
-    var purchaseCreditCardTotal: PurchaseCreditCardTotal,
-
-    //총게시물 수
-    var totalCount: Long? = null
-)
 
 //합계 항목
 data class PurchaseCreditCardTotal(

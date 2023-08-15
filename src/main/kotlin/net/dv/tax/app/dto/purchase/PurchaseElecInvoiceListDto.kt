@@ -4,17 +4,6 @@ import net.dv.tax.app.purchase.JournalEntryStatus
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 
-data class PurchaseElecInvoiceListDto (
-    
-    //list 데이터
-    var listPurchaseElecInvoice: List<PurchaseElecInvoiceDto>,
-
-    //합계 정보
-    var purchaseElecInvoiceTotal: PurchaseElecInvoiceTotal,
-
-    //총게시물 수
-    var totalCount: Long? = null
-)
 
 //합계 항목
 data class PurchaseElecInvoiceTotal(
@@ -25,7 +14,7 @@ data class PurchaseElecInvoiceTotal(
 
 data class PurchaseElecInvoiceDto (
 
-    val id: Int? = null,
+    val id: Long? = null,
 
     @Comment("병원 아이디")
     var hospitalId: String? = null,

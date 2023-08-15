@@ -76,11 +76,6 @@ class PurchaseCashReceiptRepositoryImpl(private val factory: JPAQueryFactory): P
     override fun summary(hospitalId: String, query: PurchaseQueryDto): BookSummary {
         val predicates = BooleanBuilder().apply {
             and(purchaseCashReceiptEntity.hospitalId.eq(hospitalId))
-            //공제 불공제 전체
-            when (query.deduction) {
-                1L -> and(purchaseCashReceiptEntity.isDeduction.eq(true))
-                2L -> and(purchaseCashReceiptEntity.isDeduction.eq(false))
-            }
         }
         val deduction = factory
             .select(
@@ -94,8 +89,10 @@ class PurchaseCashReceiptRepositoryImpl(private val factory: JPAQueryFactory): P
 
             )
             .from(purchaseCashReceiptEntity)
-            .where(predicates)
-            .where(purchaseCashReceiptEntity.isDeduction.eq(true))
+            .where(
+                predicates,
+                purchaseCashReceiptEntity.isDeduction.eq(true)
+            )
             .fetchFirst()
 
         val nonDeduction = factory
@@ -109,8 +106,10 @@ class PurchaseCashReceiptRepositoryImpl(private val factory: JPAQueryFactory): P
                 )
             )
             .from(purchaseCashReceiptEntity)
-            .where(predicates)
-            .where(purchaseCashReceiptEntity.isDeduction.eq(false))
+            .where(
+                predicates,
+                purchaseCashReceiptEntity.isDeduction.eq(false)
+            )
             .fetchFirst()
 
         return CashReceiptSummary(deduction, nonDeduction)
@@ -239,7 +238,7 @@ data class CashReceiptBookDto(
     @get:Comment("국세청(공제여부)명") override val deductionName: String
         get() = _deduction?.takeIf { it }?.let { "공제" }?: "불공제"
     @get:Comment("추천유형(불공제)명") override val recommendDeductionName: String
-        get() = _recommendedDeduction?.takeIf { it }?.let { "불공제" } ?: ""
+        get() = _recommendDeduction?.takeIf { it }?.let { "불공제" } ?: ""
     @Comment("전표유형 1") override var statementType1: String? = null
     @Comment("전표유형 2") override var statementType2: String? = null
     @Comment("차변계정")
@@ -258,7 +257,7 @@ data class CashReceiptBookDto(
     override var committedAt: LocalDateTime? = null
 
     private var _deduction: Boolean? = null
-    private var _recommendedDeduction: Boolean? = null
+    private var _recommendDeduction: Boolean? = null
     private var _status: JournalEntryEntity.Status? = null
     private var _accountingItem: String? = null
 }

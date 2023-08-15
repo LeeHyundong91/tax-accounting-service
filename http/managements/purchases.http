@@ -7,11 +7,11 @@ GET {{host}}/v1/purchase/cash-receipt/cid01/list
 Accept: application/json
 
 ### 전자세금 계산서 자료 목록 조회
-GET {{host}}/v1/purchase/e-invoice/{bookType}/{hospitalId}
+GET {{host}}/v1/purchase/e-invoice/TAX_INVOICE/cid01
 Accept: application/json
 
 ### 전자계산서 자료 목록 조회
-GET {{host}}/v1/purchase/e-invoice/{bookType}/{hospitalId}
+GET {{host}}/v1/purchase/e-invoice/INVOICE/cid01
 Accept: application/json
 
 ### 수기 세금 계산서 자료 목록 조회

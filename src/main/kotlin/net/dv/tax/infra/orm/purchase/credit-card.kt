@@ -2,24 +2,27 @@ package net.dv.tax.infra.orm.purchase
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Projections
-import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.jpa.impl.JPAQueryFactory
-import net.dv.tax.app.dto.purchase.PurchaseCreditCardDto
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotal
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotalSearch
 import net.dv.tax.app.enums.purchase.Deduction
 import net.dv.tax.app.enums.purchase.PurchaseType
+import net.dv.tax.app.purchase.BookSummary
+import net.dv.tax.app.purchase.CreditCardBook
 import net.dv.tax.app.purchase.PurchaseCreditCardQuery
 import net.dv.tax.app.purchase.PurchaseQueryDto
+import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.domain.purchase.QJournalEntryEntity.journalEntryEntity
 import net.dv.tax.domain.purchase.QPurchaseCreditCardEntity.purchaseCreditCardEntity
+import org.hibernate.annotations.Comment
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : PurchaseCreditCardQuery {
 
-    override fun purchaseBooks(hospitalId: String, query: PurchaseQueryDto): List<PurchaseCreditCardDto> {
+    override fun purchaseBooks(hospitalId: String, query: PurchaseQueryDto): List<CreditCardBook> {
         val realOffset = query.offset!! * query.size!!
         val predicates = BooleanBuilder()
         predicates.and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
@@ -32,7 +35,7 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
 
         return factory
             .select(Projections.fields(
-                PurchaseCreditCardDto::class.java,
+                CreditCardBookDto::class.java,
                 purchaseCreditCardEntity.id,
                 purchaseCreditCardEntity.hospitalId,
                 purchaseCreditCardEntity.billingDate,
@@ -44,20 +47,18 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
                 purchaseCreditCardEntity.taxAmount,
                 purchaseCreditCardEntity.nonTaxAmount,
                 purchaseCreditCardEntity.totalAmount,
-                purchaseCreditCardEntity.isDeduction,
-                purchaseCreditCardEntity.isRecommendDeduction,
+                purchaseCreditCardEntity.isDeduction.`as`("_deduction"),
+                purchaseCreditCardEntity.isRecommendDeduction.`as`("_recommendDeduction"),
                 purchaseCreditCardEntity.statementType1,
                 purchaseCreditCardEntity.statementType2,
-                CaseBuilder()
-                    .`when`(journalEntryEntity.accountingItem.isNotNull).then(journalEntryEntity.accountingItem)
-                    .otherwise(purchaseCreditCardEntity.debtorAccount)
-                    .`as`("debtorAccount"),
+                purchaseCreditCardEntity.debtorAccount,
                 purchaseCreditCardEntity.creditAccount,
                 purchaseCreditCardEntity.separateSend,
                 purchaseCreditCardEntity.statementStatus,
                 purchaseCreditCardEntity.writer,
                 purchaseCreditCardEntity.createdAt,
-                journalEntryEntity.status.`as`("jstatus"),
+                journalEntryEntity.status.`as`("_status"),
+                journalEntryEntity.accountingItem.`as`("_accountingItem"),
                 journalEntryEntity.requestedAt,
                 journalEntryEntity.committedAt,
             ))
@@ -72,6 +73,44 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
             .offset(realOffset)
             .limit(query.size)
             .fetch()
+    }
+
+    override fun summary(hospitalId: String, query: PurchaseQueryDto): BookSummary {
+        val predicates = BooleanBuilder()
+            .and(purchaseCreditCardEntity.hospitalId.eq(hospitalId))
+        val deduction = factory
+            .select(
+                Projections.constructor(
+                    CreditCardSummary.DS::class.java,
+                    purchaseCreditCardEntity.supplyPrice.sum(),
+                    purchaseCreditCardEntity.taxAmount.sum(),
+                    purchaseCreditCardEntity.totalAmount.sum(),
+                )
+            )
+            .from(purchaseCreditCardEntity)
+            .where(
+                predicates,
+                purchaseCreditCardEntity.isDeduction.eq(true)
+            )
+            .fetchFirst()
+
+        val nonDeduction = factory
+            .select(
+                Projections.constructor(
+                    CreditCardSummary.DS::class.java,
+                    purchaseCreditCardEntity.supplyPrice.sum(),
+                    purchaseCreditCardEntity.taxAmount.sum(),
+                    purchaseCreditCardEntity.totalAmount.sum(),
+                )
+            )
+            .from(purchaseCreditCardEntity)
+            .where(
+                predicates,
+                purchaseCreditCardEntity.isDeduction.eq(false)
+            )
+            .fetchFirst()
+
+        return CreditCardSummary(deduction, nonDeduction)
     }
 
     override fun purchaseCreditCardList(
@@ -172,4 +211,56 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
 
         return builder
     }
+}
+
+data class CreditCardBookDto(
+    override val id: Long = 0,
+    override val hospitalId: String = ""
+): CreditCardBook {
+    @Comment("업로드 파일 ID") override var dataFileId: Long? = null
+    @Comment("일자") override var billingDate: String? = null
+    @Comment("코드") override var accountCode: String? = null
+    @Comment("거래처") override var franchiseeName: String? = null
+    @Comment("구분") override var corporationType: String? = null
+    @Comment("품명") override var itemName: String? = null
+    @Comment("공급가액") override var supplyPrice: Long? = null
+    @Comment("세액") override var taxAmount: Long? = 0
+    @Comment("비과세") override var nonTaxAmount: Long? = 0
+    @Comment("합계") override var totalAmount: Long? = 0
+    @get:Comment("국세청(공제여부)명") override val deductionName: String
+        get() = _deduction?.takeIf { it }?.let { "공제" }?: "불공제"
+    @get:Comment("추천유형(불공제)명") override val recommendDeductionName: String
+        get() = _recommendDeduction?.takeIf { it }?.let { "불공제" } ?: ""
+    @Comment("전표유형1") override var statementType1: String? = null
+    @Comment("전표유형2") override var statementType2: String? = null
+    @Comment("차변계정")
+    override var debtorAccount: String? = null
+        get() = _accountingItem ?: field
+    @Comment("대변계정") override var creditAccount: String? = null
+    @Comment("분개전송") override var separateSend: String? = null
+    @Comment("전표상태") override var statementStatus: String? = null
+    @Comment("작성자") override var writer: String? = null
+    @Comment("삭제") var isDelete: Boolean? = false
+    @Comment("등록일(업로드일시") override val createdAt: LocalDateTime? = null
+
+    override var status: String? = null
+        get() = _status?.name ?: field
+    override var requestedAt: LocalDateTime? = null
+    override var committedAt: LocalDateTime? = null
+
+    private var _deduction: Boolean? = null
+    private var _recommendDeduction: Boolean? = null
+    private var _status: JournalEntryEntity.Status? = null
+    private var _accountingItem: String? = null
+}
+
+data class CreditCardSummary(
+    @Comment("공제") val deduction: DS,
+    @Comment("불공제") val nonDeduction: DS,
+): BookSummary {
+    data class DS(
+        val supplyPrice: Long?,
+        val taxAmount: Long?,
+        val amount: Long?,
+    )
 }

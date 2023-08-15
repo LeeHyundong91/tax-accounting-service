@@ -1,6 +1,5 @@
 package net.dv.tax.app.purchase
 
-import net.dv.tax.app.dto.purchase.PurchaseCreditCardListDto
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
@@ -14,6 +13,7 @@ import java.time.ZonedDateTime
 class PurchaseManagementService(
     private val creditCardRepository: PurchaseCreditCardRepository,
     private val cashReceiptRepository: PurchaseCashReceiptRepository,
+    private val invoiceRepository: PurchaseElecInvoiceRepository,
     private val journalEntryRepository: PurchaseJournalEntryRepository,
     private val journalEntryHistoryRepository: PurchaseJournalEntryHistoryRepository,
 ): PurchaseQueryCommand, JournalEntryCommand {
@@ -22,26 +22,26 @@ class PurchaseManagementService(
     /**
      * PurchaseQueryCommand member methods...
      */
-
-    /**
-     * 신용카드 매입 목록 조회
-     */
-    override fun creditCard(hospitalId: String, query: PurchaseQueryDto): PurchaseCreditCardListDto {
-        val books = creditCardRepository.purchaseBooks(hospitalId, query)
-        val totalCount = creditCardRepository.purchaseCreditCardListCnt(hospitalId, query)
-        val summary = creditCardRepository.purchaseCreditCardTotal(hospitalId, query)
-
-        return PurchaseCreditCardListDto(
-            listPurchaseCreditCard = books,
-            purchaseCreditCardTotal = summary,
-            totalCount = totalCount
-        )
+    override fun <T> purchaseBooks(type: PurchaseType,
+                               hospitalId: String,
+                               query: PurchaseQueryDto): PurchaseBooks<T> {
+        return when(type) {
+            PurchaseType.CREDIT_CARD -> creditCard(hospitalId, query)
+            PurchaseType.CASH_RECEIPT -> cashReceiptBooks(hospitalId, query)
+            PurchaseType.TAX_INVOICE -> eInvoiceBooks(hospitalId, type, query)
+            PurchaseType.INVOICE -> eInvoiceBooks(hospitalId, type, query)
+            PurchaseType.HANDWRITTEN_INVOICE -> TODO()
+            PurchaseType.BASIC_RECEIPT -> TODO()
+        } as PurchaseBooks<T>
     }
 
-    override fun purchaseBooks(type: PurchaseType,
-                               hospitalId: String,
-                               query: PurchaseQueryDto): PurchaseBooks<*> {
-        return cashReceiptBooks(hospitalId, query)
+    /** 신용카드 매입 목록 조회 */
+    private fun creditCard(hospitalId: String, query: PurchaseQueryDto): PurchaseBooks<CreditCardBook> {
+        val list = creditCardRepository.purchaseBooks(hospitalId, query)
+        val summary = creditCardRepository.summary(hospitalId, query)
+        val count = creditCardRepository.purchaseCreditCardListCnt(hospitalId, query)
+
+        return PurchaseBooks(list, summary, count)
     }
 
     private fun cashReceiptBooks(hospitalId: String, query: PurchaseQueryDto): PurchaseBooks<CashReceiptBook> {
@@ -50,6 +50,13 @@ class PurchaseManagementService(
         val count = cashReceiptRepository.purchaseCashReceiptListCnt(hospitalId, query)
 
         return PurchaseBooks(list = list, summary = summary, total = count)
+    }
+
+    private fun eInvoiceBooks(hospitalId: String, bookType: PurchaseType, query: PurchaseQueryDto): PurchaseBooks<ETaxInvoiceBook> {
+        val list = invoiceRepository.purchaseBooks(hospitalId, bookType.code, query)
+        val summary = invoiceRepository.summary(hospitalId, bookType.code, query)
+        val count = invoiceRepository.bookCount(hospitalId, bookType.code, query)
+        return PurchaseBooks(list, summary, count)
     }
 
     /**

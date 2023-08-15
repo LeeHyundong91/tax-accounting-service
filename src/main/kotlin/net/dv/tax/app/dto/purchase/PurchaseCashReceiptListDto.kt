@@ -3,17 +3,6 @@ import net.dv.tax.app.purchase.JournalEntryStatus
 import org.hibernate.annotations.Comment
 import java.time.LocalDateTime
 
-data class PurchaseCashReceiptListDto (
-    
-    //list 데이터
-    var listPurchaseCashReceipt: List<PurchaseCashReceiptDto>,
-
-    //합계 정보
-    var purchaseCashReceiptTotal: PurchaseCashReceiptTotal,
-
-    //총게시물 수
-    var totalCount: Long? = null
-)
 
 //합계 항목
 data class PurchaseCashReceiptTotal(
