@@ -1,5 +1,6 @@
 package net.dv.tax.infra.endpoint.purchase
 
+import net.dv.access.Jwt
 import net.dv.tax.Application
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.app.purchase.*
@@ -17,8 +18,8 @@ class JournalEntryEndpoint(
     fun types(): ResponseEntity<List<Any>> = ResponseEntity.ok(
         PurchaseType.values().map { mapOf("code" to it.code, "label" to it.label) })
 
-    @GetMapping("/")
-    fun list(): ResponseEntity<Any> {
+    @GetMapping("")
+    fun list(@Jwt("sub") accountId: String?): ResponseEntity<Any> {
         return ResponseEntity.ok("")
     }
 
@@ -39,7 +40,8 @@ class JournalEntryEndpoint(
     @PostMapping("/{type}/{id}")
     fun requestExpense(@PathVariable type: PurchaseType,
                        @PathVariable id: Long,
-                       @RequestBody data: JournalEntryReqDto): ResponseEntity<Any> {
+                       @RequestBody data: JournalEntryReqDto,
+                       @Jwt("sub") requester: String?): ResponseEntity<Any> {
         val res = command.request(PurchaseBookDto(id, type), data)
         return ResponseEntity.ok(res)
     }
