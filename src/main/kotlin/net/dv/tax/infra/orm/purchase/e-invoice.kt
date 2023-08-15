@@ -2,17 +2,19 @@ package net.dv.tax.infra.orm.purchase
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.QBean
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.app.dto.purchase.PurchaseElecInvoiceTotal
-import net.dv.tax.app.purchase.BookSummary
-import net.dv.tax.app.purchase.ETaxInvoiceBook
-import net.dv.tax.app.purchase.PurchaseEInvoiceQuery
-import net.dv.tax.app.purchase.PurchaseQueryDto
+import net.dv.tax.app.enums.purchase.PurchaseType
+import net.dv.tax.app.purchase.*
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.PurchaseElecInvoiceEntity
 import net.dv.tax.domain.purchase.QJournalEntryEntity.journalEntryEntity
 import net.dv.tax.domain.purchase.QPurchaseElecInvoiceEntity.purchaseElecInvoiceEntity
 import org.hibernate.annotations.Comment
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -28,35 +30,7 @@ class PurchaseElecInvoiceRepositoryImpl(private val factory: JPAQueryFactory): P
         }
 
         return factory
-            .select(
-                Projections.fields(
-                    ETaxInvoiceBookDto::class.java,
-                    purchaseElecInvoiceEntity.id,
-                    purchaseElecInvoiceEntity.hospitalId,
-                    purchaseElecInvoiceEntity.issueDate,
-                    purchaseElecInvoiceEntity.sendDate,
-                    purchaseElecInvoiceEntity.accountCode,
-                    purchaseElecInvoiceEntity.franchiseeName,
-                    purchaseElecInvoiceEntity.itemName,
-                    purchaseElecInvoiceEntity.supplyPrice,
-                    purchaseElecInvoiceEntity.taxAmount,
-                    purchaseElecInvoiceEntity.totalAmount,
-                    purchaseElecInvoiceEntity.isDeduction,
-                    purchaseElecInvoiceEntity.debtorAccount,
-                    purchaseElecInvoiceEntity.separateSend,
-                    purchaseElecInvoiceEntity.statementStatus,
-                    purchaseElecInvoiceEntity.taskType,
-                    purchaseElecInvoiceEntity.approvalNo,
-                    purchaseElecInvoiceEntity.invoiceType,
-                    purchaseElecInvoiceEntity.billingType,
-                    purchaseElecInvoiceEntity.issueType,
-                    purchaseElecInvoiceEntity.writer,
-                    journalEntryEntity.accountingItem.`as`("_accountingItem"),
-                    journalEntryEntity.status.`as`("_status"),
-                    journalEntryEntity.requestedAt,
-                    journalEntryEntity.committedAt,
-                )
-            )
+            .select(mapping)
             .from(purchaseElecInvoiceEntity)
             .leftJoin(journalEntryEntity)
             .on(
@@ -103,6 +77,60 @@ class PurchaseElecInvoiceRepositoryImpl(private val factory: JPAQueryFactory): P
             .where(predicates)
             .fetchFirst()
     }
+
+    override fun journalEntryProcessing(hospitalId: String, bookType: String, pageable: Pageable): Page<out JournalEntryStatus> {
+        val type = PurchaseType[bookType]
+        val query = factory
+            .from(journalEntryEntity)
+            .join(purchaseElecInvoiceEntity)
+            .on(
+                journalEntryEntity.purchaseId.eq(purchaseElecInvoiceEntity.id),
+                journalEntryEntity.purchaseType.eq(type.code)
+            )
+            .where(
+                purchaseElecInvoiceEntity.hospitalId.eq(hospitalId)
+            )
+
+        val list = query
+            .select(mapping)
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        val count = query
+            .select(journalEntryEntity.count())
+            .fetchOne()
+
+        return PageImpl(list, pageable, count ?: 0)
+    }
+
+    private val mapping: QBean<ETaxInvoiceBook> get() = Projections.fields(
+        ETaxInvoiceBookDto::class.java,
+        purchaseElecInvoiceEntity.id,
+        purchaseElecInvoiceEntity.hospitalId,
+        purchaseElecInvoiceEntity.issueDate,
+        purchaseElecInvoiceEntity.sendDate,
+        purchaseElecInvoiceEntity.accountCode,
+        purchaseElecInvoiceEntity.franchiseeName,
+        purchaseElecInvoiceEntity.itemName,
+        purchaseElecInvoiceEntity.supplyPrice,
+        purchaseElecInvoiceEntity.taxAmount,
+        purchaseElecInvoiceEntity.totalAmount,
+        purchaseElecInvoiceEntity.isDeduction,
+        purchaseElecInvoiceEntity.debtorAccount,
+        purchaseElecInvoiceEntity.separateSend,
+        purchaseElecInvoiceEntity.statementStatus,
+        purchaseElecInvoiceEntity.taskType,
+        purchaseElecInvoiceEntity.approvalNo,
+        purchaseElecInvoiceEntity.invoiceType,
+        purchaseElecInvoiceEntity.billingType,
+        purchaseElecInvoiceEntity.issueType,
+        purchaseElecInvoiceEntity.writer,
+        journalEntryEntity.accountingItem.`as`("_accountingItem"),
+        journalEntryEntity.status.`as`("_status"),
+        journalEntryEntity.requestedAt,
+        journalEntryEntity.committedAt,
+    )
 
     override fun purchaseElecInvoiceList(
         hospitalId: String,

@@ -1,5 +1,6 @@
 package net.dv.tax.app.purchase
 
+import net.dv.tax.app.AbstractSearchQueryDto
 import net.dv.tax.app.enums.purchase.PurchaseType
 import java.time.LocalDateTime
 
@@ -14,6 +15,18 @@ data class PurchaseBookDto(
     override val id: Long,
     override val type: PurchaseType
 ): PurchaseBook
+
+data class PurchaseQueryDto (
+    val name: String? = null,
+    val from: String? = null,
+    val to: String? = null,
+    val offset: Long? = 0,
+    val size: Long? = 30,
+    var deduction: Long? = null,
+    var isTax: Boolean = false
+)
+
+class JournalEntryQueryDto: AbstractSearchQueryDto()
 
 data class JournalEntryReqDto(
     override var merchant: String = "",

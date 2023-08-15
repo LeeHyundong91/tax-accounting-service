@@ -4,6 +4,7 @@ import net.dv.access.Jwt
 import net.dv.tax.Application
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.app.purchase.*
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -51,6 +52,15 @@ class JournalEntryEndpoint(
                         @PathVariable id: Long,
                         @RequestBody data: JournalEntryReqDto): ResponseEntity<Any> {
         val res = command.confirm(PurchaseBookDto(id, type), data)
+        return ResponseEntity.ok(res)
+    }
+
+    @GetMapping("/{hospitalId}/{type}/state")
+    fun processingState(@PathVariable hospitalId: String,
+                        @PathVariable type: PurchaseType,
+                        query: JournalEntryQueryDto): ResponseEntity<Page<out JournalEntryStatus>> {
+        val res = command.processingState(type, hospitalId, query.pageable)
+
         return ResponseEntity.ok(res)
     }
 }

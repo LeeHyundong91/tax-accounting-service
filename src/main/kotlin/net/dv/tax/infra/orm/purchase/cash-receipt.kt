@@ -2,6 +2,7 @@ package net.dv.tax.infra.orm.purchase
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.QBean
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.app.dto.purchase.PurchaseCashReceiptTotal
 import net.dv.tax.app.dto.purchase.PurchaseCashReceiptTotalSearch
@@ -12,6 +13,9 @@ import net.dv.tax.domain.purchase.*
 import net.dv.tax.domain.purchase.QJournalEntryEntity.journalEntryEntity
 import net.dv.tax.domain.purchase.QPurchaseCashReceiptEntity.purchaseCashReceiptEntity
 import org.hibernate.annotations.Comment
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -30,36 +34,7 @@ class PurchaseCashReceiptRepositoryImpl(private val factory: JPAQueryFactory): P
         }
 
         return factory
-            .select(
-                Projections.fields(
-                    CashReceiptBookDto::class.java,
-                    purchaseCashReceiptEntity.id,
-                    purchaseCashReceiptEntity.hospitalId,
-                    purchaseCashReceiptEntity.dataFileId,
-                    purchaseCashReceiptEntity.accountCode,
-                    purchaseCashReceiptEntity.franchiseeName,
-                    purchaseCashReceiptEntity.corporationType,
-                    purchaseCashReceiptEntity.itemName,
-                    purchaseCashReceiptEntity.supplyPrice,
-                    purchaseCashReceiptEntity.taxAmount,
-                    purchaseCashReceiptEntity.serviceCharge,
-                    purchaseCashReceiptEntity.totalAmount,
-                    purchaseCashReceiptEntity.isDeduction,
-                    purchaseCashReceiptEntity.isRecommendDeduction,
-                    purchaseCashReceiptEntity.statementType1,
-                    purchaseCashReceiptEntity.statementType2,
-                    purchaseCashReceiptEntity.debtorAccount,
-                    purchaseCashReceiptEntity.creditAccount,
-                    purchaseCashReceiptEntity.separateSend,
-                    purchaseCashReceiptEntity.department,
-                    purchaseCashReceiptEntity.statementStatus,
-                    purchaseCashReceiptEntity.writer,
-                    journalEntryEntity.accountingItem.`as`("_accountingItem"),
-                    journalEntryEntity.status.`as`("_status"),
-                    journalEntryEntity.requestedAt,
-                    journalEntryEntity.committedAt,
-                )
-            )
+            .select(mapping)
             .from(purchaseCashReceiptEntity)
             .leftJoin(journalEntryEntity)
             .on(
@@ -114,6 +89,60 @@ class PurchaseCashReceiptRepositoryImpl(private val factory: JPAQueryFactory): P
 
         return CashReceiptSummary(deduction, nonDeduction)
     }
+
+    override fun journalEntryProcessing(hospitalId: String, pageable: Pageable): Page<out JournalEntryStatus> {
+        val query = factory
+            .from(journalEntryEntity)
+            .join(purchaseCashReceiptEntity)
+            .on(
+                journalEntryEntity.purchaseId.eq(purchaseCashReceiptEntity.id),
+                journalEntryEntity.purchaseType.eq(PurchaseType.CASH_RECEIPT.code)
+            )
+            .where(
+                purchaseCashReceiptEntity.hospitalId.eq(hospitalId)
+            )
+
+        val list = query
+            .select(mapping)
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        val count = query
+            .select(journalEntryEntity.count())
+            .fetchOne()
+
+        return PageImpl(list, pageable, count ?: 0)
+    }
+
+    private val mapping: QBean<CashReceiptBook> get() = Projections.fields(
+        CashReceiptBookDto::class.java,
+        purchaseCashReceiptEntity.id,
+        purchaseCashReceiptEntity.hospitalId,
+        purchaseCashReceiptEntity.dataFileId,
+        purchaseCashReceiptEntity.accountCode,
+        purchaseCashReceiptEntity.franchiseeName,
+        purchaseCashReceiptEntity.corporationType,
+        purchaseCashReceiptEntity.itemName,
+        purchaseCashReceiptEntity.supplyPrice,
+        purchaseCashReceiptEntity.taxAmount,
+        purchaseCashReceiptEntity.serviceCharge,
+        purchaseCashReceiptEntity.totalAmount,
+        purchaseCashReceiptEntity.isDeduction,
+        purchaseCashReceiptEntity.isRecommendDeduction,
+        purchaseCashReceiptEntity.statementType1,
+        purchaseCashReceiptEntity.statementType2,
+        purchaseCashReceiptEntity.debtorAccount,
+        purchaseCashReceiptEntity.creditAccount,
+        purchaseCashReceiptEntity.separateSend,
+        purchaseCashReceiptEntity.department,
+        purchaseCashReceiptEntity.statementStatus,
+        purchaseCashReceiptEntity.writer,
+        journalEntryEntity.accountingItem.`as`("_accountingItem"),
+        journalEntryEntity.status.`as`("_status"),
+        journalEntryEntity.requestedAt,
+        journalEntryEntity.committedAt,
+    )
 
     override fun purchaseCashReceiptList(
         hospitalId: String,

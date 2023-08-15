@@ -43,6 +43,18 @@ Content-Type: application/json
 GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330/history
 Accept: application/json
 
+### 비용처리 현황 내역, 신용카드
+GET {{host}}/v1/purchase/journal-entry/cid01/CREDIT_CARD/state?page=1&pageSize=10&sort[]=id,desc&sort[]=name,asc&sort[]=createdAt,desc
+Accept: application/json
+
+### 비용처리 현황 내역, 현금영수증
+GET {{host}}/v1/purchase/journal-entry/cid01/CASH_RECEIPT/state
+Accept: application/json
+
+### 비용처리 현황 내역, 전자세금 계산서
+GET {{host}}/v1/purchase/journal-entry/cid01/TAX_INVOICE/state
+Accept: application/json
+
 
 
 

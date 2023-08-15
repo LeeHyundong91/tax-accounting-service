@@ -2,6 +2,7 @@ package net.dv.tax.infra.orm.purchase
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.QBean
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotal
 import net.dv.tax.app.dto.purchase.PurchaseCreditCardTotalSearch
@@ -16,6 +17,9 @@ import net.dv.tax.domain.purchase.PurchaseCreditCardEntity
 import net.dv.tax.domain.purchase.QJournalEntryEntity.journalEntryEntity
 import net.dv.tax.domain.purchase.QPurchaseCreditCardEntity.purchaseCreditCardEntity
 import org.hibernate.annotations.Comment
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -34,34 +38,7 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
         }
 
         return factory
-            .select(Projections.fields(
-                CreditCardBookDto::class.java,
-                purchaseCreditCardEntity.id,
-                purchaseCreditCardEntity.hospitalId,
-                purchaseCreditCardEntity.billingDate,
-                purchaseCreditCardEntity.accountCode,
-                purchaseCreditCardEntity.franchiseeName,
-                purchaseCreditCardEntity.corporationType,
-                purchaseCreditCardEntity.itemName,
-                purchaseCreditCardEntity.supplyPrice,
-                purchaseCreditCardEntity.taxAmount,
-                purchaseCreditCardEntity.nonTaxAmount,
-                purchaseCreditCardEntity.totalAmount,
-                purchaseCreditCardEntity.isDeduction.`as`("_deduction"),
-                purchaseCreditCardEntity.isRecommendDeduction.`as`("_recommendDeduction"),
-                purchaseCreditCardEntity.statementType1,
-                purchaseCreditCardEntity.statementType2,
-                purchaseCreditCardEntity.debtorAccount,
-                purchaseCreditCardEntity.creditAccount,
-                purchaseCreditCardEntity.separateSend,
-                purchaseCreditCardEntity.statementStatus,
-                purchaseCreditCardEntity.writer,
-                purchaseCreditCardEntity.createdAt,
-                journalEntryEntity.status.`as`("_status"),
-                journalEntryEntity.accountingItem.`as`("_accountingItem"),
-                journalEntryEntity.requestedAt,
-                journalEntryEntity.committedAt,
-            ))
+            .select(mapping)
             .from(purchaseCreditCardEntity)
             .leftJoin(journalEntryEntity)
             .on(
@@ -113,6 +90,60 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
         return CreditCardSummary(deduction, nonDeduction)
     }
 
+    override fun journalEntryProcessing(hospitalId: String, pageable: Pageable): Page<CreditCardBook> {
+        val query = factory
+            .from(journalEntryEntity)
+            .join(purchaseCreditCardEntity)
+            .on(
+                journalEntryEntity.purchaseId.eq(purchaseCreditCardEntity.id),
+                journalEntryEntity.purchaseType.eq(PurchaseType.CREDIT_CARD.code)
+            )
+            .where(
+                purchaseCreditCardEntity.hospitalId.eq(hospitalId)
+            )
+
+        val list = query
+            .select(mapping)
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        val count = query
+            .select(journalEntryEntity.count())
+            .fetchOne()
+
+        return PageImpl(list, pageable, count ?: 0)
+    }
+
+    private val mapping: QBean<CreditCardBook> get() = Projections.fields(
+        CreditCardBookDto::class.java,
+        purchaseCreditCardEntity.id,
+        purchaseCreditCardEntity.hospitalId,
+        purchaseCreditCardEntity.billingDate,
+        purchaseCreditCardEntity.accountCode,
+        purchaseCreditCardEntity.franchiseeName,
+        purchaseCreditCardEntity.corporationType,
+        purchaseCreditCardEntity.itemName,
+        purchaseCreditCardEntity.supplyPrice,
+        purchaseCreditCardEntity.taxAmount,
+        purchaseCreditCardEntity.nonTaxAmount,
+        purchaseCreditCardEntity.totalAmount,
+        purchaseCreditCardEntity.isDeduction.`as`("_deduction"),
+        purchaseCreditCardEntity.isRecommendDeduction.`as`("_recommendDeduction"),
+        purchaseCreditCardEntity.statementType1,
+        purchaseCreditCardEntity.statementType2,
+        purchaseCreditCardEntity.debtorAccount,
+        purchaseCreditCardEntity.creditAccount,
+        purchaseCreditCardEntity.separateSend,
+        purchaseCreditCardEntity.statementStatus,
+        purchaseCreditCardEntity.writer,
+        purchaseCreditCardEntity.createdAt,
+        journalEntryEntity.status.`as`("_status"),
+        journalEntryEntity.accountingItem.`as`("_accountingItem"),
+        journalEntryEntity.requestedAt,
+        journalEntryEntity.committedAt,
+    )
+
     override fun purchaseCreditCardList(
         hospitalId: String,
         purchaseQueryDto: PurchaseQueryDto,
@@ -144,7 +175,6 @@ class PurchaseCreditCardRepositoryImpl(private val factory: JPAQueryFactory) : P
         }
 
         return res
-
     }
 
     override fun purchaseCreditCardListCnt(hospitalId: String, purchaseQueryDto: PurchaseQueryDto): Long {

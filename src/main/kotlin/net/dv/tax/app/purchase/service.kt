@@ -1,8 +1,11 @@
 package net.dv.tax.app.purchase
 
+import com.amazonaws.services.kms.model.UnsupportedOperationException
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -22,16 +25,17 @@ class PurchaseManagementService(
     /**
      * PurchaseQueryCommand member methods...
      */
+    @Suppress("UNCHECKED_CAST")
     override fun <T> purchaseBooks(type: PurchaseType,
-                               hospitalId: String,
-                               query: PurchaseQueryDto): PurchaseBooks<T> {
+                                   hospitalId: String,
+                                   query: PurchaseQueryDto): PurchaseBooks<T> {
         return when(type) {
             PurchaseType.CREDIT_CARD -> creditCard(hospitalId, query)
             PurchaseType.CASH_RECEIPT -> cashReceiptBooks(hospitalId, query)
-            PurchaseType.TAX_INVOICE -> eInvoiceBooks(hospitalId, type, query)
+            PurchaseType.TAX_INVOICE,
             PurchaseType.INVOICE -> eInvoiceBooks(hospitalId, type, query)
-            PurchaseType.HANDWRITTEN_INVOICE -> TODO()
-            PurchaseType.BASIC_RECEIPT -> TODO()
+            PurchaseType.HANDWRITTEN_INVOICE -> empty()
+            PurchaseType.BASIC_RECEIPT -> empty()
         } as PurchaseBooks<T>
     }
 
@@ -161,4 +165,16 @@ class PurchaseManagementService(
                 )
             }
     }
+
+    override fun processingState(type: PurchaseType, hospitalId: String, pageable: Pageable): Page<out JournalEntryStatus> {
+        return when(type) {
+            PurchaseType.CREDIT_CARD -> creditCardRepository.journalEntryProcessing(hospitalId, pageable)
+            PurchaseType.CASH_RECEIPT -> cashReceiptRepository.journalEntryProcessing(hospitalId, pageable)
+            PurchaseType.TAX_INVOICE,
+            PurchaseType.INVOICE -> invoiceRepository.journalEntryProcessing(hospitalId, type.code, pageable)
+            else -> empty()
+        }
+    }
+
+    private fun empty(): Nothing = throw UnsupportedOperationException("empty")
 }
