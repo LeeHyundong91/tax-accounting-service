@@ -4,10 +4,6 @@ import mu.KotlinLogging
 import net.dv.tax.Application
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.app.purchase.*
-import net.dv.tax.domain.purchase.PurchaseHandwrittenEntity
-import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -15,7 +11,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/${Application.VERSION}/purchase")
 class PurchaseBooksEndpoints(
     private val handwrittenService: PurchaseHandwrittenService,
-    private val command: PurchaseQueryCommand,
+    private val operationCommand: PurchaseOperationCommand,
+    private val queryCommand: PurchaseQueryCommand,
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -25,7 +22,7 @@ class PurchaseBooksEndpoints(
                              query: PurchaseQueryDto): ResponseEntity<PurchaseBooks<CreditCardBook>> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
-        val res = command.purchaseBooks<CreditCardBook>(PurchaseType.CREDIT_CARD, hospitalId, query)
+        val res = queryCommand.purchaseBooks<CreditCardBook>(PurchaseType.CREDIT_CARD, hospitalId, query)
 
         return ResponseEntity.ok(res)
     }
@@ -36,7 +33,7 @@ class PurchaseBooksEndpoints(
                               query: PurchaseQueryDto): ResponseEntity<PurchaseBooks<CashReceiptBook>> {
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
-        val res = command.purchaseBooks<CashReceiptBook>(PurchaseType.CASH_RECEIPT, hospitalId, query)
+        val res = queryCommand.purchaseBooks<CashReceiptBook>(PurchaseType.CASH_RECEIPT, hospitalId, query)
 
         return ResponseEntity.ok(res)
     }
@@ -49,30 +46,40 @@ class PurchaseBooksEndpoints(
 
         if( hospitalId.isEmpty() ) throw IllegalArgumentException("hospitalId is empty.")
         val type = bookType.replace("-", "_")
-        val res = command.purchaseBooks<ETaxInvoiceBook>(PurchaseType[type], hospitalId, query)
+        val res = queryCommand.purchaseBooks<ETaxInvoiceBook>(PurchaseType[type], hospitalId, query)
         return ResponseEntity.ok(res)
     }
 
     /** 수기 매입자료 조회 (수기 세금계산서 / 간이 영수증) */
     @GetMapping("/{bookType}/{hospitalId}/{year}")
     fun dataList(@PathVariable hospitalId: String,
-                 @PathVariable year: String,
                  @PathVariable bookType: String,
-                 @PageableDefault(size = 30) page: Pageable,
-    ): ResponseEntity<List<PurchaseHandwrittenEntity>> {
+                 @PathVariable year: Int,
+    ): ResponseEntity<List<HandwrittenBook>> {
         val purchaseType = PurchaseType[bookType.replace("-", "_")]
-        val res = handwrittenService.dataList(hospitalId, year, page)
+        val res = queryCommand.handwrittenBooks(purchaseType, hospitalId, year)
         return ResponseEntity.ok(res)
     }
 
     /** 수기 매입자료 등록 (수기 세금계산서 / 간이 영수증) */
     @PatchMapping("/{bookType}/{hospitalId}")
     fun saveList(
-        @RequestBody dataList: List<PurchaseHandwrittenEntity>,
+        @RequestBody books: List<HandwrittenBookDto>,
         @PathVariable hospitalId: String,
         @PathVariable bookType: String,
-    ): ResponseEntity<HttpStatus> {
+    ): ResponseEntity<BookSummary> {
         val purchaseType = PurchaseType[bookType.replace("-", "_")]
-        return handwrittenService.dataSave(dataList)
+        val res = operationCommand.writeBooks(hospitalId, purchaseType, books)
+        return ResponseEntity.ok(res)
     }
 }
+
+data class HandwrittenBookDto(
+    override var issueDate: String?,
+    override var supplier: String?,
+    override var itemName: String?,
+    override var supplyPrice: Long?,
+    override var debitAccount: String?,
+    override val taxAmount: Long?,
+    override val writer: String?
+): HandwrittenBook

@@ -4,6 +4,7 @@ import com.amazonaws.services.kms.model.UnsupportedOperationException
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
+import net.dv.tax.domain.purchase.PurchaseHandwrittenEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -17,9 +18,10 @@ class PurchaseManagementService(
     private val creditCardRepository: PurchaseCreditCardRepository,
     private val cashReceiptRepository: PurchaseCashReceiptRepository,
     private val invoiceRepository: PurchaseElecInvoiceRepository,
+    private val handwrittenRepository: PurchaseHandwrittenRepository,
     private val journalEntryRepository: PurchaseJournalEntryRepository,
     private val journalEntryHistoryRepository: PurchaseJournalEntryHistoryRepository,
-): PurchaseQueryCommand, JournalEntryCommand {
+): PurchaseQueryCommand, PurchaseOperationCommand, JournalEntryCommand {
     private val now: LocalDateTime  get() = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()
 
     /**
@@ -63,6 +65,58 @@ class PurchaseManagementService(
         return PurchaseBooks(list, summary, count)
     }
 
+    override fun handwrittenBooks(type: PurchaseType, hospitalId: String, year: Int): List<HandwrittenBook> {
+        return handwrittenRepository.find {
+            this.hospitalId = hospitalId
+            this.year = year
+            this.type = type.code
+        }.map {entity ->
+            object: HandwrittenBook {
+                val id: Long? = entity.id
+                val hospitalId: String = entity.hospitalId!!
+                val type: String? = entity.type?.name
+                override val issueDate: String? = entity.issueDate
+                override val supplier: String? = entity.supplier
+                override val itemName: String? = entity.itemName
+                override val supplyPrice: Long? = entity.supplyPrice
+                override val debitAccount: String? = entity.debitAccount
+                override val taxAmount: Long? = entity.taxAmount
+                override val writer: String? = entity.writer
+                val createdAt: LocalDateTime = entity.createdAt
+            }
+        }
+    }
+
+    /**
+     * PurchaseOperationCommand member methods...
+     */
+    override fun writeBooks(hospitalId: String,
+                            type: PurchaseType,
+                            books: List<HandwrittenBook>): BookSummary {
+        val entities = books.map {
+            PurchaseHandwrittenEntity(
+                type = PurchaseHandwrittenEntity.Type[type.code],
+                hospitalId = hospitalId,
+                issueDate = it.issueDate,
+                supplier = it.supplier,
+                itemName = it.itemName,
+                supplyPrice = it.supplyPrice,
+                debitAccount = it.debitAccount,
+                taxAmount = it.taxAmount,
+                writer = it.writer,
+                createdAt = now
+            )
+        }
+
+        handwrittenRepository.saveAll(entities)
+
+        return object: BookSummary {
+            val hospitalId: String = hospitalId
+            val type: String = type.label
+            val books: Int = entities.size
+        }
+    }
+
     /**
      * Journal Entry member methods...
      */
@@ -77,6 +131,8 @@ class PurchaseManagementService(
                     it.status?.name,
                     "",
                     it.committer,
+                    it.requestedAt,
+                    it.committedAt
                 )
             } ?: throw RuntimeException("no journal entry")
     }
@@ -153,8 +209,32 @@ class PurchaseManagementService(
         return entry
     }
 
-    override fun history(purchase: PurchaseBookDto): List<JournalEntryHistoryDto> {
-        return journalEntryHistoryRepository.find(purchase)
+    // TODO ( Repository ID 및 PurchaseBook type 개선 필요)
+    override fun history(purchase: PurchaseBookDto): PurchaseBookSummary {
+        val (id, merchant, txDate, item, amount) = when (purchase.type) {
+            PurchaseType.CREDIT_CARD -> {
+                creditCardRepository.findById(purchase.id.toInt()).get().let {
+                    listOf(it.id, it.franchiseeName, it.billingDate, it.itemName, it.totalAmount)
+                }
+            }
+            PurchaseType.CASH_RECEIPT -> {
+                cashReceiptRepository.findById(purchase.id.toInt()).get().let {
+                    listOf(it.id, it.franchiseeName, it.billingDate, it.itemName, it.totalAmount)
+                }
+            }
+            PurchaseType.INVOICE, PurchaseType.TAX_INVOICE -> {
+                invoiceRepository.findById(purchase.id.toInt()).get().let {
+                    listOf(it.id, it.franchiseeName, it.sendDate, it.itemName, it.totalAmount)
+                }
+            }
+            PurchaseType.BASIC_RECEIPT, PurchaseType.HANDWRITTEN_INVOICE -> {
+                handwrittenRepository.findById(purchase.id).get().let {
+                    listOf(it.id, it.supplier, it.issueDate, it.itemName, it.taxAmount)
+                }
+            }
+        }
+
+        val history = journalEntryHistoryRepository.find(purchase)
             .map{
                 JournalEntryHistoryDto(
                     it.writer!!,
@@ -164,6 +244,17 @@ class PurchaseManagementService(
                     it.writtenAt
                 )
             }
+
+        return object: PurchaseBookSummary {
+            override val id: Long = id as Long
+            override val type: PurchaseType = purchase.type
+            override val merchant: String = merchant as String
+            override val item: String = item as String
+            override val transactionDate: String = txDate as String
+            override val amount: Long = amount as Long
+
+            val history: List<JournalEntryHistoryDto> = history
+        }
     }
 
     override fun processingState(type: PurchaseType, hospitalId: String, pageable: Pageable): Page<out JournalEntryStatus> {

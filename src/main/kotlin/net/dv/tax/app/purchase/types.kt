@@ -11,6 +11,13 @@ interface PurchaseBook {
     val type: PurchaseType
 }
 
+interface PurchaseBookSummary: PurchaseBook {
+    val merchant: String
+    val item: String
+    val transactionDate: String
+    val amount: Long
+}
+
 interface JournalEntryStatus {
     var status: String?
     var requestedAt: LocalDateTime?
@@ -97,5 +104,15 @@ interface ETaxInvoiceBook: JournalEntryStatus {
     val invoiceType: String?
     val billingType: String?
     val issueType: String?
+    val writer: String?
+}
+
+interface HandwrittenBook {
+    val issueDate: String?
+    val supplier: String?
+    val itemName: String?
+    val supplyPrice: Long?
+    val debitAccount: String?
+    val taxAmount: Long?
     val writer: String?
 }

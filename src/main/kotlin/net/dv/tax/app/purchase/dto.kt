@@ -36,14 +36,9 @@ data class JournalEntryReqDto(
     override var status: String? = null,
     override var requester: String? = null,
     override var committer: String? = null,
-) : JournalEntry {
-    override var requestedAt: LocalDateTime?
-        get() = TODO("Not yet implemented")
-        set(value) {}
-    override var committedAt: LocalDateTime?
-        get() = TODO("Not yet implemented")
-        set(value) {}
-}
+    override var requestedAt: LocalDateTime? = null,
+    override var committedAt: LocalDateTime? = null
+) : JournalEntry
 
 data class JournalEntryHistoryDto(
     val writer: String,

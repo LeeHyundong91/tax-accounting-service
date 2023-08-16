@@ -28,8 +28,6 @@ Content-Type: application/json
 
 [
   {
-    "hospitalId": "cid01",
-    "dataFileId": null,
     "issueDate": "2022-01-01",
     "supplier": null,
     "itemName": "품목명오늘",

@@ -14,7 +14,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL
 #    INVOICE("II", "전자계산서"),
 #    HANDWRITTEN_INVOICE("HI", "수기세금계산서"),
 #    BASIC_RECEIPT("BR", "간이영수증"),;
-GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/4608
+GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/4509
 Accept: application/json
 
 
@@ -40,22 +40,17 @@ Content-Type: application/json
 }
 
 ### 계정과목 분계 처리 내역
-GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/33330/history
+GET {{host}}/v1/purchase/journal-entry/credit_card/33330/history
 Accept: application/json
 
 ### 비용처리 현황 내역, 신용카드
-GET {{host}}/v1/purchase/journal-entry/cid01/CREDIT_CARD/state?page=1&pageSize=10&sort[]=id,desc&sort[]=name,asc&sort[]=createdAt,desc
+GET {{host}}/v1/purchase/journal-entry/cid01/credit_card/state?page=1&pageSize=10&sort[]=id,desc&sort[]=name,asc&sort[]=createdAt,desc
 Accept: application/json
 
 ### 비용처리 현황 내역, 현금영수증
-GET {{host}}/v1/purchase/journal-entry/cid01/CASH_RECEIPT/state
+GET {{host}}/v1/purchase/journal-entry/cid01/cash_receipt/state
 Accept: application/json
 
 ### 비용처리 현황 내역, 전자세금 계산서
-GET {{host}}/v1/purchase/journal-entry/cid01/TAX_INVOICE/state
+GET {{host}}/v1/purchase/journal-entry/cid01/tax_invoice/state
 Accept: application/json
-
-
-
-
-

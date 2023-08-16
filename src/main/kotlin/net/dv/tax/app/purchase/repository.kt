@@ -57,6 +57,27 @@ interface PurchaseEInvoiceQuery {
     fun purchaseElecInvoiceTotal( hospitalId: String, purchaseQueryDto: PurchaseQueryDto): PurchaseElecInvoiceTotal
 }
 
+/** 수기세금계산서 / 간이영수증 매입자료 Repository */
+interface PurchaseHandwrittenRepository : JpaRepository<PurchaseHandwrittenEntity, Long>,
+    PurchaseHandwrittenQuery,
+    JpaSpecificationExecutor<PurchaseHandwrittenEntity> {
+    fun findAllByHospitalIdAndIssueDateStartingWith(
+        hospitalId: String,
+        issueDate: String,
+        pageable: Pageable,
+    ): List<PurchaseHandwrittenEntity>?
+}
+
+interface PurchaseHandwrittenQuery {
+    fun find(query: Query.() -> Unit): List<PurchaseHandwrittenEntity>
+
+    data class Query(
+        var hospitalId: String? = null,
+        var type: String? = null,
+        var year: Int? = null,
+    )
+}
+
 @Repository
 interface PurchaseJournalEntryRepository:
     JpaRepository<JournalEntryEntity, Long>,

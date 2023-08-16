@@ -73,7 +73,13 @@ data class PurchaseHandwrittenEntity(
     enum class Type(override val code: String,
                     override val label: String): Code {
         TAX_INVOICE("HI", "수기세금계산서"),
-        BASIC_RECEIPT("BR", "간이영수증"),
+        BASIC_RECEIPT("BR", "간이영수증");
+
+        companion object {
+            operator fun get(key: String): Type = Type.values().first {
+                it.code == key.uppercase() || it.name == key.uppercase()
+            }
+        }
     }
 
     @Converter(autoApply = true)

@@ -25,41 +25,42 @@ class JournalEntryEndpoint(
     }
 
     @GetMapping("/{type}/{id}")
-    fun view(@PathVariable type: PurchaseType,
+    fun view(@PathVariable type: String,
              @PathVariable id: Long): ResponseEntity<JournalEntry> {
-        val res = command.get(PurchaseBookDto(id, type))
+        val res = command.get(PurchaseBookDto(id, PurchaseType[type]))
         return ResponseEntity.ok(res)
     }
 
     @GetMapping("/{type}/{id}/history")
-    fun history(@PathVariable type: PurchaseType,
-                @PathVariable id: Long): ResponseEntity<List<JournalEntryHistoryDto>> {
-        val res = command.history(PurchaseBookDto(id, type))
+    fun history(@PathVariable type: String,
+//                @PathVariable id: Long): ResponseEntity<List<JournalEntryHistoryDto>> {
+                @PathVariable id: Long): ResponseEntity<PurchaseBookSummary> {
+        val res = command.history(PurchaseBookDto(id, PurchaseType[type]))
         return ResponseEntity.ok(res)
     }
 
     @PostMapping("/{type}/{id}")
-    fun requestExpense(@PathVariable type: PurchaseType,
+    fun requestExpense(@PathVariable type: String,
                        @PathVariable id: Long,
                        @RequestBody data: JournalEntryReqDto,
                        @Jwt("sub") requester: String?): ResponseEntity<Any> {
-        val res = command.request(PurchaseBookDto(id, type), data)
+        val res = command.request(PurchaseBookDto(id, PurchaseType[type]), data)
         return ResponseEntity.ok(res)
     }
 
     @PutMapping("/{type}/{id}")
-    fun checkAndRequest(@PathVariable type: PurchaseType,
+    fun checkAndRequest(@PathVariable type: String,
                         @PathVariable id: Long,
                         @RequestBody data: JournalEntryReqDto): ResponseEntity<Any> {
-        val res = command.confirm(PurchaseBookDto(id, type), data)
+        val res = command.confirm(PurchaseBookDto(id, PurchaseType[type]), data)
         return ResponseEntity.ok(res)
     }
 
     @GetMapping("/{hospitalId}/{type}/state")
     fun processingState(@PathVariable hospitalId: String,
-                        @PathVariable type: PurchaseType,
+                        @PathVariable type: String,
                         query: JournalEntryQueryDto): ResponseEntity<Page<out JournalEntryStatus>> {
-        val res = command.processingState(type, hospitalId, query.pageable)
+        val res = command.processingState(PurchaseType[type], hospitalId, query.pageable)
 
         return ResponseEntity.ok(res)
     }
