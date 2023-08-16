@@ -84,8 +84,8 @@ interface PurchaseJournalEntryRepository:
     PurchaseJournalEntryQuery
 
 interface PurchaseJournalEntryQuery {
-    fun search(): List<PurchaseData>
     fun find(purchase: PurchaseBook): JournalEntryEntity?
+    fun expense(hospitalId: String, pageable: Pageable): Page<JournalEntry>
 }
 
 @Repository

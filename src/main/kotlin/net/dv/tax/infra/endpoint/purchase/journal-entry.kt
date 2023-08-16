@@ -19,9 +19,12 @@ class JournalEntryEndpoint(
     fun types(): ResponseEntity<List<Any>> = ResponseEntity.ok(
         PurchaseType.values().map { mapOf("code" to it.code, "label" to it.label) })
 
-    @GetMapping("")
-    fun list(@Jwt("sub") accountId: String?): ResponseEntity<Any> {
-        return ResponseEntity.ok("")
+    @GetMapping("/{hospitalId}")
+    fun list(@Jwt("sub") accountId: String?,
+             @PathVariable hospitalId: String,
+             query: JournalEntryQueryDto): ResponseEntity<Page<JournalEntry>> {
+        val res = command.expenseByHospital(hospitalId, query.pageable)
+        return ResponseEntity.ok(res)
     }
 
     @GetMapping("/{type}/{id}")

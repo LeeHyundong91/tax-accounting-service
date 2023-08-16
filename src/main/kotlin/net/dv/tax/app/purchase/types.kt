@@ -25,12 +25,12 @@ interface JournalEntryStatus {
 }
 
 interface JournalEntry: JournalEntryStatus {
-    var merchant: String
-    var note: String
-    var checkExpense: Boolean
-    var accountingItem: String?
-    var requester: String?
-    var committer: String?
+    val merchant: String
+    val note: String
+    val checkExpense: Boolean
+    val accountingItem: String?
+    val requester: String?
+    val committer: String?
 }
 
 interface CreditCardBook: JournalEntryStatus {

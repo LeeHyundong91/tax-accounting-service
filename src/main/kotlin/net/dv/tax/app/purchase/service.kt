@@ -117,9 +117,12 @@ class PurchaseManagementService(
         }
     }
 
-    /**
-     * Journal Entry member methods...
-     */
+    /** Journal Entry member methods... */
+
+    override fun expenseByHospital(hospitalId: String, pageable: Pageable): Page<JournalEntry> {
+        return journalEntryRepository.expense(hospitalId, pageable)
+    }
+
     override fun get(purchase: PurchaseBook): JournalEntry {
         return journalEntryRepository.find(purchase)
             ?.let {
