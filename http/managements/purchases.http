@@ -1,21 +1,41 @@
 ### 신용카드 매입 자료 목록 조회
-GET {{host}}/v1/purchase/credit-card/cid01/list
+GET {{host}}/v1/purchase/credit-card/cid01
 Accept: application/json
 
 ### 현금영수증 매입 자료 목록 조회
-GET {{host}}/v1/purchase/cash-receipt/cid01/list
+GET {{host}}/v1/purchase/cash-receipt/cid01
 Accept: application/json
 
 ### 전자세금 계산서 자료 목록 조회
-GET {{host}}/v1/purchase/e-invoice/TAX_INVOICE/cid01
+GET {{host}}/v1/purchase/e-tax_invoice/cid01
 Accept: application/json
 
 ### 전자계산서 자료 목록 조회
-GET {{host}}/v1/purchase/e-invoice/INVOICE/cid01
+GET {{host}}/v1/purchase/e-invoice/cid01
 Accept: application/json
 
 ### 수기 세금 계산서 자료 목록 조회
-GET {{host}}/v1/purchase/cash-receipt/cid01/list
+GET {{host}}/v1/purchase/handwritten-invoice/cid01/2022
 Accept: application/json
 
 ### 간이 영수증 자료 목록 조회
+GET {{host}}/v1/purchase/basic-receipt/cid01/2022
+Accept: application/json
+
+### 간이 영수증 / 수기 세금 계산서 매입 등록
+PATCH {{host}}/v1/purchase/handwritten-invoice/cid01
+Content-Type: application/json
+
+[
+  {
+    "hospitalId": "cid01",
+    "dataFileId": null,
+    "issueDate": "2022-01-01",
+    "supplier": null,
+    "itemName": "품목명오늘",
+    "supplyPrice": 10,
+    "debitAccount": null,
+    "taxAmount": 0,
+    "writer": "test"
+  }
+]

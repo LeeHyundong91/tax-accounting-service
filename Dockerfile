@@ -33,6 +33,7 @@ ENTRYPOINT ["java", \
     "-Ddv.rds.port=${RDS_PORT}", \
     "-Ddv.rds.username=${RDS_USERNAME}", \
     "-Ddv.rds.password=${RDS_PASSWORD}", \
+    "-Ddv.access.jwt.secret=${JWT_SECRET}", \
     "-Dspring.rabbitmq.host=${MQ_HOST}", \
     "-Dspring.rabbitmq.port=${MQ_PORT}", \
     "-Dspring.rabbitmq.username=${MQ_USERNAME}", \
