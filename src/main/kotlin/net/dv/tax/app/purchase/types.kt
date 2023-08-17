@@ -11,7 +11,7 @@ interface PurchaseBookIdentity {
     val type: PurchaseType
 }
 
-interface PurchaseBookSummary: PurchaseBookIdentity {
+interface PurchaseBookOverview: PurchaseBookIdentity {
     val merchant: String?
     val item: String?
     val transactionDate: String

@@ -26,8 +26,6 @@ data class PurchaseQueryDto (
     var isTax: Boolean = false
 )
 
-class JournalEntryQueryDto: AbstractSearchQueryDto()
-
 data class JournalEntryReqDto(
     override var merchant: String = "",
     override var note: String,

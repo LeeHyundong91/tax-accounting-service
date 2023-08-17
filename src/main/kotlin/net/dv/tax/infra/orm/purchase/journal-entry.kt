@@ -165,4 +165,11 @@ object JournalEntryQueries {
           OR ('분류완료' = ? AND H.DEBIT_ACCOUNT <> '확인필요' AND H.DEBIT_ACCOUNT IS NOT NULL)
         )
     """
+
+    const val COUNT_QUERY = """
+        SELECT COUNT(*)
+        FROM ( 
+          %s 
+        ) AS U
+    """
 }

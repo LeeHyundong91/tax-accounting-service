@@ -2,6 +2,8 @@ package net.dv.tax.infra.endpoint.purchase
 
 import net.dv.access.Jwt
 import net.dv.tax.Application
+import net.dv.tax.app.AbstractSearchQueryDto
+import net.dv.tax.app.Period
 import net.dv.tax.app.enums.purchase.PurchaseType
 import net.dv.tax.app.purchase.*
 import org.springframework.data.domain.Page
@@ -22,8 +24,8 @@ class JournalEntryEndpoint(
     @GetMapping("/{hospitalId}")
     fun list(@Jwt("sub") accountId: String?,
              @PathVariable hospitalId: String,
-             query: JournalEntryQueryDto): ResponseEntity<Page<JournalEntry>> {
-        val res = command.expenseByHospital(hospitalId, query.pageable)
+             query: QueryRequest): ResponseEntity<Page<JournalEntry>> {
+        val res = command.expenseByHospital(hospitalId, query, query.pageable)
         return ResponseEntity.ok(res)
     }
 
@@ -36,8 +38,7 @@ class JournalEntryEndpoint(
 
     @GetMapping("/{type}/{id}/history")
     fun history(@PathVariable type: String,
-//                @PathVariable id: Long): ResponseEntity<List<JournalEntryHistoryDto>> {
-                @PathVariable id: Long): ResponseEntity<PurchaseBookSummary> {
+                @PathVariable id: Long): ResponseEntity<PurchaseBookOverview> {
         val res = command.history(PurchaseBookDto(id, PurchaseType[type]))
         return ResponseEntity.ok(res)
     }
@@ -62,9 +63,16 @@ class JournalEntryEndpoint(
     @GetMapping("/{hospitalId}/{type}/state")
     fun processingState(@PathVariable hospitalId: String,
                         @PathVariable type: String,
-                        query: JournalEntryQueryDto): ResponseEntity<Page<out JournalEntryStatus>> {
+                        query: QueryRequest): ResponseEntity<Page<out JournalEntryStatus>> {
         val res = command.processingState(PurchaseType[type], hospitalId, query.pageable)
 
         return ResponseEntity.ok(res)
     }
+
+    data class QueryRequest(
+        override var category: String,
+        override var period: Period,
+        override var type: PurchaseType,
+        var term: String,
+    ): JournalEntryCommand.Query, AbstractSearchQueryDto()
 }
