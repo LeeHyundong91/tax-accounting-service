@@ -14,7 +14,7 @@ data class PurchaseBooks<T>(
 data class PurchaseBookDto(
     override val id: Long,
     override val type: PurchaseType
-): PurchaseBook
+): PurchaseBookIdentity
 
 data class PurchaseQueryDto (
     val name: String? = null,

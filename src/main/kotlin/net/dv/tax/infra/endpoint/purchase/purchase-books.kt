@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/${Application.VERSION}/purchase")
 class PurchaseBooksEndpoints(
-    private val handwrittenService: PurchaseHandwrittenService,
     private val operationCommand: PurchaseOperationCommand,
     private val queryCommand: PurchaseQueryCommand,
 ) {

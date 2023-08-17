@@ -26,5 +26,4 @@ class PurchaseHandwrittenRepositoryImpl(private val factory: JPAQueryFactory): P
             )
             .fetch()
     }
-
 }

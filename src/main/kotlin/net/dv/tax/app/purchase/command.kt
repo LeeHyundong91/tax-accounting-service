@@ -16,9 +16,9 @@ interface PurchaseOperationCommand {
 
 interface JournalEntryCommand {
     fun expenseByHospital(hospitalId: String, pageable: Pageable): Page<JournalEntry>
-    fun get(purchase: PurchaseBook): JournalEntry
-    fun request(purchase: PurchaseBook, je: JournalEntry): JournalEntry
-    fun confirm(purchase: PurchaseBook, je: JournalEntry): JournalEntry
+    fun get(purchase: PurchaseBookIdentity): JournalEntry
+    fun request(purchase: PurchaseBookIdentity, je: JournalEntry): JournalEntry
+    fun confirm(purchase: PurchaseBookIdentity, je: JournalEntry): JournalEntry
     fun history(purchase: PurchaseBookDto): PurchaseBookSummary
     fun processingState(type: PurchaseType, hospitalId: String, pageable: Pageable): Page<out JournalEntryStatus>
 }

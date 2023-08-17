@@ -58,15 +58,7 @@ interface PurchaseEInvoiceQuery {
 }
 
 /** 수기세금계산서 / 간이영수증 매입자료 Repository */
-interface PurchaseHandwrittenRepository : JpaRepository<PurchaseHandwrittenEntity, Long>,
-    PurchaseHandwrittenQuery,
-    JpaSpecificationExecutor<PurchaseHandwrittenEntity> {
-    fun findAllByHospitalIdAndIssueDateStartingWith(
-        hospitalId: String,
-        issueDate: String,
-        pageable: Pageable,
-    ): List<PurchaseHandwrittenEntity>?
-}
+interface PurchaseHandwrittenRepository : JpaRepository<PurchaseHandwrittenEntity, Long>, PurchaseHandwrittenQuery
 
 interface PurchaseHandwrittenQuery {
     fun find(query: Query.() -> Unit): List<PurchaseHandwrittenEntity>
@@ -84,7 +76,7 @@ interface PurchaseJournalEntryRepository:
     PurchaseJournalEntryQuery
 
 interface PurchaseJournalEntryQuery {
-    fun find(purchase: PurchaseBook): JournalEntryEntity?
+    fun find(purchase: PurchaseBookIdentity): JournalEntryEntity?
     fun expense(hospitalId: String, pageable: Pageable): Page<JournalEntry>
 }
 
@@ -94,7 +86,7 @@ interface PurchaseJournalEntryHistoryRepository:
     PurchaseJournalEntryHistoryQuery
 
 interface PurchaseJournalEntryHistoryQuery {
-    fun find(purchase: PurchaseBook): List<JournalEntryHistoryEntity>
+    fun find(purchase: PurchaseBookIdentity): List<JournalEntryHistoryEntity>
 }
 
 class PurchaseData

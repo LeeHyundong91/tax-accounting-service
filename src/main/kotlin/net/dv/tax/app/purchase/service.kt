@@ -123,7 +123,7 @@ class PurchaseManagementService(
         return journalEntryRepository.expense(hospitalId, pageable)
     }
 
-    override fun get(purchase: PurchaseBook): JournalEntry {
+    override fun get(purchase: PurchaseBookIdentity): JournalEntry {
         return journalEntryRepository.find(purchase)
             ?.let {
                 JournalEntryReqDto(
@@ -140,7 +140,7 @@ class PurchaseManagementService(
             } ?: throw RuntimeException("no journal entry")
     }
 
-    override fun request(purchase: PurchaseBook, je: JournalEntry): JournalEntry {
+    override fun request(purchase: PurchaseBookIdentity, je: JournalEntry): JournalEntry {
         val entity = journalEntryRepository.find(purchase) ?: JournalEntryEntity(
             purchaseId = purchase.id,
             purchaseType = purchase.type.code,
@@ -176,7 +176,7 @@ class PurchaseManagementService(
         return entry
     }
 
-    override fun confirm(purchase: PurchaseBook, je: JournalEntry): JournalEntry {
+    override fun confirm(purchase: PurchaseBookIdentity, je: JournalEntry): JournalEntry {
         val entity = journalEntryRepository.find(purchase) ?: throw RuntimeException("no journal entity")
 
         entity.apply {
@@ -214,7 +214,7 @@ class PurchaseManagementService(
 
     // TODO ( Repository ID 및 PurchaseBook type 개선 필요)
     override fun history(purchase: PurchaseBookDto): PurchaseBookSummary {
-        val (id, merchant, txDate, item, amount) = when (purchase.type) {
+        val (id, merchant, date, item, amount) = when (purchase.type) {
             PurchaseType.CREDIT_CARD -> {
                 creditCardRepository.findById(purchase.id.toInt()).get().let {
                     listOf(it.id, it.franchiseeName, it.billingDate, it.itemName, it.totalAmount)
@@ -251,9 +251,9 @@ class PurchaseManagementService(
         return object: PurchaseBookSummary {
             override val id: Long = id as Long
             override val type: PurchaseType = purchase.type
-            override val merchant: String = merchant as String
-            override val item: String = item as String
-            override val transactionDate: String = txDate as String
+            override val merchant: String? = merchant as String?
+            override val item: String? = item as String?
+            override val transactionDate: String = date as String
             override val amount: Long = amount as Long
 
             val history: List<JournalEntryHistoryDto> = history

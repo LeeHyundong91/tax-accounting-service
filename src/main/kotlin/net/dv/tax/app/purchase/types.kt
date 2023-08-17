@@ -6,14 +6,14 @@ import java.time.LocalDateTime
 
 interface BookSummary
 
-interface PurchaseBook {
+interface PurchaseBookIdentity {
     val id: Long
     val type: PurchaseType
 }
 
-interface PurchaseBookSummary: PurchaseBook {
-    val merchant: String
-    val item: String
+interface PurchaseBookSummary: PurchaseBookIdentity {
+    val merchant: String?
+    val item: String?
     val transactionDate: String
     val amount: Long
 }
