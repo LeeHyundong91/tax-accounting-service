@@ -119,8 +119,8 @@ class PurchaseManagementService(
 
     /** Journal Entry member methods... */
 
-    override fun expenseByHospital(hospitalId: String, pageable: Pageable): Page<JournalEntry> {
-        return journalEntryRepository.expense(hospitalId, pageable)
+    override fun expenseByHospital(hospitalId: String, query: JournalEntryCommand.Query, pageable: Pageable): Page<PurchaseBookOverview> {
+        return journalEntryRepository.expense(hospitalId, query, pageable)
     }
 
     override fun get(purchase: PurchaseBookIdentity): JournalEntry {
@@ -213,7 +213,7 @@ class PurchaseManagementService(
     }
 
     // TODO ( Repository ID 및 PurchaseBook type 개선 필요)
-    override fun history(purchase: PurchaseBookDto): PurchaseBookSummary {
+    override fun history(purchase: PurchaseBookDto): PurchaseBookOverview {
         val (id, merchant, date, item, amount) = when (purchase.type) {
             PurchaseType.CREDIT_CARD -> {
                 creditCardRepository.findById(purchase.id.toInt()).get().let {
@@ -248,7 +248,7 @@ class PurchaseManagementService(
                 )
             }
 
-        return object: PurchaseBookSummary {
+        return object: PurchaseBookOverview {
             override val id: Long = id as Long
             override val type: PurchaseType = purchase.type
             override val merchant: String? = merchant as String?

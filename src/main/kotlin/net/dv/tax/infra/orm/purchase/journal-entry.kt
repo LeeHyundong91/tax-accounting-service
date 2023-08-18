@@ -2,10 +2,7 @@ package net.dv.tax.infra.orm.purchase
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.app.enums.purchase.PurchaseType
-import net.dv.tax.app.purchase.JournalEntry
-import net.dv.tax.app.purchase.PurchaseBookIdentity
-import net.dv.tax.app.purchase.PurchaseJournalEntryHistoryQuery
-import net.dv.tax.app.purchase.PurchaseJournalEntryQuery
+import net.dv.tax.app.purchase.*
 import net.dv.tax.domain.purchase.JournalEntryEntity
 import net.dv.tax.domain.purchase.JournalEntryHistoryEntity
 import net.dv.tax.domain.purchase.QJournalEntryEntity
@@ -13,7 +10,8 @@ import net.dv.tax.domain.purchase.QJournalEntryHistoryEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -21,7 +19,7 @@ import java.time.LocalDateTime
 @Repository
 class PurchaseJournalEntryRepositoryImpl(
     private val factory: JPAQueryFactory,
-    private val jdbcTemplate: JdbcTemplate,
+    private val jdbcTemplate: NamedParameterJdbcTemplate,
 ): PurchaseJournalEntryQuery {
     override fun find(purchase: PurchaseBookIdentity): JournalEntryEntity? {
         return factory
@@ -34,29 +32,34 @@ class PurchaseJournalEntryRepositoryImpl(
             .fetchOne()
     }
 
-    override fun expense(hospitalId: String, pageable: Pageable): Page<JournalEntry> {
-        val list = jdbcTemplate.query(JournalEntryQueries.E_INVOICE_BOOKS) { rs, _ ->
-            JournalEntryDto(
-                id = rs.getLong("PURCHASE_ID"),
-                type = PurchaseType[rs.getString("PURCHASE_TYPE")],
-                status = rs.getString("STATUS"),
-                merchant = "",
-                note = rs.getString("REQ_NOTE"),
-                checkExpense = rs.getBoolean("REQ_EXPENSE"),
-            )
-        } as List<JournalEntry>
-
-        val count = jdbcTemplate.queryForObject(EXPENSE_COUNT_QUERY) { rs, _ ->
-            rs.getLong(1)
+    override fun expense(hospitalId: String, query: JournalEntryCommand.Query, pageable: Pageable): Page<PurchaseBookOverview> {
+        val params = MapSqlParameterSource().apply {
+            addValue("purchaseType", "CC")
+            addValue("hospitalId", hospitalId)
+            addValue("begin", "2022-01-01")
+            addValue("end", "2023-12-31")
+            addValue("category", "ALL")
+            addValue("offset", pageable.offset)
+            addValue("size", pageable.pageSize)
         }
+
+        val list = jdbcTemplate.query(JournalEntryQueries.CREDIT_CARD_BOOKS, params) { rs, _ ->
+            object: PurchaseBookOverview {
+                override val id: Long = rs.getLong("ID")
+                override val merchant: String? = rs.getString("FRANCHISEE_NAME")
+                override val item: String? = rs.getString("ITEM_NAME")
+                override val transactionDate: String = rs.getString("BILLING_DATE")
+                override val amount: Long = rs.getLong("TOTAL_AMOUNT")
+                override val type: PurchaseType = PurchaseType.CREDIT_CARD
+            }
+        } as List<PurchaseBookOverview>
+
+        val cq = JournalEntryQueries.COUNT_QUERY.format(JournalEntryQueries.CREDIT_CARD_BOOKS)
+
+        val count = jdbcTemplate.queryForObject(cq, params) { rs, _ -> rs.getLong(1) }
 
         return PageImpl(list, pageable, count ?: 0)
     }
-
-    private val EXPENSE_COUNT_QUERY = """
-        SELECT COUNT(*)
-          FROM JOURNAL_ENTRY J;
-    """.trimIndent()
 }
 
 @Repository
@@ -92,23 +95,27 @@ data class JournalEntryDto(
 
 object JournalEntryQueries {
     const val CREDIT_CARD_BOOKS = """
-       SELECT C.FRANCHISEE_NAME 
+       SELECT C.ID
+             ,C.FRANCHISEE_NAME 
              ,C.BILLING_DATE
+             ,C.ITEM_NAME
              ,C.TOTAL_AMOUNT
              ,C.DEBTOR_ACCOUNT
              ,J.ACCOUNTING_ITEM
-             ,J.PURCHASE_TYPE
+             ,'CC' AS PURCHASE_TYPE
        FROM PURCHASE_CREDIT_CARD C 
        LEFT OUTER JOIN JOURNAL_ENTRY J
-       ON C.ID = J.PURCHASE_ID AND J.PURCHASE_TYPE = ?
-       WHERE C.HOSPITAL_ID = ?
-       AND C.BILLING_DATE BETWEEN ? AND ?
+       ON C.ID = J.PURCHASE_ID AND J.PURCHASE_TYPE = :purchaseType
+       WHERE C.HOSPITAL_ID = :hospitalId
+       AND C.BILLING_DATE BETWEEN :begin AND :end
        AND (
-         ('ALL' = ? AND 1 = 1)
-         OR ('미분류' = ? AND C.DEBTOR_ACCOUNT IS NULL)
-         OR ('확인필요' = ? AND C.DEBTOR_ACCOUNT = '확인필요')
-         OR ('분류완료' = ? AND C.DEBTOR_ACCOUNT <> '확인필요' AND C.DEBTOR_ACCOUNT IS NOT NULL)
-       )        
+         ('ALL' = :category AND 1 = 1)
+         OR ('NC' = :category AND C.DEBTOR_ACCOUNT IS NULL)
+         OR ('NN' = :category AND C.DEBTOR_ACCOUNT = '확인필요')
+         OR ('CC' = :category AND C.DEBTOR_ACCOUNT <> '확인필요' AND C.DEBTOR_ACCOUNT IS NOT NULL)
+       )
+       ORDER BY BILLING_DATE desc
+       LIMIT :offset, :size
     """
 
     const val CASH_RECEIPT_BOOKS = """
@@ -164,6 +171,10 @@ object JournalEntryQueries {
           OR ('확인필요' = ? AND H.DEBIT_ACCOUNT = '확인필요')
           OR ('분류완료' = ? AND H.DEBIT_ACCOUNT <> '확인필요' AND H.DEBIT_ACCOUNT IS NOT NULL)
         )
+    """
+
+    const val UNION_QUERY = """
+        
     """
 
     const val COUNT_QUERY = """

@@ -24,8 +24,9 @@ class JournalEntryEndpoint(
     @GetMapping("/{hospitalId}")
     fun list(@Jwt("sub") accountId: String?,
              @PathVariable hospitalId: String,
-             query: QueryRequest): ResponseEntity<Page<JournalEntry>> {
+             query: QueryRequest): ResponseEntity<Page<PurchaseBookOverview>> {
         val res = command.expenseByHospital(hospitalId, query, query.pageable)
+        println("---> test !! $res")
         return ResponseEntity.ok(res)
     }
 
@@ -70,9 +71,9 @@ class JournalEntryEndpoint(
     }
 
     data class QueryRequest(
-        override var category: String,
-        override var period: Period,
-        override var type: PurchaseType,
-        var term: String,
+        override var category: String = "",
+        override var period: Period = Period(null, null) ,
+        override var type: PurchaseType = PurchaseType.CREDIT_CARD,
+        var term: String = "",
     ): JournalEntryCommand.Query, AbstractSearchQueryDto()
 }

@@ -14,6 +14,6 @@ data class AccountingItem(
 )
 
 data class Period(
-    val begin: LocalDate,
-    val end: LocalDate,
+    val begin: LocalDate? = null,
+    val end: LocalDate? = null,
 )
