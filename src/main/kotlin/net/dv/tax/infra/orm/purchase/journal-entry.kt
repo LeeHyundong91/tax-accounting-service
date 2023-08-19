@@ -106,6 +106,7 @@ class PurchaseJournalEntryRepositoryImpl(
                             purchaseCreditCardEntity.billingDate.`as`("transactionDate"),
                             purchaseCreditCardEntity.taxAmount.`as`("amount"),
                             Expressions.`as`(Expressions.constant(purchase.type.code), "_type"),
+                            purchaseCreditCardEntity.debtorAccount.`as`("_pDebitAccount"),
                         )
                     )
                 }
@@ -120,6 +121,7 @@ class PurchaseJournalEntryRepositoryImpl(
                             purchaseCashReceiptEntity.itemName.`as`("item"),
                             purchaseCashReceiptEntity.billingDate.`as`("transactionDate"),
                             purchaseCashReceiptEntity.taxAmount.`as`("amount"),
+                            purchaseCashReceiptEntity.debtorAccount.`as`("_pDebitAccount"),
                         )
                     )
                 }
@@ -138,6 +140,7 @@ class PurchaseJournalEntryRepositoryImpl(
                             purchaseElecInvoiceEntity.sendDate.`as`("transactionDate"),
                             purchaseElecInvoiceEntity.taxAmount.`as`("amount"),
                             purchaseElecInvoiceEntity.type.stringValue().`as`("_type"),
+                            purchaseElecInvoiceEntity.debtorAccount.`as`("_pDebitAccount"),
                         ),
                     )
                 }
@@ -155,6 +158,7 @@ class PurchaseJournalEntryRepositoryImpl(
                             purchaseHandwrittenEntity.issueDate.`as`("transactionDate"),
                             purchaseHandwrittenEntity.taxAmount.`as`("amount"),
                             purchaseHandwrittenEntity.type.stringValue().`as`("_type"),
+                            purchaseHandwrittenEntity.debitAccount.`as`("_pDebitAccount"),
                         )
                     )
                 }
@@ -170,7 +174,7 @@ class PurchaseJournalEntryRepositoryImpl(
                     journalEntryEntity.committedAt,
                     journalEntryEntity.requestNote,
                     journalEntryEntity.checkExpense,
-                    journalEntryEntity.accountingItem,
+                    journalEntryEntity.accountingItem.`as`("_jDebitAccount"),
                     journalEntryEntity.committer,
                 )
             )
@@ -216,15 +220,18 @@ data class JournalEntryDto(
     override var committedAt: LocalDateTime? = null,
     override var note: String = "",
     override var checkExpense: Boolean = false,
-    override var accountingItem: String? = null,
     override var requester: String? = null,
     override var committer: String? = null,
 ): JournalEntryOverview {
     override val type: PurchaseType get() = PurchaseType[_type]
     override val status: String? get() = _status?.name
+    override val accountingItem: String? get() = _jDebitAccount ?: _pDebitAccount
+    val category get() = AccountingItemCategory.category(accountingItem)
 
     private var _status: JournalEntryEntity.Status? = null
     private var _type: String = ""
+    private var _jDebitAccount: String? = null
+    private var _pDebitAccount: String? = null
 }
 
 
