@@ -2,7 +2,7 @@ GET {{host}}/v1/purchase/journal-entry/types
 Accept: application/json
 
 ### 사용자 비용 분개 목록 조회
-GET {{host}}/v1/purchase/journal-entry/cid01
+GET {{host}}/v1/purchase/journal-entry/cid01?term=12m
 Accept: application/json
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3NlY3VyZS5kb2N0b3J2aWxsYWdlLm5ldCIsInN1YiI6ImU5MTc3ZTc1LWQwYmQtMzE0OC04NGIxLWIwYzdhZmUzZmM1Ny11LmR2Lm5ldCIsImF1ZCI6Imh0dHBzOi8vd3d3LmRvY2ppYi5uZXQiLCJpYXQiOjE2OTIzMzMzODUsImV4cCI6MTY5MjU5MjU4NSwiYWNjZXNzX3Rva2VuIjoiOTRlNDQ5YTQzMTVlNGRiNjI0ZDIwMWQwOTFjMzQyZGEwY2QwZDcwODRjYjQzNTRlOTdiMzg4Y2UxNGEyMjgxZiIsIm5hbWUiOiLsnqXsoJXtlYQiLCJlbWFpbCI6Imp1cGhpY2hAc3VnYXJicmlja3MuY28ua3IiLCJyb2xlcyI6W10sImdyb3VwIjp7ImlkIjoiIiwibmFtZSI6IiIsInR5cGUiOiIifX0.Fqs5qFydCFk8oc6BUW1yYgR2J5e_DroS18PNYNVwQp0
 
@@ -14,7 +14,12 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL
 #    INVOICE("II", "전자계산서"),
 #    HANDWRITTEN_INVOICE("HI", "수기세금계산서"),
 #    BASIC_RECEIPT("BR", "간이영수증"),;
-GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/4509
+GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/4507
+Accept: application/json
+
+
+### 계정 분계 상세 정보 조회 (미처리 포함)
+GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/4509?check=requested
 Accept: application/json
 
 

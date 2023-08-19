@@ -16,25 +16,29 @@ interface PurchaseOperationCommand {
 }
 
 interface JournalEntryCommand {
-    fun expenseByHospital(hospitalId: String, query: Query, pageable: Pageable): Page<PurchaseBookOverview>
-    fun <T: Query> expenseByHospital(hospitalId: String, option:T.() -> Unit): Page<PurchaseBookOverview> {
-        val query = object: AbstractSearchQueryDto(), Query {
-            override val category: String get() = TODO("Not yet implemented")
-            override val period: Period get() = TODO("Not yet implemented")
-            override val type: PurchaseType get() = TODO("Not yet implemented")
-
+    fun expenseByHospital(hospitalId: String, filter: ExpenseFilter, pageable: Pageable): Page<PurchaseBookOverview>
+    fun expenseByHospital(hospitalId: String, option:FilterOption.() -> Unit): Page<PurchaseBookOverview> {
+        return FilterOption(hospitalId).apply(option).let {
+            expenseByHospital(hospitalId, it, it.pageable)
         }
-        return expenseByHospital(hospitalId, query, query.pageable)
     }
-    fun get(purchase: PurchaseBookIdentity): JournalEntry
+    fun get(purchase: PurchaseBookIdentity): JournalEntryOverview
     fun request(purchase: PurchaseBookIdentity, je: JournalEntry): JournalEntry
     fun confirm(purchase: PurchaseBookIdentity, je: JournalEntry): JournalEntry
     fun history(purchase: PurchaseBookDto): PurchaseBookOverview
     fun processingState(type: PurchaseType, hospitalId: String, pageable: Pageable): Page<out JournalEntryStatus>
 
-    interface Query {
-        val category: String
-        val period: Period
-        val type: PurchaseType
+    enum class Category(val code: String) {
+        ALL("ALL"),
+        REQUIRE_CHECK("RC"),
+        CATEGORIZED("CG"),
+        NOT_CATEGORIZED("NC")
     }
+
+    data class FilterOption(
+        override val hospitalId: String,
+        override var category: Category = Category.NOT_CATEGORIZED,
+        override var period: Period = Period(null, null),
+        override var types: List<PurchaseType>? = null,
+    ): ExpenseFilter, AbstractSearchQueryDto()
 }

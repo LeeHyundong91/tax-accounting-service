@@ -1,6 +1,5 @@
 package net.dv.tax.app.purchase
 
-import net.dv.tax.app.AbstractSearchQueryDto
 import net.dv.tax.app.enums.purchase.PurchaseType
 import java.time.LocalDateTime
 
@@ -27,7 +26,6 @@ data class PurchaseQueryDto (
 )
 
 data class JournalEntryReqDto(
-    override var merchant: String = "",
     override var note: String,
     override var checkExpense: Boolean,
     override var accountingItem: String? = null,

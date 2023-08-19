@@ -119,25 +119,13 @@ class PurchaseManagementService(
 
     /** Journal Entry member methods... */
 
-    override fun expenseByHospital(hospitalId: String, query: JournalEntryCommand.Query, pageable: Pageable): Page<PurchaseBookOverview> {
-        return journalEntryRepository.expense(hospitalId, query, pageable)
+    override fun expenseByHospital(hospitalId: String, filter: ExpenseFilter, pageable: Pageable): Page<PurchaseBookOverview> {
+        return journalEntryRepository.expense(hospitalId, filter, pageable)
     }
 
-    override fun get(purchase: PurchaseBookIdentity): JournalEntry {
-        return journalEntryRepository.find(purchase)
-            ?.let {
-                JournalEntryReqDto(
-                    "Sample!!!",
-                    it.requestNote!!,
-                    it.checkExpense!!,
-                    it.accountingItem,
-                    it.status?.name,
-                    "",
-                    it.committer,
-                    it.requestedAt,
-                    it.committedAt
-                )
-            } ?: throw RuntimeException("no journal entry")
+    override fun get(purchase: PurchaseBookIdentity): JournalEntryOverview {
+        return journalEntryRepository.overview(purchase)
+            ?: throw RuntimeException("no journal entry")
     }
 
     override fun request(purchase: PurchaseBookIdentity, je: JournalEntry): JournalEntry {
@@ -199,7 +187,6 @@ class PurchaseManagementService(
 
         val entry = journalEntryRepository.save(entity).let {
             JournalEntryReqDto(
-                merchant = "Sample!!",
                 note = it.requestNote!!,
                 checkExpense =  it.checkExpense!!,
                 status = it.status?.name,
@@ -212,7 +199,6 @@ class PurchaseManagementService(
         return entry
     }
 
-    // TODO ( Repository ID 및 PurchaseBook type 개선 필요)
     override fun history(purchase: PurchaseBookDto): PurchaseBookOverview {
         val (id, merchant, date, item, amount) = when (purchase.type) {
             PurchaseType.CREDIT_CARD -> {

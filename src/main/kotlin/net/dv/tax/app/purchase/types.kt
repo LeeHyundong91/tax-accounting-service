@@ -1,5 +1,6 @@
 package net.dv.tax.app.purchase
 
+import net.dv.tax.app.Period
 import net.dv.tax.app.enums.purchase.PurchaseType
 import java.time.LocalDateTime
 
@@ -25,13 +26,14 @@ interface JournalEntryStatus {
 }
 
 interface JournalEntry: JournalEntryStatus {
-    val merchant: String
     val note: String
     val checkExpense: Boolean
     val accountingItem: String?
     val requester: String?
     val committer: String?
 }
+
+interface JournalEntryOverview: JournalEntry, PurchaseBookOverview
 
 interface CreditCardBook: JournalEntryStatus {
     val id: Long
@@ -115,4 +117,11 @@ interface HandwrittenBook {
     val debitAccount: String?
     val taxAmount: Long?
     val writer: String?
+}
+
+interface ExpenseFilter {
+    val hospitalId: String
+    val category: JournalEntryCommand.Category
+    val period: Period
+    val types: List<PurchaseType>?
 }

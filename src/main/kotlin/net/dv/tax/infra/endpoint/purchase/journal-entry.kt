@@ -9,6 +9,9 @@ import net.dv.tax.app.purchase.*
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 
 @RestController
@@ -25,14 +28,30 @@ class JournalEntryEndpoint(
     fun list(@Jwt("sub") accountId: String?,
              @PathVariable hospitalId: String,
              query: QueryRequest): ResponseEntity<Page<PurchaseBookOverview>> {
-        val res = command.expenseByHospital(hospitalId, query, query.pageable)
-        println("---> test !! $res")
+        val today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate()
+        val res = command.expenseByHospital(hospitalId) {
+            val reg = """^(\d*)M$""".toRegex()
+
+            category = JournalEntryCommand.Category.valueOf(query.category)
+            period = query.term?.uppercase()?.takeIf { reg.matches(it)}
+                ?.let {
+                    val months = reg.find(it)!!.groupValues[1].toLong()
+                    Period(today.minusMonths(months), today)
+                }
+                ?: Period(query.begin, query.end)
+            types = query.type
+
+            page = query.page
+            pageSize = query.pageSize
+            sort = query.sort
+        }
         return ResponseEntity.ok(res)
     }
 
     @GetMapping("/{type}/{id}")
     fun view(@PathVariable type: String,
-             @PathVariable id: Long): ResponseEntity<JournalEntry> {
+             @PathVariable id: Long,
+             @RequestParam("check", required = false) check: String?): ResponseEntity<JournalEntry> {
         val res = command.get(PurchaseBookDto(id, PurchaseType[type]))
         return ResponseEntity.ok(res)
     }
@@ -71,9 +90,10 @@ class JournalEntryEndpoint(
     }
 
     data class QueryRequest(
-        override var category: String = "",
-        override var period: Period = Period(null, null) ,
-        override var type: PurchaseType = PurchaseType.CREDIT_CARD,
-        var term: String = "",
-    ): JournalEntryCommand.Query, AbstractSearchQueryDto()
+        val category: String = "ALL",
+        var type: List<PurchaseType>? = null,
+        var begin: LocalDate? = null,
+        var end: LocalDate? = null,
+        var term: String? = null,
+    ): AbstractSearchQueryDto()
 }
