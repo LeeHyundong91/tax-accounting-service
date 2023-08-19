@@ -20,9 +20,9 @@ interface PurchaseBookOverview: PurchaseBookIdentity {
 }
 
 interface JournalEntryStatus {
-    var status: String?
-    var requestedAt: LocalDateTime?
-    var committedAt: LocalDateTime?
+    val status: String?
+    val requestedAt: LocalDateTime?
+    val committedAt: LocalDateTime?
 }
 
 interface JournalEntry: JournalEntryStatus {

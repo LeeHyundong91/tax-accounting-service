@@ -1,10 +1,10 @@
 package net.dv.tax.infra.orm.purchase
 
-import com.querydsl.core.BooleanBuilder
+import com.querydsl.core.types.Expression
 import com.querydsl.core.types.Projections
-import com.querydsl.core.types.QBean
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.EntityPathBase
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import net.dv.tax.app.AccountingItemCategory
 import net.dv.tax.app.enums.purchase.PurchaseType
@@ -93,104 +93,100 @@ class PurchaseJournalEntryRepositoryImpl(
     }
 
     override fun overview(purchase: PurchaseBookIdentity): JournalEntryOverview? {
-        val purchaseEntity = when(purchase.type) {
-            PurchaseType.CREDIT_CARD -> purchaseCreditCardEntity
-            PurchaseType.CASH_RECEIPT -> purchaseCashReceiptEntity
-            PurchaseType.INVOICE,
-            PurchaseType.TAX_INVOICE -> purchaseElecInvoiceEntity
-            PurchaseType.HANDWRITTEN_INVOICE,
-            PurchaseType.BASIC_RECEIPT -> purchaseHandwrittenEntity
-        }
-        val joinPredicate = when(purchase.type) {
-            PurchaseType.CREDIT_CARD -> {
-                purchaseCreditCardEntity.id.eq(journalEntryEntity.purchaseId)
-            }
-            PurchaseType.CASH_RECEIPT -> {
-                purchaseCashReceiptEntity.id.eq(journalEntryEntity.purchaseId)
-            }
-            PurchaseType.INVOICE,
-            PurchaseType.TAX_INVOICE -> {
-                purchaseElecInvoiceEntity.id.eq(journalEntryEntity.purchaseId)
-            }
-            PurchaseType.HANDWRITTEN_INVOICE,
-            PurchaseType.BASIC_RECEIPT -> {
-                purchaseHandwrittenEntity.id.eq(journalEntryEntity.purchaseId)
-            }
-        }
-
-        val predicate = BooleanBuilder().apply {
-            when(purchase.type) {
+        val m = when(purchase.type) {
                 PurchaseType.CREDIT_CARD -> {
-                    and(purchaseCreditCardEntity.id.eq(purchase.id))
-                }
-                PurchaseType.CASH_RECEIPT -> {
-                    and(purchaseCashReceiptEntity.id.eq(purchase.id))
-                }
-                PurchaseType.INVOICE,
-                PurchaseType.TAX_INVOICE -> {
-                    and(purchaseElecInvoiceEntity.id.eq(purchase.id))
-                }
-                PurchaseType.HANDWRITTEN_INVOICE,
-                PurchaseType.BASIC_RECEIPT -> {
-                    and(purchaseHandwrittenEntity.id.eq(purchase.id))
-                }
-            }
-        }
-        val mapping = when(purchase.type) {
-                PurchaseType.CREDIT_CARD -> {
-                    QuerySet(
+                    Mappings(
                         entity = purchaseCreditCardEntity,
                         join_predicate = purchaseCreditCardEntity.id.eq(journalEntryEntity.purchaseId),
                         predicates = purchaseCreditCardEntity.id.eq(purchase.id),
-                        mapping = Projections.fields(
-                            JournalEntryDto::class.java,
+                        columns = arrayOf(
                             purchaseCreditCardEntity.id,
                             purchaseCreditCardEntity.franchiseeName.`as`("merchant"),
                             purchaseCreditCardEntity.itemName.`as`("item"),
                             purchaseCreditCardEntity.billingDate.`as`("transactionDate"),
                             purchaseCreditCardEntity.taxAmount.`as`("amount"),
-                            journalEntryEntity.status.`as`("_status"),
-                            journalEntryEntity.requestedAt,
-                            journalEntryEntity.committedAt,
-                            journalEntryEntity.requestNote,
-                            journalEntryEntity.checkExpense,
-                            journalEntryEntity.accountingItem,
-                            journalEntryEntity.committer,
+                            Expressions.`as`(Expressions.constant(purchase.type.code), "_type"),
                         )
                     )
                 }
                 PurchaseType.CASH_RECEIPT -> {
-                    purchaseCashReceiptEntity.id
+                    Mappings(
+                        entity = purchaseCashReceiptEntity,
+                        join_predicate = purchaseCashReceiptEntity.id.eq(journalEntryEntity.purchaseId),
+                        predicates = purchaseCashReceiptEntity.id.eq(purchase.id),
+                        columns = arrayOf(
+                            purchaseCashReceiptEntity.id,
+                            purchaseCashReceiptEntity.franchiseeName.`as`("merchant"),
+                            purchaseCashReceiptEntity.itemName.`as`("item"),
+                            purchaseCashReceiptEntity.billingDate.`as`("transactionDate"),
+                            purchaseCashReceiptEntity.taxAmount.`as`("amount"),
+                        )
+                    )
                 }
                 PurchaseType.INVOICE,
                 PurchaseType.TAX_INVOICE -> {
-                    purchaseElecInvoiceEntity.id
+                    Mappings(
+                        entity = purchaseElecInvoiceEntity,
+                        join_predicate = purchaseElecInvoiceEntity.id.eq(journalEntryEntity.purchaseId)
+                            .and(purchaseElecInvoiceEntity.type.stringValue().eq(purchase.type.code))
+                        ,
+                        predicates = purchaseElecInvoiceEntity.id.eq(purchase.id),
+                        columns = arrayOf(
+                            purchaseElecInvoiceEntity.id,
+                            purchaseElecInvoiceEntity.franchiseeName.`as`("merchant"),
+                            purchaseElecInvoiceEntity.itemName.`as`("item"),
+                            purchaseElecInvoiceEntity.sendDate.`as`("transactionDate"),
+                            purchaseElecInvoiceEntity.taxAmount.`as`("amount"),
+                            purchaseElecInvoiceEntity.type.stringValue().`as`("_type"),
+                        ),
+                    )
                 }
                 PurchaseType.HANDWRITTEN_INVOICE,
                 PurchaseType.BASIC_RECEIPT -> {
-                    purchaseHandwrittenEntity
+                    Mappings(
+                        entity = purchaseHandwrittenEntity,
+                        join_predicate = purchaseHandwrittenEntity.id.eq(journalEntryEntity.purchaseId)
+                            .and(purchaseHandwrittenEntity.type.stringValue().eq(purchase.type.code)),
+                        predicates = purchaseHandwrittenEntity.id.eq(purchase.id),
+                        columns = arrayOf(
+                            purchaseHandwrittenEntity.id,
+                            purchaseHandwrittenEntity.supplier.`as`("merchant"),
+                            purchaseHandwrittenEntity.itemName.`as`("item"),
+                            purchaseHandwrittenEntity.issueDate.`as`("transactionDate"),
+                            purchaseHandwrittenEntity.taxAmount.`as`("amount"),
+                            purchaseHandwrittenEntity.type.stringValue().`as`("_type"),
+                        )
+                    )
                 }
             }
 
         return factory
             .select(
                 Projections.fields(
-                    JournalEntryDto::class.java
+                    JournalEntryDto::class.java,
+                    *m.columns,
+                    journalEntryEntity.status.`as`("_status"),
+                    journalEntryEntity.requestedAt,
+                    journalEntryEntity.committedAt,
+                    journalEntryEntity.requestNote,
+                    journalEntryEntity.checkExpense,
+                    journalEntryEntity.accountingItem,
+                    journalEntryEntity.committer,
                 )
             )
-            .from(purchaseEntity)
+            .from(m.entity)
             .leftJoin(journalEntryEntity)
-            .on(joinPredicate)
-            .where(predicate)
+            .on(m.join_predicate)
+            .where(m.predicates)
             .fetchOne()
     }
 
     @Suppress("PropertyName")
-    private data class QuerySet(
+    private class Mappings(
         val entity: EntityPathBase<out Any>,
         val join_predicate: BooleanExpression,
         val predicates: BooleanExpression,
-        var mapping: QBean<JournalEntryDto>
+        val columns: Array<Expression<*>>,
     )
 }
 
@@ -211,21 +207,25 @@ class PurchaseJournalEntryHistoryRepositoryImpl(
 }
 
 data class JournalEntryDto(
-    override var id: Long,
-    override var type: PurchaseType,
-    override var merchant: String?,
-    override var item: String?,
-    override var transactionDate: String,
-    override var amount: Long,
-    override var status: String?,
-    override var requestedAt: LocalDateTime?,
-    override var committedAt: LocalDateTime?,
-    override var note: String,
-    override var checkExpense: Boolean,
-    override var accountingItem: String?,
-    override var requester: String?,
-    override var committer: String?
-): JournalEntryOverview
+    override var id: Long = 0,
+    override var merchant: String? = null,
+    override var item: String? = null,
+    override var transactionDate: String = "",
+    override var amount: Long = 0,
+    override var requestedAt: LocalDateTime? = null,
+    override var committedAt: LocalDateTime? = null,
+    override var note: String = "",
+    override var checkExpense: Boolean = false,
+    override var accountingItem: String? = null,
+    override var requester: String? = null,
+    override var committer: String? = null,
+): JournalEntryOverview {
+    override val type: PurchaseType get() = PurchaseType[_type]
+    override val status: String? get() = _status?.name
+
+    private var _status: JournalEntryEntity.Status? = null
+    private var _type: String = ""
+}
 
 
 private object QS {

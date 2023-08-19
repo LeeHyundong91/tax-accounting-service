@@ -14,7 +14,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL
 #    INVOICE("II", "전자계산서"),
 #    HANDWRITTEN_INVOICE("HI", "수기세금계산서"),
 #    BASIC_RECEIPT("BR", "간이영수증"),;
-GET {{host}}/v1/purchase/journal-entry/CREDIT_CARD/4507
+GET {{host}}/v1/purchase/journal-entry/TAX_INVOICE/2538
 Accept: application/json
 
 
