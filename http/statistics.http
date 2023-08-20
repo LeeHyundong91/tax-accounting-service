@@ -9,3 +9,7 @@ Accept: application/json
 ### 월별 매출 현황 : old
 GET {{host}}/v1/dashboard/report/monthly/2023-07/cid01
 Accept: application/json
+
+### 년도별 비용현황
+GET {{host}}/v1/statistics/purchase/cid01/annual/2023
+Accept: application/json

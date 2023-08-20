@@ -96,4 +96,44 @@ class StatisticsService(
             val total: Long = total
         }
     }
+
+    override fun purchaseStatistics(criteria: Criteria): PurchaseStatistics {
+        val hospitalId = criteria.hospitalId
+        val term = criteria.term
+        val date = criteria.date
+
+        val (cDate, bDate) = when(term!!) {
+            Criteria.Term.ANNUAL -> {
+                val year = Year.parse(date!!)
+                Pair(
+                    year.toString(),
+                    year.minusYears(1).toString()
+                )
+            }
+            Criteria.Term.MONTHLY -> {
+                val yearMonth = YearMonth.parse(date!!)
+                Pair(
+                    yearMonth.toString(),
+                    yearMonth.minusMonths(1).toString()
+                )
+            }
+        }
+
+        val current = repository.purchaseStatistics(hospitalId, cDate)
+        val before = repository.purchaseStatistics(hospitalId, bDate)
+
+        val currentAmount = current.sumOf { it.amount }
+        val beforeAmount = current.sumOf { it.amount }
+
+        TODO("not implements yet!!")
+    }
+
+    private fun purchaseSummaryByYear(current: Long, before: Long): PurchaseAmount {
+        return object: PurchaseAmount {
+            override val currentAmount: Long = current
+            override val beforeAmount: Long = before
+            override val compareAmount: Long = current - before
+            override val compareRatio: Double = current.toDouble() / before.toDouble() * 100
+        }
+    }
 }
