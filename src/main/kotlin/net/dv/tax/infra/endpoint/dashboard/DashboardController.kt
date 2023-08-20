@@ -47,6 +47,4 @@ class DashboardController(
     ): DashboardMainDto {
         return dashboardMainService.dashboard(hospitalId, yearMonth)
     }
-
-
 }

@@ -31,6 +31,7 @@ class SalesManagementService(
         val beforeYear =
             salesPaymentMethodService.makeData(hospitalId, YearMonth.parse(yearMonth).minusYears(1).toString()).totalAmount ?: 0
 
+
         val salesTotal = MonthlySalesTotalReportDto(
             currentMonthAmount = currentAmount,
             compareMonthAmount = currentAmount.minus(beforeAmount),
@@ -61,6 +62,8 @@ class SalesManagementService(
         val salesType = MonthlySalesTypeReportDto(
             itemList = salesTypeData.detailList
         )
+
+        println("--> sales type data ")
 
 
         return MonthlyReportDto(

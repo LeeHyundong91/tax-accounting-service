@@ -47,7 +47,7 @@ data class HospitalChartEntity(
     var nonPayment: Long? = 0,
 
     @Comment("기타")
-    @Column(name = "ECT_AMOUNT")
+    @Column(name = "ETC_AMOUNT")
     var etcAmount: Long = 0,
 
     @Comment("본인부담금 합계 - 본인부담금+비급여")

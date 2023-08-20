@@ -21,7 +21,7 @@ import java.util.*
 data class SalesCreditCardEntity(
 
     @Id
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column(name = "ID", insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
