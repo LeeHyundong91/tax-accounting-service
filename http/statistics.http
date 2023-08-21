@@ -13,3 +13,7 @@ Accept: application/json
 ### 년도별 비용현황
 GET {{host}}/v1/statistics/purchase/cid01/annual/2023
 Accept: application/json
+
+### 월별 비용현황
+GET {{host}}/v1/statistics/purchase/cid01/monthly/2022-04
+Accept: application/json

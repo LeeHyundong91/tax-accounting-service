@@ -2,14 +2,17 @@ package net.dv.tax.app.enums.consulting
 
 enum class PurchaseCategory(
     var code: String,
-    var value: String,
+    var label: String,
 ) {
     SALES_OF_COST("SALES_OF_COST", "매출원가"),
     SGA_EXPENSE("SGA_EXPENSE", "판관비"),
     NON_OPERATING_EXPENSES("NON_OPERATING_EXPENSES", "영업외비용"),
     NON_OPERATING_INCOME("NON_OPERATING_INCOME", "영업외수익"),
-    DEPRECIATION("DEPRECIATION", "감가비"),
+    DEPRECIATION("DEPRECIATION", "감가비");
 
+    companion object {
+        operator fun get(key: String) = values().first { it.code == key.uppercase() || it.name == key.uppercase() }
+    }
 }
 
 enum class PurchaseTitleItem(

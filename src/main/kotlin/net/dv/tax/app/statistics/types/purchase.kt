@@ -1,9 +1,8 @@
 package net.dv.tax.app.statistics.types
 
 interface PurchaseStatistics {
-    val summary: SalesAmount
-    val byPayments: SalesPayment
-    val byCategories: SalesCategory
+    val summary: PurchaseAmount
+    val byCategories: List<PurchaseAggregation>
 }
 
 interface PurchaseAmount {
@@ -19,4 +18,5 @@ interface PurchaseAggregation {
     val debitAccount: String
     val category: String
     val amount: Long
+    val ratio: Double
 }

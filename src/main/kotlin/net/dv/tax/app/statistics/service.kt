@@ -1,8 +1,8 @@
 package net.dv.tax.app.statistics
 
+import net.dv.tax.app.AccountingItemCategory
 import net.dv.tax.app.statistics.types.*
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.time.Year
 import java.time.YearMonth
 
@@ -100,18 +100,18 @@ class StatisticsService(
     override fun purchaseStatistics(criteria: Criteria): PurchaseStatistics {
         val hospitalId = criteria.hospitalId
         val term = criteria.term
-        val date = criteria.date
+        val period = criteria.date
 
         val (cDate, bDate) = when(term!!) {
             Criteria.Term.ANNUAL -> {
-                val year = Year.parse(date!!)
+                val year = Year.parse(period!!)
                 Pair(
                     year.toString(),
                     year.minusYears(1).toString()
                 )
             }
             Criteria.Term.MONTHLY -> {
-                val yearMonth = YearMonth.parse(date!!)
+                val yearMonth = YearMonth.parse(period!!)
                 Pair(
                     yearMonth.toString(),
                     yearMonth.minusMonths(1).toString()
@@ -119,13 +119,43 @@ class StatisticsService(
             }
         }
 
+        println("--> data : $cDate  /  $bDate")
+
         val current = repository.purchaseStatistics(hospitalId, cDate)
         val before = repository.purchaseStatistics(hospitalId, bDate)
 
         val currentAmount = current.sumOf { it.amount }
-        val beforeAmount = current.sumOf { it.amount }
+        val beforeAmount = before.sumOf { it.amount }
 
-        TODO("not implements yet!!")
+        val summary = when(term) {
+            Criteria.Term.ANNUAL -> purchaseSummaryByYear(currentAmount, beforeAmount)
+            Criteria.Term.MONTHLY -> {
+                val beforeYearAmount = repository.purchaseStatistics(
+                    hospitalId, YearMonth.parse(period).minusYears(1).toString()
+                ).sumOf { it.amount }
+                purchaseSummaryByMonth(currentAmount, beforeAmount, beforeYearAmount)
+            }
+        }
+
+        val aggregation: Map<String, PurchaseAggregation> = current
+            .groupBy { it.category }
+            .mapValues {(k, v)->
+                val category = AccountingItemCategory.valueOf(k)
+                object: PurchaseAggregation {
+                    override val hospitalId: String = hospitalId
+                    override val period: String = period
+                    override val debitAccount: String = category.label
+                    override val category: String = category.name
+                    override val amount: Long = v.sumOf { it.amount }
+                    override val ratio: Double = v.sumOf { it.amount }.toDouble() / currentAmount * 100
+                    var meanRatio: Double = 0.0
+                }
+            }
+
+        return object: PurchaseStatistics {
+            override val summary: PurchaseAmount = summary
+            override val byCategories: List<PurchaseAggregation> = aggregation.values.toList()
+        }
     }
 
     private fun purchaseSummaryByYear(current: Long, before: Long): PurchaseAmount {
@@ -134,6 +164,17 @@ class StatisticsService(
             override val beforeAmount: Long = before
             override val compareAmount: Long = current - before
             override val compareRatio: Double = current.toDouble() / before.toDouble() * 100
+        }
+    }
+
+    private fun purchaseSummaryByMonth(current: Long, before: Long, beforeYear: Long): PurchaseAmount {
+        return object: PurchaseAmount {
+            override val currentAmount: Long = current
+            override val beforeAmount: Long = before
+            override val compareAmount: Long = current - before
+            override val compareRatio: Double = current.toDouble() / before.toDouble() * 100
+            val beforeYear: Long = beforeYear
+            val compareBeforeYear: Long = current - beforeYear
         }
     }
 }

@@ -178,13 +178,14 @@ class StatisticsRepositoryImpl(
             GROUP BY U.HOSPITAL_ID, U.DEBTOR_ACCOUNT
             """.trimIndent()
 
-        return jdbcTemplate.query(QS.CASH_RECEIPT_BOOKS, params) { rs, _ ->
+        return jdbcTemplate.query(query, params) { rs, _ ->
             object: PurchaseAggregation {
                 override val hospitalId: String = rs.getString("HOSPITAL_ID")
                 override val period: String = period
-                override val debitAccount: String = rs.getString("DEBTOR_ACCOUNT")
+                override val debitAccount: String = rs.getString("DEBTOR_ACCOUNT") ?: ""
                 override val category: String = AccountingItemCategory.category(debitAccount).name
                 override val amount: Long = rs.getLong("AMOUNT")
+                override val ratio: Double = 0.0
             }
         }
     }
@@ -214,6 +215,7 @@ private object QS {
              ,C.TOTAL_AMOUNT AS AMOUNT
        FROM PURCHASE_CREDIT_CARD C  
        WHERE C.HOSPITAL_ID = :hospitalId
+         AND C.DEBTOR_ACCOUNT IS NOT NULL
          AND C.BILLING_DATE LIKE CONCAT(:period, '%')
     """
 
@@ -223,6 +225,7 @@ private object QS {
              ,R.TOTAL_AMOUNT AS AMOUNT
        FROM PURCHASE_CASH_RECEIPT R  
        WHERE R.HOSPITAL_ID = :hospitalId
+         AND R.DEBTOR_ACCOUNT IS NOT NULL
          AND R.BILLING_DATE LIKE CONCAT(:period, '%')
     """
 
@@ -232,16 +235,18 @@ private object QS {
              ,I.TOTAL_AMOUNT AS AMOUNT
        FROM PURCHASE_ELEC_INVOICE I
        WHERE I.HOSPITAL_ID = :hospitalId
+         AND I.DEBTOR_ACCOUNT IS NOT NULL
          AND I.SEND_DATE LIKE CONCAT(:period, '%')
     """
 
     const val HANDWRITTEN_BOOKS = """
        SELECT H.HOSPITAL_ID
-             ,H.DEBTOR_ACCOUNT
-             ,H.TOTAL_AMOUNT AS AMOUNT
+             ,H.DEBIT_ACCOUNT
+             ,H.SUPPLY_PRICE + H.TAX_AMOUNT AS AMOUNT
        FROM PURCHASE_HANDWRITTEN H
        WHERE H.HOSPITAL_ID = :hospitalId
-         AND H.SEND_DATE LIKE CONCAT(:period, '%')
+         AND H.DEBIT_ACCOUNT IS NOT NULL
+         AND H.ISSUE_DATE LIKE CONCAT(:period, '%')
     """
 
     const val SALARY_BOOKS = """
